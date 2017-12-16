@@ -31,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     Button signup;
     Retrofit retrofit;
     Usuario p;
+    Button button;
     private static final String URL_BASE = "http://10.193.222.188:8080/1O-survival/game/"; ///nuestra api virtual
 
     @Override
@@ -79,6 +80,14 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        /*button = (Button) findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent mapa = new Intent(LoginActivity.this, MapaActivity.class);
+                startActivity(mapa);
+            }
+        });*/
 
     }
 
