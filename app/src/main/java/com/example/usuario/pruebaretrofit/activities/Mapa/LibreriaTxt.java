@@ -1,5 +1,8 @@
 package com.example.usuario.pruebaretrofit.activities.Mapa;
 
+import android.nfc.Tag;
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -8,9 +11,9 @@ import java.io.IOException;
 
 public abstract class LibreriaTxt {
 
-    //final static Logger log = Logger.getLogger(OneOctoberManagerImpl.class.getName());
 
     public static void pasarMapaTxt(String[][] mapa, String nomTxt){
+        final String TAG = "LlibreriaTxt";
         String savePath=" ";
         try {
             savePath = System.getProperty("user.dir") + System.getProperty("file.separator") + "mapesTxt";
@@ -25,16 +28,17 @@ public abstract class LibreriaTxt {
             }
             writer.close();
         } catch (IOException e) {
-            //log.error(e);
+            Log.e(TAG, e.getMessage());
             //log.info("No se ha podido crear el fichero del mapa: "+nomTxt);
         }
-        //log.info("Se ha creado el mapa: "+nomTxt+". Se ha guardado en: "+savePath);
+        Log.d(TAG,"Se ha creado el mapa: "+nomTxt+". Se ha guardado en: "+savePath);
     }
 
     public static String[][] llegirMapaTxt(String nomTxt){
+        final String TAG = "LlibreriaTxt";
         String line="";
         int cont=1;
-        String savePath = System.getProperty("user.dir") + System.getProperty("file.separator") + "mapesTxt";
+        String savePath = System.getProperty("user.dir") + System.getProperty("file.separator") + "assets";
         File myFile = new File(savePath, nomTxt+".txt");
         try {
             // per saber la mida del mapa (amplada i altura)
@@ -48,7 +52,7 @@ public abstract class LibreriaTxt {
             String[][] malla = new String [cont][line.length()];
             reader.close();
         } catch (Exception e){
-            //log.error(e);
+            Log.e(TAG,e.getMessage());
             //log.info("No se ha podido cargar el mapa: "+nomTxt+".txt");
             return null;
         }
@@ -67,7 +71,7 @@ public abstract class LibreriaTxt {
             reader.close();
 
         } catch (Exception e){
-            //log.fatal("No entenc què està passant.");
+            Log.e(TAG,"No entenc què està passant.");
             return null;
         }
         //String[][] malla = String [][];

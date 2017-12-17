@@ -4,10 +4,15 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.util.Random;
 
 public class IA {
+
+    private final String TAG = this.getClass().getSimpleName();
+
     private static final int BMP_ROWS = 4;
     private static final int BMP_COLUMNS = 3;
     /*private int x = 0;
@@ -29,6 +34,7 @@ public class IA {
     private static final int[] DIRECTION_TO_ANIMATION_MAP = { 3, 1, 0, 2 };
 
     public IA(GameView gameView, Bitmap bmp, String idIa) {
+        Log.d(TAG, "inicialitzo un IA");
         this.gameView=gameView;
         this.bmp=bmp;
         this.width = bmp.getWidth() / BMP_COLUMNS;
@@ -52,6 +58,7 @@ public class IA {
     }
 
     private void update() {
+        Log.d(TAG, "Update: moc una casella");
         /*if (x > gameView.getWidth() - width - xSpeed || x + xSpeed < 0) {
             xSpeed = -xSpeed;
         }
@@ -60,28 +67,35 @@ public class IA {
             ySpeed = -ySpeed;
         }
         y = y + ySpeed;*/
-        double distancia = getPosicion().length(getPosObjetivo().x,getPosObjetivo().y);
-        double min = 1000;
-        PointF act = new PointF();
-        int[] vecPos = {1, -1, 0, 0};
-        // de les quatre celes del voltant, miro quina es la que esta mes aprop del objectiu
-        for (int i = 0; i < 4; i++) {
-            PointF p = new PointF((int) getPosicion().x + vecPos[i], (int) getPosicion().y + vecPos[vecPos.length-1-i]);
-            if(getPosObjetivo().length(p.x,p.y) < min ) {
-                min = getPosObjetivo().length(p.x,p.y);
-                act.set(p);
+
+        PointF act = null;
+        try {
+            double distancia = getPosicion().length(getPosObjetivo().x,getPosObjetivo().y);
+            double min = 1000;
+            act = new PointF();
+            int[] vecPos = {1, -1, 0, 0};
+            // de les quatre celes del voltant, miro quina es la que esta mes aprop del objectiu
+            for (int i = 0; i < 4; i++) {
+                PointF p = new PointF((int) getPosicion().x + vecPos[i], (int) getPosicion().y + vecPos[vecPos.length-1-i]);
+                if(getPosObjetivo().length(p.x,p.y) < min ) {
+                    min = getPosObjetivo().length(p.x,p.y);
+                    act.set(p);
+                }
             }
+        } catch (Exception e) {
+            Log.e(TAG,e.getMessage());
         }
         // si m'ho ha calculat bé, actualitzo posicio
         if(!act.equals(new PointF()))
             setPosicion(act);
         else {
-            //Log.error("No calcula laproxima cela");
+            Log.e(TAG,"No calcula la pròxima casella");
         }
         currentFrame = ++currentFrame % BMP_COLUMNS;
     }
 
     public void onDraw(Canvas canvas) {
+        Log.d(TAG,"onDraw");
         update();
         int srcX = currentFrame * width;
         int srcY = getAnimationRow() * height;

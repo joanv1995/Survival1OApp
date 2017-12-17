@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.usuario.pruebaretrofit.R;
+import com.example.usuario.pruebaretrofit.activities.Mapa.MapaActivity;
 import com.example.usuario.pruebaretrofit.model.Usuario;
 import com.example.usuario.pruebaretrofit.service.RestClient;
 
@@ -80,14 +81,14 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        /*button = (Button) findViewById(R.id.button);
+        button = (Button) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent mapa = new Intent(LoginActivity.this, MapaActivity.class);
                 startActivity(mapa);
             }
-        });*/
+        });
 
     }
 

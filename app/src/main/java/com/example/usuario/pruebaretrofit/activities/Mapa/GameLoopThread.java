@@ -1,8 +1,11 @@
 package com.example.usuario.pruebaretrofit.activities.Mapa;
 
 import android.graphics.Canvas;
+import android.util.Log;
 
 public class GameLoopThread extends Thread {
+
+    private final String TAG = this.getClass().getSimpleName();
 
     static final long FPS = 30;
 
@@ -18,6 +21,7 @@ public class GameLoopThread extends Thread {
     }
 
     public void run() {
+        Log.d(TAG, "Estic corrent");
         long ticksPS = 1000 / FPS;
         long startTime;
         long sleepTime;
