@@ -7,7 +7,7 @@ public class GameLoopThread extends Thread {
 
     private final String TAG = this.getClass().getSimpleName();
 
-    static final long FPS = 10;
+    static final long FPS = 30;
 
     private GameView view;
     private boolean running = false;
@@ -22,7 +22,7 @@ public class GameLoopThread extends Thread {
 
     public void run() {
         Log.d(TAG, "Estic corrent");
-        long ticksPS = 100 / FPS;
+        long ticksPS = 1000 / FPS;
         long startTime;
         long sleepTime;
         while (running) {
@@ -38,7 +38,7 @@ public class GameLoopThread extends Thread {
                     view.onDraw(c);
                 }
             } finally {
-                if (c != null) {
+                if (c != null) { //si falla lo del try desbloqueixo el canvas per si de cas
                     view.getHolder().unlockCanvasAndPost(c);
                 }
             }
@@ -55,3 +55,13 @@ public class GameLoopThread extends Thread {
         }
     }
 }
+// ticksPS es un marge de temps per executar els processos,
+// (System.currentTimeMillis() - startTime) temps que triga en executar el process
+//  Si es triga mes que el marge, per no posar un temps d'espera negatiu, es posa un fixe, pero no s'espera a que s'arribi a aquest extrem
+// amb aquest metode s'igualen els temps enstre threads
+
+// An application consists of one or more processes.
+// A process, in the simplest terms, is an executing program.
+// One or more threads run in the context of the process.
+// A thread is the basic unit to which the operating system allocates processor time.
+// A thread can execute any part of the process code, including parts currently being executed by another thread

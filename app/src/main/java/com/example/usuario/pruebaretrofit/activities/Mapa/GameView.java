@@ -120,7 +120,7 @@ public class GameView extends SurfaceView {
         for (IA ia : listaIas) {
             recBtm = ia.onDraw(canvas);
             x = (int) ia.getPosicion().x*ample; y=(int) ia.getPosicion().y*altura;
-            rec.set(x, y, x+ample, y+altura);
+            rec.set(x, y, x+2*ample, y+2*altura);
             canvas.drawBitmap(ia.getBmp(), recBtm, rec, null);
         }
 
