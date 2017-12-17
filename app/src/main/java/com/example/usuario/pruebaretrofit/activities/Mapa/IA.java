@@ -33,13 +33,15 @@ public class IA {
     // animation = 3 back, 1 left, 0 front, 2 right
     private static final int[] DIRECTION_TO_ANIMATION_MAP = { 3, 1, 0, 2 };
 
-    public IA(GameView gameView, Bitmap bmp, String idIa) {
+    public IA(GameView gameView, Bitmap bmp, String idIa, PointF posicion, PointF posObjetivo) {
         Log.d(TAG, "inicialitzo un IA");
         this.gameView=gameView;
         this.bmp=bmp;
         this.width = bmp.getWidth() / BMP_COLUMNS;
         this.height = bmp.getHeight() / BMP_ROWS;
         this.idIa = idIa;
+        this.posicion = posicion;
+        this.posObjetivo = posObjetivo;
         /*Random rnd = new Random();
         xSpeed = rnd.nextInt(10)-5;
         ySpeed = rnd.nextInt(10)-5;
@@ -56,6 +58,12 @@ public class IA {
     public PointF getPosObjetivo() {
         return posObjetivo;
     }
+    public void setPosObjetivo(PointF posObjetivo) {
+        this.posObjetivo = posObjetivo;
+    }
+    public Bitmap getBmp() {
+        return bmp;
+    }
 
     private void update() {
         Log.d(TAG, "Update: moc una casella");
@@ -68,40 +76,44 @@ public class IA {
         }
         y = y + ySpeed;*/
 
-        PointF act = null;
-        try {
-            double distancia = getPosicion().length(getPosObjetivo().x,getPosObjetivo().y);
-            double min = 1000;
-            act = new PointF();
-            int[] vecPos = {1, -1, 0, 0};
-            // de les quatre celes del voltant, miro quina es la que esta mes aprop del objectiu
-            for (int i = 0; i < 4; i++) {
-                PointF p = new PointF((int) getPosicion().x + vecPos[i], (int) getPosicion().y + vecPos[vecPos.length-1-i]);
-                if(getPosObjetivo().length(p.x,p.y) < min ) {
-                    min = getPosObjetivo().length(p.x,p.y);
-                    act.set(p);
+
+        if (!posicion.equals(posObjetivo)) {
+            PointF act = null;
+            try {
+                //double distancia = getPosicion().length(getPosObjetivo().x,getPosObjetivo().y);
+                double min = 1000;
+                act = new PointF();
+                int[] vecPos = {1, -1, 0, 0};
+                // de les quatre celes del voltant, miro quina es la que esta mes aprop del objectiu
+                for (int i = 0; i < 4; i++) {
+                    PointF p = new PointF((int) getPosicion().x + vecPos[i], (int) getPosicion().y + vecPos[vecPos.length-1-i]);
+                    if(getPosObjetivo().length(p.x,p.y) < min ) {
+                        min = getPosObjetivo().length(p.x,p.y);
+                        act.set(p);
+                    }
                 }
+            } catch (Exception e) {
+                Log.e(TAG,e.getMessage());
             }
-        } catch (Exception e) {
-            Log.e(TAG,e.getMessage());
+            // si m'ho ha calculat bé, actualitzo posicio
+            if(!act.equals(new PointF()))
+                setPosicion(act);
+            else {
+                Log.e(TAG,"No calcula la pròxima casella");
+            }
+            currentFrame = ++currentFrame % BMP_COLUMNS;
         }
-        // si m'ho ha calculat bé, actualitzo posicio
-        if(!act.equals(new PointF()))
-            setPosicion(act);
-        else {
-            Log.e(TAG,"No calcula la pròxima casella");
-        }
-        currentFrame = ++currentFrame % BMP_COLUMNS;
     }
 
-    public void onDraw(Canvas canvas) {
+    public Rect onDraw(Canvas canvas) {
         Log.d(TAG,"onDraw");
         update();
         int srcX = currentFrame * width;
         int srcY = getAnimationRow() * height;
         Rect src = new Rect(srcX, srcY, srcX + width, srcY + height);
-        Rect dst = new Rect((int)getPosicion().x, (int)getPosicion().y, (int)getPosicion().x + width, (int)getPosicion().y + height);
-        canvas.drawBitmap(bmp, src, dst, null);
+        return src;
+        //Rect dst = new Rect((int)getPosicion().x, (int)getPosicion().y, (int)getPosicion().x + width, (int)getPosicion().y + height);
+        //canvas.drawBitmap(bmp, src, dst, null);
     }
 
     private int getAnimationRow() {

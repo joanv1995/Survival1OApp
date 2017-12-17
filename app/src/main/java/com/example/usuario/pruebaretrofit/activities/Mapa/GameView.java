@@ -31,6 +31,12 @@ public class GameView extends SurfaceView {
     private GameLoopThread gameLoopThread;
     private java.util.List<IA> listaIas = new ArrayList<>();
     private String[][] malla;
+
+    // per dibuixar
+    private int x = 0, y = 0;
+    private Rect rec = new Rect(), recBtm = new Rect();
+    private int ample, altura;
+
     //private List<Sprite> sprites = new ArrayList<Sprite>();
 
     public GameView(Context context) {
@@ -72,57 +78,60 @@ public class GameView extends SurfaceView {
         });
     }
 
+    private Paint quinColor(String s){
+        Paint paint = new Paint();
+        switch (s) {
+            case "T": paint.setColor(getResources().getColor(R.color.Brown));
+                break;
+            case "U": paint.setColor(getResources().getColor(R.color.Cornsilk));
+                break;
+            case "P": paint.setColor(getResources().getColor(R.color.Black));
+                break;
+            default: paint.setColor(getResources().getColor(R.color.Peru));
+                break;
+        }
+        return paint;
+    }
     @Override
     protected void onDraw(Canvas canvas) {
         Log.d(TAG, "onDraw");
-        canvas.drawColor(getResources().getColor(R.color.Peru));
+        canvas.drawColor(getResources().getColor(R.color.Peru)); // Fondo ("-")
 
         Log.d(TAG,"canvasWidth " + canvas.getWidth());
         Log.d(TAG,"canvasHeight " + canvas.getHeight());
-        int ample = canvas.getWidth() / malla[0].length ;
-        int altura = canvas.getHeight() / malla.length;
+        ample = canvas.getWidth() / malla[0].length ;
+        altura = canvas.getHeight() / malla.length;
 
         //int i = malla.length; // files
         //int j = malla[1].length; // columnes
-        Paint paint = new Paint();
-        paint.setColor(getResources().getColor(R.color.Brown));
         for(int i = 0; i < malla.length; i++) //altura
         {
             for(int j = 0; j<  malla[1].length; j++ ) //amplada
             {
-                if (malla[i][j].contains("T")){
-                    int xx = j*ample, yy=i*altura;
-                    Rect rec = new Rect(xx, yy, xx+ample, yy+altura);
-                    canvas.drawRect(rec, paint);
+                x = j*ample; y=i*altura;
+                if (!malla[i][j].contains("-")){
+                    //x = j*ample; y=i*altura;
+                    rec.set(x, y, x+ample, y+altura);
+                    canvas.drawRect(rec, quinColor(malla[i][j]));
                 }
-
             }
-
         }
+
+        for (IA ia : listaIas) {
+            recBtm = ia.onDraw(canvas);
+            x = (int) ia.getPosicion().x*ample; y=(int) ia.getPosicion().y*altura;
+            rec.set(x, y, x+ample, y+altura);
+            canvas.drawBitmap(ia.getBmp(), recBtm, rec, null);
+        }
+
+
 /*
         int xx = canvas.getWidth(), yy=canvas.getHeight();
         Rect rec = new Rect(xx-50, yy-50, xx, yy); // rectangle on va la imatge dins del canvas
         Paint paint = new Paint();
         paint.setColor(getResources().getColor(R.color.colorAccent));
         canvas.drawRect(rec, paint);
-
-        int xxx = 0, yyy=0;
-        Rect rec2 = new Rect(xxx, yyy, xxx+50, yyy+50); // rectangle on va la imatge dins del canvas
-        Paint paint2 = new Paint();
-        paint2.setColor(getResources().getColor(R.color.Aqua));
-        canvas.drawRect(rec2, paint2);
-
-        int x = canvas.getWidth(), y=0;
-        Rect rec1 = new Rect(x-100, y, x, y+50); // rectangle on va la imatge dins del canvas
-        Paint paint1 = new Paint();
-        paint2.setColor(getResources().getColor(R.color.Black));
-        canvas.drawRect(rec1, paint1);
-
-        int x1 = 0, y1=canvas.getHeight();
-        Rect re = new Rect(x1, y1-100, x1+50, y1); // rectangle on va la imatge dins del canvas
-        Paint pain = new Paint();
-        paint2.setColor(getResources().getColor(R.color.Cornsilk));
-        canvas.drawRect(re, pain);/*
+*/
 
         /*Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.school);
         bmp = getResizedBitmap(bmp,100,80);
@@ -143,44 +152,46 @@ public class GameView extends SurfaceView {
         }*/
     }
 
-    public Bitmap getResizedBitmap(Bitmap image, int bitmapWidth, int bitmapHeight) {
+    private int buscarIAperPosicio(PointF p){
+        for (IA ia : listaIas) {
+            if(ia.getPosicion().equals(p))
+                return listaIas.indexOf(ia);
+        }
+        return -1;
+    }
+
+    private Bitmap getResizedBitmap(Bitmap image, int bitmapWidth, int bitmapHeight) {
         return Bitmap.createScaledBitmap(image, bitmapWidth, bitmapHeight, true);
     }
-    public void afegirIas(){
+    private void afegirIas(){
         //IA ia1 = new IA("v",1,4,new PointF(25,19),new PointF(15,15));
         listaIas.add(createIA(R.drawable.bad1));
     }
+
+    private IA createIA(int resouce) {
+        Bitmap bmp = BitmapFactory.decodeResource(getResources(), resouce);
+        return new IA(this,bmp,"v",new PointF(25,19),new PointF(15,15));
+    }
+
     public String[][] llegirMapaTxt(String nomTxt){
         String line="";
         int cont=1;
-        //final String nomTxt2 = nomTxt;
-        //final AssetManager assets = getContext().getResources().getAssets();
 
-//File myFile = new File(savePath, nomTxt+".txt");
-        //String savePath = System.getProperty("user.dir") + System.getProperty("file.separator") + "assets";
         try {
-            //InputStream file = this.getContext().getAssets().open(nomTxt);
-
-            // per saber la mida del mapa (amplada i altura)
-            //FileReader reader = new FileReader(file);
-            //Scanner reader = new Scanner(file);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(this.getContext().getAssets().open(nomTxt+".txt")));
 
             line = bufferedReader.readLine();
             while (bufferedReader.readLine() != null){
                 cont++;
             }
-            //String[][] malla = new String [cont][line.length()];
             bufferedReader.close();
         } catch (Exception e){
             Log.e(TAG,e.getMessage());
-            //log.info("No se ha podido cargar el mapa: "+nomTxt+".txt");
             return null;
         }
         String[][] malla = new String [cont][line.length()];
         try{
             // Per omplir la malla
-            //FileReader reader = new FileReader(myFile);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(this.getContext().getAssets().open(nomTxt+".txt")));
             cont=0;
             while ((line = bufferedReader.readLine()) != null){
@@ -195,15 +206,11 @@ public class GameView extends SurfaceView {
             Log.e(TAG,e.getMessage());
             return null;
         }
-        //String[][] malla = String [][];
         return malla;
 
     }
 
-    private IA createIA(int resouce) {
-        Bitmap bmp = BitmapFactory.decodeResource(getResources(), resouce);
-        return new IA(this,bmp,"v");
-    }
+
     /*
     @Override
     public boolean onTouchEvent(MotionEvent event) {
