@@ -48,7 +48,7 @@ public class GameView extends SurfaceView {
             @Override
             public void surfaceCreated(SurfaceHolder surfaceHolder) {
                 afegirIas();
-                malla = llegirMapaTxt("mapaEscola");
+                malla = llegirMapaTxt("mapaEscola3");
                 Log.d(TAG, "Creo els ias: " + listaIas.size() + " i la malla: " + malla.length);
                 gameLoopThread.setRunning(true);
                 Log.d(TAG, "Run = true");

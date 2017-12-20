@@ -29,7 +29,7 @@ public class GameLoopThread extends Thread {
             Canvas c = null;
             startTime = System.currentTimeMillis();
             try {
-                // It first evaluates the expression foo.
+                //  (synchronized) It first evaluates the expression foo (view.getHolder()).
                 // The result must be an object reference.
                 // Then it locks the object, performs the body of the synchronized block, and then it unlocks the object.
 

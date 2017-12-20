@@ -110,7 +110,7 @@ public class IA {
         update();
         int srcX = currentFrame * width;
         int srcY = getAnimationRow() * height;
-        Rect src = new Rect(srcX, srcY, srcX + width, srcY + height);
+        Rect src = new Rect(srcX, srcY, srcX + width, srcY + height); //retalla la imatge segons l'animacio
         return src;
         //Rect dst = new Rect((int)getPosicion().x, (int)getPosicion().y, (int)getPosicion().x + width, (int)getPosicion().y + height);
         //canvas.drawBitmap(bmp, src, dst, null);
