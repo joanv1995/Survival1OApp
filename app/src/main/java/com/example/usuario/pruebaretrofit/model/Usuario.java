@@ -23,7 +23,12 @@ import com.google.gson.annotations.SerializedName;
         @SerializedName("puntFinal")
         @Expose
         private Integer puntFinal;
+        @SerializedName("idMapa")
+        @Expose
+        private String idMapa;
         private final static long serialVersionUID = 3122917227009467179L;
+
+        public Usuario(){}
 
         public Usuario(String nombre, String password, String correo) {
             this.nombre = nombre;
@@ -63,4 +68,11 @@ import com.google.gson.annotations.SerializedName;
             this.puntFinal = puntFinal;
         }
 
+        public String getIdMapa() {
+            return idMapa;
+        }
+
+        public void setIdMapa(String idMapa) {
+            this.idMapa = idMapa;
+        }
     }

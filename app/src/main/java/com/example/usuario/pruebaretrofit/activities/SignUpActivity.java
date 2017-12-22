@@ -1,5 +1,6 @@
 package com.example.usuario.pruebaretrofit.activities;
 
+import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -64,6 +65,14 @@ EditText mail;
 
     }
     public void connectService(){
+        final ProgressDialog pd;
+        pd = new ProgressDialog(SignUpActivity.this);
+        pd.setMax(100);
+        pd.setMessage("Connectant...");
+        //pd.setTitle("");
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        // show it
+        pd.show();
         if (this.retrofit == null) {
             this.retrofit = new Retrofit.Builder()
                     .baseUrl(URL_BASE)
@@ -74,33 +83,44 @@ EditText mail;
 
 
             user = new Usuario(name, pass, email);
-            Call<ResponseBody> call = service.signupUser(user);
+            Call<Integer> call = service.signupUser(user);
             try {
-                call.enqueue(new Callback<ResponseBody>() {
+                call.enqueue(new Callback<Integer>() {
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                     int i=   response.code();
-                     String s = response.body().toString();
-                     Log.i("user","INSERTADO");
+                    public void onResponse(Call<Integer> call, Response<Integer> response) {
+                        pd.dismiss();
+                        signUpAnswer(response.body());
                     }
 
                     @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.i("user","NO INSERTADO");
+                    public void onFailure(Call<Integer> call, Throwable t) {
+                        t.getMessage();
 
                     }
                 });
-
-
-
             }
+
             catch (Exception e){
                 throw e;
             }
 
-
-
-
-
     }
+    public void signUpAnswer(Integer i){
+
+            switch (i){
+
+                case 1:
+                    Toast.makeText(this, "Usuario registrado correctamente", Toast.LENGTH_SHORT).show();
+                    break;
+                case 0:
+                    Toast.makeText(this, "Usuario no registrado", Toast.LENGTH_SHORT).show();
+                    break;
+
+
+
+            }
+            finish();
+
+            }
+
 }

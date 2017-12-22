@@ -24,6 +24,6 @@ public interface RestClient {
     @GET("player/{nomPlayer}/{password}")
     Call<Usuario> loginUser(@Path("nomPlayer") String nomPlayer, @Path("password") String password);
     @POST("newUser")
-    Call<ResponseBody> signupUser(@Body Usuario u);
+    Call<Integer> signupUser(@Body Usuario u);
 
 }
