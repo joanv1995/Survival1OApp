@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 
 import com.example.usuario.pruebaretrofit.R;
 
@@ -31,24 +32,32 @@ public class GameView extends SurfaceView {
     private GameLoopThread gameLoopThread;
     private java.util.List<IA> listaIas = new ArrayList<>();
     private String[][] malla;
+    private int canvasWidth, canvasHeight;
+    private int margeAmpl = 0, margeAlt = 0;
 
     // per dibuixar
     private int x = 0, y = 0;
     private Rect rec = new Rect(), recBtm = new Rect();
     private int ample, altura;
 
+    int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            | View.SYSTEM_UI_FLAG_FULLSCREEN;
     //private List<Sprite> sprites = new ArrayList<Sprite>();
 
     public GameView(Context context) {
         super(context);
         Log.d(TAG,"constructor GameView");
         gameLoopThread = new GameLoopThread(this);
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        this.setSystemUiVisibility(uiOptions);
+
         holder = getHolder();
         holder.addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder surfaceHolder) {
                 afegirIas();
-                malla = llegirMapaTxt("mapaEscola3");
+                malla = llegirMapaTxt("mapaEscola5");
                 Log.d(TAG, "Creo els ias: " + listaIas.size() + " i la malla: " + malla.length);
                 gameLoopThread.setRunning(true);
                 Log.d(TAG, "Run = true");
@@ -57,8 +66,14 @@ public class GameView extends SurfaceView {
             }
 
             @Override
-            public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+            public void surfaceChanged(SurfaceHolder surfaceHolder, int format, int width, int height) {
                 Log.d(TAG, "surfaceChanged");
+                Log.d(TAG, "width " + width);
+                Log.d(TAG, "height " + height);
+                canvasHeight = midaCanvas(height, malla.length);
+                canvasWidth = midaCanvas(width, malla[0].length);
+                margeAmpl = width - canvasWidth;
+                margeAlt = height - canvasHeight;
             }
 
             @Override
@@ -87,40 +102,66 @@ public class GameView extends SurfaceView {
                 break;
             case "P": paint.setColor(getResources().getColor(R.color.Black));
                 break;
+            case "-": paint.setColor(getResources().getColor(R.color.Peru));
+                break;
             default: paint.setColor(getResources().getColor(R.color.Peru));
                 break;
         }
         return paint;
     }
+
+    private int midaCanvas(int canvasT, int length){
+        boolean trobat = false;
+        int ampladaCanvas = 0;
+        if(canvasT % length != 0) {
+            for(int i = canvasT; i > length; i--) {
+                if(i % length == 0){
+                    ampladaCanvas = i; trobat = true;
+                    break;
+                }
+            }
+        } else
+            ampladaCanvas = canvasT;
+        if (!trobat)
+            Log.e(TAG, "No s'ha pogut adaptar el mapa");
+        return ampladaCanvas;
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
+
         Log.d(TAG, "onDraw");
-        canvas.drawColor(getResources().getColor(R.color.Peru)); // Fondo ("-")
+        canvas.drawColor(getResources().getColor(R.color.Black)); // Fondo ("-")
 
         Log.d(TAG,"canvasWidth " + canvas.getWidth());
         Log.d(TAG,"canvasHeight " + canvas.getHeight());
-        ample = canvas.getWidth() / malla[0].length ;
-        altura = canvas.getHeight() / malla.length;
 
-        //int i = malla.length; // files
-        //int j = malla[1].length; // columnes
+        altura = canvasHeight / malla.length;
+        ample = canvasWidth / malla[0].length;
+
+        Log.d(TAG,"canvasWidth " + ample);
+        Log.d(TAG,"canvasHeight " + altura);
+
         for(int i = 0; i < malla.length; i++) //altura
         {
-            for(int j = 0; j<  malla[1].length; j++ ) //amplada
+            for(int j = 0; j<  malla[0].length; j++ ) //amplada
             {
-                x = j*ample; y=i*altura;
-                if (!malla[i][j].contains("-")){
+                x = j*ample + margeAmpl/2; y=i*altura + margeAlt/2;
+                //if (!malla[i][j].contains("-")){
                     //x = j*ample; y=i*altura;
                     rec.set(x, y, x+ample, y+altura);
                     canvas.drawRect(rec, quinColor(malla[i][j]));
-                }
+                //}
             }
         }
+
+        Log.d(TAG,"x " + x);
+        Log.d(TAG,"y " + y);
 
         for (IA ia : listaIas) {
             recBtm = ia.onDraw(canvas);
             x = (int) ia.getPosicion().x*ample; y=(int) ia.getPosicion().y*altura;
-            rec.set(x, y, x+2*ample, y+2*altura);
+            rec.set(x, y, x+10*ample, y+10*altura);
             canvas.drawBitmap(ia.getBmp(), recBtm, rec, null);
         }
 
@@ -128,10 +169,10 @@ public class GameView extends SurfaceView {
 /*
         int xx = canvas.getWidth(), yy=canvas.getHeight();
         Rect rec = new Rect(xx-50, yy-50, xx, yy); // rectangle on va la imatge dins del canvas
-        Paint paint = new Paint();
+        //Paint paint = new Paint();
         paint.setColor(getResources().getColor(R.color.colorAccent));
-        canvas.drawRect(rec, paint);
-*/
+        canvas.drawRect(rec, paint);*/
+
 
         /*Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.school);
         bmp = getResizedBitmap(bmp,100,80);
@@ -170,7 +211,7 @@ public class GameView extends SurfaceView {
 
     private IA createIA(int resouce) {
         Bitmap bmp = BitmapFactory.decodeResource(getResources(), resouce);
-        return new IA(this,bmp,"v",new PointF(25,19),new PointF(15,15));
+        return new IA(this,bmp,"v",new PointF(180,100),new PointF(100,50));
     }
 
     public String[][] llegirMapaTxt(String nomTxt){
@@ -211,21 +252,34 @@ public class GameView extends SurfaceView {
     }
 
 
-    /*
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         synchronized (getHolder()) {
-            for (int i = sprites.size() - 1; i >= 0; i--) {
+            /*for (int i = sprites.size() - 1; i >= 0; i--) {
                 Sprite sprite = sprites.get(i);
                 if (sprite.isCollition(event.getX(), event.getY())) {
                     sprites.remove(sprite);
                     break;
                 }
-            }
+            }*/
+            hideUI();
             return super.onTouchEvent(event);
         }
+        //int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+         //       | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        // setSystemUiVisibility(uiOptions);
+    }
+    private void hideUI(){
+        this.getHandler().postDelayed(new Runnable(){
+            @Override
+            public void run() {
+                GameView.this.setSystemUiVisibility(uiOptions);
+            }
+        },60);
     }
 
+/*
     private Sprite createSprite(int resouce) {
         Bitmap bmp = BitmapFactory.decodeResource(getResources(), resouce);
         return new Sprite(this,bmp);

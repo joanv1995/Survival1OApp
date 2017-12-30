@@ -27,6 +27,7 @@ public class GameLoopThread extends Thread {
         long sleepTime;
         while (running) {
             Canvas c = null;
+
             startTime = System.currentTimeMillis();
             try {
                 //  (synchronized) It first evaluates the expression foo (view.getHolder()).
