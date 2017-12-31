@@ -5,9 +5,12 @@ import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.util.Random;
+
+import static java.lang.Math.sqrt;
 
 public class IA {
 
@@ -28,10 +31,18 @@ public class IA {
     private String idIa;
     private PointF posicion;
     private PointF posObjetivo;
+    private boolean enEspera = false;
+    private int speed = 2; // TODO: mirar que faig amb la velocitat
+    private boolean direccioX_Left, direccioY_Up; // true: up, false: down
+    private int direccio; // direction = 0 right, 1 left, 2 up, 3 down,
 
     // direction = 0 up, 1 left, 2 down, 3 right,
     // animation = 3 back, 1 left, 0 front, 2 right
-    private static final int[] DIRECTION_TO_ANIMATION_MAP = { 3, 1, 0, 2 };
+    private static final int[] DIRECTION_TO_ANIMATION_MAP = {2, 1, 3, 0};//{ 3, 1, 0, 2 };
+
+    // per dibuixar
+    PointF act = new PointF();
+    PointF p = new PointF();
 
     public IA(GameView gameView, Bitmap bmp, String idIa, PointF posicion, PointF posObjetivo) {
         Log.d(TAG, "inicialitzo un IA");
@@ -42,6 +53,7 @@ public class IA {
         this.idIa = idIa;
         this.posicion = posicion;
         this.posObjetivo = posObjetivo;
+        saberDireccio();
         /*Random rnd = new Random();
         xSpeed = rnd.nextInt(10)-5;
         ySpeed = rnd.nextInt(10)-5;
@@ -49,6 +61,24 @@ public class IA {
         y = rnd.nextInt(gameView.getHeight() - height);*/
     }
 
+    private void saberDireccio(){
+        this.direccioX_Left = posicion.x >= posObjetivo.x ;
+        this.direccioY_Up = posicion.y >= posObjetivo.y ;
+    }
+
+    private boolean haArribat(){
+        if(direccioY_Up){
+            if (direccioX_Left)
+                return posicion.y <= posObjetivo.y && posicion.x <= posObjetivo.x;
+            else
+                return posicion.y <= posObjetivo.y && posicion.x >= posObjetivo.x;
+        } else {
+            if (direccioX_Left)
+                return posicion.y >= posObjetivo.y && posicion.x <= posObjetivo.x;
+            else
+                return posicion.y >= posObjetivo.y && posicion.x >= posObjetivo.x;
+        }
+    }
     public PointF getPosicion() {
         return posicion;
     }
@@ -78,17 +108,17 @@ public class IA {
 
 
         if (!posicion.equals(posObjetivo)) {
-            PointF act = null;
+            act = new PointF();
+            //p = null;
             try {
-                //double distancia = getPosicion().length(getPosObjetivo().x,getPosObjetivo().y);
-                double min = 1000;
-                act = new PointF();
-                int[] vecPos = {1, -1, 0, 0};
-                // de les quatre celes del voltant, miro quina es la que esta mes aprop del objectiu
+                double min = 10000000;
+                int[] vecPos = {speed, -speed, 0, 0};
+                // de les quatre celes del voltant, miro es la que esta mes aprop del objectiu
                 for (int i = 0; i < 4; i++) {
-                    PointF p = new PointF((int) getPosicion().x + vecPos[i], (int) getPosicion().y + vecPos[vecPos.length-1-i]);
-                    if(getPosObjetivo().length(p.x,p.y) < min ) {
-                        min = getPosObjetivo().length(p.x,p.y);
+                    p.set((int) getPosicion().x + vecPos[i], (int) getPosicion().y + vecPos[vecPos.length-1-i]);
+                    if(calculaDistancia(p,getPosObjetivo()) < min){
+                        direccio = i;
+                        min = calculaDistancia(p,getPosObjetivo());
                         act.set(p);
                     }
                 }
@@ -96,13 +126,26 @@ public class IA {
                 Log.e(TAG,e.getMessage());
             }
             // si m'ho ha calculat bé, actualitzo posicio
-            if(!act.equals(new PointF()))
+            if(!enEspera && estaDinsDeMalla(act)){ //&& !act.equals(getPosicion())) {
                 setPosicion(act);
-            else {
-                Log.e(TAG,"No calcula la pròxima casella");
+                if(haArribat())
+                    enEspera = true;
+            }else {
+                if(!estaDinsDeMalla(act))
+                    Log.e(TAG,"No esta dins la malla");
             }
+            if (enEspera)
+                Log.d(TAG,"Ha arribat");
+
+            Log.d(TAG,"posX " + getPosicion().x);
+            Log.d(TAG,"posY " + getPosicion().y);
+
             currentFrame = ++currentFrame % BMP_COLUMNS;
         }
+    }
+
+    private double calculaDistancia(PointF p1, PointF p2){
+        return  sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
     }
 
     public Rect onDraw(Canvas canvas) {
@@ -112,14 +155,15 @@ public class IA {
         int srcY = getAnimationRow() * height;
         Rect src = new Rect(srcX, srcY, srcX + width, srcY + height); //retalla la imatge segons l'animacio
         return src;
-        //Rect dst = new Rect((int)getPosicion().x, (int)getPosicion().y, (int)getPosicion().x + width, (int)getPosicion().y + height);
-        //canvas.drawBitmap(bmp, src, dst, null);
     }
 
     private int getAnimationRow() {
         //double dirDouble = (Math.atan2(xSpeed, ySpeed) / (Math.PI / 2) + 2);
         //int direction = (int) Math.round(dirDouble) % BMP_ROWS;
-        return DIRECTION_TO_ANIMATION_MAP[1];
+        return DIRECTION_TO_ANIMATION_MAP[direccio];
+    }
+    private boolean estaDinsDeMalla(PointF p){
+        return p.x <= gameView.getMalla()[0].length && p.x >= 0 && p.y <= (gameView.getMalla().length-5) && p.y >= 5;
     }
 /*
     public boolean isCollition(float x2, float y2) {
