@@ -36,11 +36,14 @@ public class GameView extends SurfaceView {
     private int margeAmpl = 0, margeAlt = 0;
     private Rect rectangleCanvas = new Rect();
 
+
     // per dibuixar
     private int x = 0, y = 0;
     private Rect rec = new Rect(), recBtm = new Rect();
     private int ample, altura;
+    private int zoomBitmap = 5;
 
+    // per amager la barra de navegacio
     int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
             | View.SYSTEM_UI_FLAG_FULLSCREEN;
     //private List<Sprite> sprites = new ArrayList<Sprite>();
@@ -97,6 +100,9 @@ public class GameView extends SurfaceView {
 
     public String[][] getMalla() {
         return malla;
+    }
+    public int getZoomBitmap() {
+        return zoomBitmap;
     }
 
     private Paint quinColor(String s){
@@ -163,7 +169,7 @@ public class GameView extends SurfaceView {
         for (IA ia : listaIas) {
             recBtm = ia.onDraw(canvas);
             x = (int) ia.getPosicion().x*ample + margeAmpl/2; y=(int) ia.getPosicion().y*altura + margeAlt/2;
-            rec.set(x - 5*ample, y - 5*altura, x + 5*ample, y + 5*altura);
+            rec.set(x - zoomBitmap*ample, y - zoomBitmap*altura, x + zoomBitmap*ample, y + zoomBitmap*altura);
             ////Log.d(TAG,"posY " + y);
             canvas.drawBitmap(ia.getBmp(), recBtm, rec, null);
 
@@ -214,14 +220,14 @@ public class GameView extends SurfaceView {
         return Bitmap.createScaledBitmap(image, bitmapWidth, bitmapHeight, true);
     }
     private void afegirIas(){
-        // x: 0-200, y: 5-95
+        // x: 0-200, y: 5-95   // x: 0-100, y: 5-45 //x=19,y=19-->15
         //IA ia1 = new IA("v",1,4,new PointF(25,19),new PointF(15,15));
-        listaIas.add(createIA(R.drawable.bad1,new PointF(180,90),new PointF(150,70)));
-        listaIas.add(createIA(R.drawable.bad1,new PointF(10,5),new PointF(200,10)));
-        listaIas.add(createIA(R.drawable.bad1,new PointF(10,10),new PointF(10,95)));
-        listaIas.add(createIA(R.drawable.bad1,new PointF(10,95),new PointF(10,10)));
-        listaIas.add(createIA(R.drawable.bad1,new PointF(10,10),new PointF(100,95)));
-        listaIas.add(createIA(R.drawable.bad1,new PointF(10,10),new PointF(0,150)));
+        listaIas.add(createIA(R.drawable.bad1,new PointF(170,95),new PointF(170,5)));
+        //listaIas.add(createIA(R.drawable.bad1,new PointF(5,19),new PointF(100,19)));
+        //listaIas.add(createIA(R.drawable.bad1,new PointF(7,10),new PointF(100,10)));
+        //listaIas.add(createIA(R.drawable.bad3,new PointF(10,15),new PointF(100,15)));
+        //listaIas.add(createIA(R.drawable.bad1,new PointF(10,10),new PointF(100,95)));
+        //listaIas.add(createIA(R.drawable.bad1,new PointF(10,10),new PointF(0,150)));
 
     }
 
