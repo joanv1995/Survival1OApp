@@ -220,12 +220,12 @@ public class GameView extends SurfaceView {
         return Bitmap.createScaledBitmap(image, bitmapWidth, bitmapHeight, true);
     }
     private void afegirIas(){
-        // x: 0-200, y: 5-95   // x: 0-100, y: 5-45 //x=19,y=19-->15
+        // x: 5-195, y: 5-95   // x: 0-100, y: 5-45 //x=19,y=19-->15
         //IA ia1 = new IA("v",1,4,new PointF(25,19),new PointF(15,15));
         listaIas.add(createIA(R.drawable.bad1,new PointF(170,95),new PointF(170,5)));
-        //listaIas.add(createIA(R.drawable.bad1,new PointF(5,19),new PointF(100,19)));
-        //listaIas.add(createIA(R.drawable.bad1,new PointF(7,10),new PointF(100,10)));
-        //listaIas.add(createIA(R.drawable.bad3,new PointF(10,15),new PointF(100,15)));
+        listaIas.add(createIA(R.drawable.bad1,new PointF(5,45),new PointF(195,45)));
+        listaIas.add(createIA(R.drawable.bad1,new PointF(20,10),new PointF(20,95)));
+        listaIas.add(createIA(R.drawable.bad3,new PointF(195,60),new PointF(5,62)));
         //listaIas.add(createIA(R.drawable.bad1,new PointF(10,10),new PointF(100,95)));
         //listaIas.add(createIA(R.drawable.bad1,new PointF(10,10),new PointF(0,150)));
 

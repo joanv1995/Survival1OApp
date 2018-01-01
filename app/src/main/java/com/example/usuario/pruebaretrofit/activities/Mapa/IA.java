@@ -97,7 +97,7 @@ public class IA {
 
     private void update() {
         Log.d(TAG, "Update: moc una casella");
-        if (!posicion.equals(posObjetivo)) {
+        if (!posicion.equals(posObjetivo) && !haArribat()) {
             act = new PointF();
             try {
                 double min = 10000000;
@@ -105,7 +105,7 @@ public class IA {
                 // de les quatre celes del voltant, miro es la que esta mes aprop de l'objectiu
                 for (int i = 0; i < 4; i++) {
                     p.set((int) getPosicion().x + vecPos[i], (int) getPosicion().y + vecPos[vecPos.length-1-i]);
-                    if(calculaDistancia(p,getPosObjetivo()) < min && esPotTrepitjar(p) && !p.equals(posAntiga)){
+                    if(calculaDistancia(p,getPosObjetivo()) < min && estaDinsDeMalla(p) && esPotTrepitjar(p) && !p.equals(posAntiga)){
                         direccio = i;
                         min = calculaDistancia(p,getPosObjetivo());
                         act.set(p);
@@ -115,7 +115,7 @@ public class IA {
                 Log.e(TAG,e.getMessage());
             }
             // si m'ho ha calculat bé, actualitzo posicio
-            if(!enEspera && estaDinsDeMalla(act)){ //&& !act.equals(getPosicion())) {
+            if(!enEspera){ //&& !act.equals(getPosicion())) {
                 posAntiga = new PointF(getPosicion().x,getPosicion().y);
                 setPosicion(act);
                 if(haArribat())
@@ -154,16 +154,20 @@ public class IA {
         return DIRECTION_TO_ANIMATION_MAP[direccio];
     }
     private boolean estaDinsDeMalla(PointF p){
-        return p.x <= gameView.getMalla()[0].length && p.x >= 0
+        return p.x <= gameView.getMalla()[0].length-gameView.getZoomBitmap()-1 && p.x >= gameView.getZoomBitmap()-1
                 && p.y <= (gameView.getMalla().length-gameView.getZoomBitmap()-1) && p.y >= gameView.getZoomBitmap()-1;
     }
 
     private boolean esPotTrepitjar(PointF p){
         int[] vec = {gameView.getZoomBitmap()-1, -(gameView.getZoomBitmap()-1), 0, 0};
         // de les quatre celes del voltant, miro es la que esta mes aprop de l'objectiu
-        for (int i = 0; i < 4; i++) {
-            if(!gameView.getMalla()[(int) p.y + vec[vec.length-1-i]][(int) p.x + vec[i]].contains("-"))
-                return false; //TODO: als costats ho fa be, pero quan va cap a munt es pot treure espai
+        try {
+            for (int i = 0; i < 4; i++) {
+                if(!gameView.getMalla()[(int) p.y + vec[vec.length-1-i]][(int) p.x + vec[i]].contains("-"))
+                    return false; //TODO: als costats ho fa be, pero quan va cap a munt es pot treure espai
+            }
+        } catch (Exception e) {
+            return false;
         }
         return gameView.getMalla()[(int)p.y][(int)p.x].contains("-");
     }
