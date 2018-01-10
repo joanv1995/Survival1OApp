@@ -48,10 +48,7 @@ public class IA {
     private Rect src = new Rect();
     int[] vecPos = {speed, -speed, 0, 0};
     int[] vecPos2 = {speed+1, -speed-1, 0, 0};
-    private int[][] matrix ={{0, -1, -1, -1},
-            {-1, -1, -1, 0},
-            {1, 0, 1, 1},
-            {1, 1, 0, 1}};
+
 
     PointF[] caminoAseguir = {new PointF(55, 36),
                                 new PointF(145, 36),
@@ -59,6 +56,7 @@ public class IA {
                                 new PointF(145,66)};
     PointF puertaAlInfierno = new PointF(100,2);
     private boolean meVoy = false, meQuieroMorir= false;
+    int tiempoVotando = 10, tiempoVotangoPasado = 0;
 
     public IA(GameView gameView, Bitmap bmp, String idIa, PointF posicion, PointF posObjetivo){//, int noSoyUnClon) {
         Log.d(TAG, "inicialitzo un IA");
@@ -73,11 +71,6 @@ public class IA {
         calculaRecObjetivo();
         saberDireccio();
         calculaAnimes();
-        /*Random rnd = new Random();
-        xSpeed = rnd.nextInt(10)-5;
-        ySpeed = rnd.nextInt(10)-5;
-        x = rnd.nextInt(gameView.getWidth() - width);
-        y = rnd.nextInt(gameView.getHeight() - height);*/
     }
 
     private void calculaRecObjetivo(){
@@ -86,8 +79,6 @@ public class IA {
     }
     private void calculaAnimes(){
         // [files][columnes]
-
-
         /*this.anima.set((int) posicion.x + matrix[0][direccio] * gameView.getZoomBitmap(),
                 (int) posicion.y + matrix[1][direccio] * gameView.getZoomBitmap(),
                 (int) posicion.x + matrix[2][direccio] * gameView.getZoomBitmap(),
@@ -96,10 +87,6 @@ public class IA {
             this.anima.set((int) posicion.x - gameView.getZoomBitmap()+1, (int) posicion.y - gameView.getZoomBitmap(),
                     (int) posicion.x + gameView.getZoomBitmap()-1, (int) posicion.y + gameView.getZoomBitmap());
 
-        /*this.anima.set((int) (posicion.x+gameView.margeAmpl-gameView.getZoomBitmap())*gameView.ample,
-                (int) (posicion.y+gameView.margeAlt-gameView.getZoomBitmap())*gameView.altura,
-                (int) (posicion.x+gameView.margeAmpl+gameView.getZoomBitmap())*gameView.ample,
-                (int) (posicion.y+gameView.margeAlt+gameView.getZoomBitmap())*gameView.altura);*/
     }
     private void saberDireccio(){
         this.direccioX_Left = posicion.x >= posObjetivo.x ;
@@ -154,7 +141,6 @@ public class IA {
         if (!rectObjetivo.contains((int)posicion.x,(int)posicion.y)){//!posicion.equals(posObjetivo) && !enEspera) {
             act = new PointF();
             try {
-
                 double min = 10000000;
                 //int[] vecPos = {speed, -speed, 0, 0};
                 //int[] vecPos2 = {speed+1, -speed-1, 0, 0};
@@ -172,11 +158,8 @@ public class IA {
                     }else if (d==3){
                             // 3: estan en vertical, han d'escapar un per la dreta i l'altre per l'esquerra
                     } else {
-
                         double distancia = calculaDistancia(p, getPosObjetivo());
                         if (distancia < min && estaDinsDeMalla(p) && esPotTrepitjar(p) && !p.equals(posAntiga)) {
-                                //!enEspera){//!(hihaIaInoEmPucMoure && i!=2 )  ){
-                                //&& !gameView.hiHaUnIA(p,posicion)){
                             direccio = i;
                             min = calculaDistancia(p, getPosObjetivo());
                             act.set(p);
@@ -188,13 +171,8 @@ public class IA {
             } catch (Exception e) {
                 Log.e(TAG,e.getMessage());
                 enEspera=true;
-
             }
-            /*if(gameView.hiHaUnIA(act,posicion))
-                hihaIaInoEmPucMoure = true;
-            else
-                hihaIaInoEmPucMoure = false;*/
-// 0 - 1, 2 - 3
+
             // si m'ho ha calculat bé, actualitzo posicio
             if(!enEspera && gameView.hiHaUnIA(act2,posicion,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
                 posAntiga = new PointF(getPosicion().x,getPosicion().y);
@@ -213,34 +191,31 @@ public class IA {
             Log.d(TAG,"posX " + getPosicion().x);
             Log.d(TAG,"posY " + getPosicion().y);
 
-            //currentFrame = ++currentFrame % BMP_COLUMNS;
-        } else {
+        } else { // ha arribat a la posició objectiu
             if(!meVoy) {
                 // se'n van a les taules
                 posObjetivo.set(caminoAseguir[gameView.getCualEsMiCamino()]);
                 gameView.setCualEsMiCamino(gameView.getCualEsMiCamino() + 1);
                 calculaRecObjetivo();
                 meVoy = true;
-                if (gameView.getCualEsMiCamino() == 4)
+                if (gameView.getCualEsMiCamino() == caminoAseguir.length)
                     gameView.setCualEsMiCamino(0);
             } else {
-                posObjetivo.set(puertaAlInfierno);
-                calculaRecObjetivo();
-                if(rectObjetivo.contains((int)posicion.x,(int)posicion.y))
-                    meQuieroMorir  = true;
+                if(tiempoVotangoPasado >= tiempoVotando) {
+                    posObjetivo.set(puertaAlInfierno);
+                    calculaRecObjetivo();
+                    if (rectObjetivo.contains((int) posicion.x, (int) posicion.y))
+                        meQuieroMorir = true;
+                } else
+                    tiempoVotangoPasado++;
             }
             saberDireccio();
-
-
         }
-
     }
 
     private double calculaDistancia(PointF p1, PointF p2){
         return  sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
     }
-
-
 
     protected Rect onDraw(Canvas canvas) {
         Log.d(TAG,"onDraw");
@@ -268,7 +243,7 @@ public class IA {
         try {
             for (int i = 0; i < 4; i++) {
                 if(!gameView.getMalla()[(int) p.y + vec[vec.length-1-i]][(int) p.x + vec[i]].contains("-"))
-                    return false; //TODO: als costats ho fa be, pero quan va cap a munt es pot treure espai
+                    return false;
             }
         } catch (Exception e) {
             return false;
@@ -276,8 +251,5 @@ public class IA {
         // Si la cela p hi ha cami:
         return gameView.getMalla()[(int)p.y][(int)p.x].contains("-");
     }
-/*
-    public boolean isCollition(float x2, float y2) {
-        return x2 > x && x2 < x + width && y2 > y && y2 < y + height;
-    }*/
+
 }
