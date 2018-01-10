@@ -33,20 +33,24 @@ public class GameView extends SurfaceView {
     private java.util.List<IA> listaIas = new ArrayList<>();
     private String[][] malla;
     private int canvasWidth, canvasHeight;
-    private int margeAmpl = 0, margeAlt = 0;
+    protected int margeAmpl = 0, margeAlt = 0;
     private Rect rectangleCanvas = new Rect();
 
 
     // per dibuixar
     private int x = 0, y = 0;
     private Rect rec = new Rect(), recBtm = new Rect();
-    private int ample, altura;
+    protected int ample, altura;
     private int zoomBitmap = 5;
 
     // per amager la barra de navegacio
     int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
             | View.SYSTEM_UI_FLAG_FULLSCREEN;
     //private List<Sprite> sprites = new ArrayList<Sprite>();
+
+    // saber el cami dels ias
+    private int  cualEsMiCamino = 0;
+    private int esperaIAs;
 
     public GameView(Context context) {
         super(context);
@@ -59,8 +63,9 @@ public class GameView extends SurfaceView {
         holder.addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder surfaceHolder) {
-                afegirIas();
-                malla = llegirMapaTxt("mapaEscola7");
+                //afegirIas();
+                iasNonStop();
+                malla = llegirMapaTxt("mapaEscola10");
                 Log.d(TAG, "Creo els ias: " + listaIas.size() + " i la malla: " + malla.length);
                 gameLoopThread.setRunning(true);
                 Log.d(TAG, "Run = true");
@@ -97,6 +102,12 @@ public class GameView extends SurfaceView {
         });
     }
 
+    public int getCualEsMiCamino() {
+        return cualEsMiCamino;
+    }
+    public void setCualEsMiCamino(int cualEsMiCamino) {
+        this.cualEsMiCamino = cualEsMiCamino;
+    }
 
     public String[][] getMalla() {
         return malla;
@@ -142,17 +153,17 @@ public class GameView extends SurfaceView {
     @Override
     protected void onDraw(Canvas canvas) {
 
-        Log.d(TAG, "onDraw");
-        canvas.drawColor(getResources().getColor(R.color.Black)); // Fondo ("-")
+        //Log.d(TAG, "onDraw");
+        canvas.drawColor(getResources().getColor(R.color.Black)); // Fondo
 
-        Log.d(TAG,"canvasWidth " + canvas.getWidth());
-        Log.d(TAG,"canvasHeight " + canvas.getHeight());
+        //Log.d(TAG,"canvasWidth " + canvas.getWidth());
+        //Log.d(TAG,"canvasHeight " + canvas.getHeight());
 
         altura = canvasHeight / malla.length;
         ample = canvasWidth / malla[0].length;
 
-        Log.d(TAG,"canvasWidth " + ample);
-        Log.d(TAG,"canvasHeight " + altura);
+        //Log.d(TAG,"canvasWidth " + ample);
+        //Log.d(TAG,"canvasHeight " + altura);
 
         for(int i = 0; i < malla.length; i++) //altura
         {
@@ -160,52 +171,52 @@ public class GameView extends SurfaceView {
             {
                 x = j*ample + margeAmpl/2; y=i*altura + margeAlt/2;
                 //if (!malla[i][j].contains("-")){
-                    //x = j*ample; y=i*altura;
                     rec.set(x, y, x + ample, y + altura);
                     canvas.drawRect(rec, quinColor(malla[i][j]));
                 //}
             }
         }
+        int a = -1;
         for (IA ia : listaIas) {
-            recBtm = ia.onDraw(canvas);
-            x = (int) ia.getPosicion().x*ample + margeAmpl/2; y=(int) ia.getPosicion().y*altura + margeAlt/2;
-            rec.set(x - zoomBitmap*ample, y - zoomBitmap*altura, x + zoomBitmap*ample, y + zoomBitmap*altura);
-            ////Log.d(TAG,"posY " + y);
-            canvas.drawBitmap(ia.getBmp(), recBtm, rec, null);
-
-            int xx = (int) ia.getPosObjetivo().x*ample + margeAmpl/2, yy = (int) ia.getPosObjetivo().y*altura + margeAlt/2;
-            Rect rec = new Rect(xx-10, yy-10, xx+10, yy+10); // rectangle on va la imatge dins del canvas
             Paint paint = new Paint();
-            paint.setColor(getResources().getColor(R.color.colorPrimary));
-            canvas.drawRect(rec, paint);
+            //int xxx = (int) ia.getPosObjetivo().x*ample + margeAmpl/2, yyy = (int) ia.getPosObjetivo().y*altura + margeAlt/2;
+            //Rect recc = new Rect(xxx-10, yyy-10, xxx+10, yyy+10); // rectangle on va la imatge dins del canvas
+            //paint.setColor(getResources().getColor(R.color.Green));
+            //canvas.drawRect(ia.getAnima(), paint);
+
+
+            recBtm = ia.onDraw(canvas);
+            if(ia.isMeQuieroMorir())
+                a = listaIas.indexOf(ia);
+            else {
+                x = (int) ia.getPosicion().x * ample + margeAmpl / 2;
+                y = (int) ia.getPosicion().y * altura + margeAlt / 2;
+                rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
+                ////Log.d(TAG,"posY " + y);
+                canvas.drawBitmap(ia.getBmp(), recBtm, rec, null);
+
+                //paint.setColor(getResources().getColor(R.color.Green));
+                //Rect rec2 = new Rect(ia.getAnima().left * ample + margeAmpl/2, ia.getAnima().top *altura + margeAlt/2,
+                //  ia.getAnima().right * ample + margeAmpl/2, ia.getAnima().bottom * altura + margeAlt/2);
+                //canvas.drawRect(rec2, paint);
+                //Log.wtf(TAG, "ANIMA --> " + ia.getAnima().toString());
+                //canvas.drawBitmap(ia.getBmp(), recBtm, rec, null);
+                int xx = (int) ia.getPosObjetivo().x * ample + margeAmpl / 2, yy = (int) ia.getPosObjetivo().y * altura + margeAlt / 2;
+                Rect rec = new Rect(xx - 10, yy - 10, xx + 10, yy + 10);
+                paint.setColor(getResources().getColor(R.color.colorPrimary));
+                canvas.drawRect(rec, paint);
+            }
+
         }
+        if(a != -1)
+            listaIas.remove(a);
 
-
-/*
-        int xx = canvas.getWidth(), yy=canvas.getHeight();
-        Rect rec = new Rect(xx-50, yy-50, xx, yy); // rectangle on va la imatge dins del canvas
-        //Paint paint = new Paint();
-        paint.setColor(getResources().getColor(R.color.colorAccent));
-        canvas.drawRect(rec, paint);*/
-
-
-        /*Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.school);
-        bmp = getResizedBitmap(bmp,100,80);
-        int width = bmp.getWidth(), height = bmp.getHeight();
-        Rect src = new Rect(0 , 0, width, height); // rectangle de la imatge
-        int x = 50, y=50;
-        Rect dst = new Rect(x, y, x+width, y+height); // rectangle on va la imatge dins del canvas
-        canvas.drawBitmap(bmp, src, dst,null);
-        int xx = 50, yy=200;
-        Rect rec = new Rect(xx, yy, xx+width, yy+height); // rectangle on va la imatge dins del canvas
-
-        Paint paint = new Paint();
-        paint.setColor(Color.BLUE);
-        paint.setColor(getResources().getColor(R.color.colorAccent));
-        canvas.drawRect(rec, paint);*/
-        /*for (IA ia : listaIas) {
-            ia.onDraw(canvas);
-        }*/
+        // respawn d'ias
+        if(esperaIAs == 5) {
+            iasNonStop();
+            esperaIAs = 0;
+        } else
+            esperaIAs++;
     }
 
     private int buscarIAperPosicio(PointF p){
@@ -216,19 +227,47 @@ public class GameView extends SurfaceView {
         return -1;
     }
 
+    protected int hiHaUnIA(PointF p, PointF pos, int direc){
+        // 0: no hi ha, 1: hi ha, 2: esta de cara costat, 3 esta e cara vertical
+        // 0-1 2-3
+        int cont=0;
+        for(IA ia: listaIas){
+            if(ia.getAnima().contains((int) p.x, (int) p.y)){// && !ia.getPosicion().equals(pos)) {
+                if(Math.abs(direc - ia.getDireccio()) == 1){
+                    if(!((direc == 2 || ia.getDireccio() == 2) &&
+                            (direc == 1 || ia.getDireccio() == 1))){
+                        if((direc == 0 || ia.getDireccio() == 0) &&
+                                (direc == 1 || ia.getDireccio() == 1)){
+                            return 2;
+                        }else
+                            return 3;
+                    }
+                }
+                cont++;
+            }
+           //if (ia.getPosicion().equals(p))
+           //     return true;
+        }
+        return cont > 1? 1:0;
+
+    }
+
     private Bitmap getResizedBitmap(Bitmap image, int bitmapWidth, int bitmapHeight) {
         return Bitmap.createScaledBitmap(image, bitmapWidth, bitmapHeight, true);
     }
     private void afegirIas(){
         // x: 5-195, y: 5-95   // x: 0-100, y: 5-45 //x=19,y=19-->15
         //IA ia1 = new IA("v",1,4,new PointF(25,19),new PointF(15,15));
-        listaIas.add(createIA(R.drawable.bad1,new PointF(170,95),new PointF(170,5)));
-        listaIas.add(createIA(R.drawable.bad1,new PointF(5,45),new PointF(195,45)));
-        listaIas.add(createIA(R.drawable.bad1,new PointF(20,10),new PointF(20,95)));
-        listaIas.add(createIA(R.drawable.bad3,new PointF(195,60),new PointF(5,62)));
-        //listaIas.add(createIA(R.drawable.bad1,new PointF(10,10),new PointF(100,95)));
-        //listaIas.add(createIA(R.drawable.bad1,new PointF(10,10),new PointF(0,150)));
-
+        // per aque funcioni be s'han de separar minim 7 unitats
+        listaIas.add(createIA(R.drawable.bad1,new PointF(158,90),new PointF(100,60)));
+        listaIas.add(createIA(R.drawable.bad1,new PointF(165,90),new PointF(100,60)));
+        listaIas.add(createIA(R.drawable.bad1,new PointF(172,90),new PointF(100,60)));
+        listaIas.add(createIA(R.drawable.bad3,new PointF(179,90),new PointF(100,60)));
+        listaIas.add(createIA(R.drawable.bad1,new PointF(186,90),new PointF(100,60)));
+        listaIas.add(createIA(R.drawable.bad1,new PointF(193,90),new PointF(100,60)));
+    }
+    private void iasNonStop(){
+        listaIas.add(createIA(R.drawable.bad1,new PointF(165,95),new PointF(100,60)));
     }
 
     private IA createIA(int resouce, PointF pos, PointF obj) {

@@ -28,23 +28,39 @@ public class IA {
 
     private String idIa;
     private PointF posicion;
-    private PointF posObjetivo;
+    private PointF posObjetivo; // canviar la posicio objectiu per un rectangle
+    private Rect rectObjetivo = new Rect();
     private PointF posAntiga;
     private boolean enEspera = false;
-    private int speed = 1; // TODO: mirar que faig amb la velocitat
+    private int speed = 2; // TODO: mirar que faig amb la velocitat
     private boolean direccioX_Left, direccioY_Up; // true: up, false: down
     private int direccio; // direction = 0 right, 1 left, 2 up, 3 down,
-
+    private Rect anima = new Rect();
+    private boolean hihaIaInoEmPucMoure;
     // direction = 0 up, 1 left, 2 down, 3 right,
     // animation = 3 back, 1 left, 0 front, 2 right
     private static final int[] DIRECTION_TO_ANIMATION_MAP = {2, 1, 3, 0};//{ 3, 1, 0, 2 };
 
     // per dibuixar
-    PointF act = new PointF();
-    PointF p = new PointF();
-    Rect src = new Rect();
+    private PointF act = new PointF(), act2 = new PointF();
+    private PointF p = new PointF();
+    private PointF pp = new PointF();
+    private Rect src = new Rect();
+    int[] vecPos = {speed, -speed, 0, 0};
+    int[] vecPos2 = {speed+1, -speed-1, 0, 0};
+    private int[][] matrix ={{0, -1, -1, -1},
+            {-1, -1, -1, 0},
+            {1, 0, 1, 1},
+            {1, 1, 0, 1}};
 
-    public IA(GameView gameView, Bitmap bmp, String idIa, PointF posicion, PointF posObjetivo) {
+    PointF[] caminoAseguir = {new PointF(55, 36),
+                                new PointF(145, 36),
+                                new PointF(55, 66),
+                                new PointF(145,66)};
+    PointF puertaAlInfierno = new PointF(100,2);
+    private boolean meVoy = false, meQuieroMorir= false;
+
+    public IA(GameView gameView, Bitmap bmp, String idIa, PointF posicion, PointF posObjetivo){//, int noSoyUnClon) {
         Log.d(TAG, "inicialitzo un IA");
         this.gameView=gameView;
         this.bmp=bmp;
@@ -53,7 +69,10 @@ public class IA {
         this.idIa = idIa;
         this.posicion = posicion;
         this.posObjetivo = posObjetivo;
+        //this.noSoyUnClon = noSoyUnClon;
+        calculaRecObjetivo();
         saberDireccio();
+        calculaAnimes();
         /*Random rnd = new Random();
         xSpeed = rnd.nextInt(10)-5;
         ySpeed = rnd.nextInt(10)-5;
@@ -61,12 +80,34 @@ public class IA {
         y = rnd.nextInt(gameView.getHeight() - height);*/
     }
 
+    private void calculaRecObjetivo(){
+        rectObjetivo.set((int)posObjetivo.x-4,(int)posObjetivo.y-4,
+                (int)posObjetivo.x+4,(int)posObjetivo.y+4);
+    }
+    private void calculaAnimes(){
+        // [files][columnes]
+
+
+        /*this.anima.set((int) posicion.x + matrix[0][direccio] * gameView.getZoomBitmap(),
+                (int) posicion.y + matrix[1][direccio] * gameView.getZoomBitmap(),
+                (int) posicion.x + matrix[2][direccio] * gameView.getZoomBitmap(),
+                (int) posicion.y + matrix[3][direccio] * gameView.getZoomBitmap());*/
+
+            this.anima.set((int) posicion.x - gameView.getZoomBitmap()+1, (int) posicion.y - gameView.getZoomBitmap(),
+                    (int) posicion.x + gameView.getZoomBitmap()-1, (int) posicion.y + gameView.getZoomBitmap());
+
+        /*this.anima.set((int) (posicion.x+gameView.margeAmpl-gameView.getZoomBitmap())*gameView.ample,
+                (int) (posicion.y+gameView.margeAlt-gameView.getZoomBitmap())*gameView.altura,
+                (int) (posicion.x+gameView.margeAmpl+gameView.getZoomBitmap())*gameView.ample,
+                (int) (posicion.y+gameView.margeAlt+gameView.getZoomBitmap())*gameView.altura);*/
+    }
     private void saberDireccio(){
         this.direccioX_Left = posicion.x >= posObjetivo.x ;
         this.direccioY_Up = posicion.y >= posObjetivo.y ;
     }
 
     private boolean haArribat(){
+        // TODO: pensar una altre manera de fer aixo
         if(direccioY_Up){
             if (direccioX_Left)
                 return posicion.y <= posObjetivo.y && posicion.x <= posObjetivo.x;
@@ -94,35 +135,76 @@ public class IA {
     public Bitmap getBmp() {
         return bmp;
     }
+    public Rect getAnima() {
+        return anima;
+    }
+    public int getDireccio() {
+        return direccio;
+    }
+    public boolean isMeQuieroMorir() {
+        return meQuieroMorir;
+    }
 
     private void update() {
         Log.d(TAG, "Update: moc una casella");
-        if (!posicion.equals(posObjetivo) && !haArribat()) {
+        if(haArribat())
+            enEspera = true;
+        else
+            enEspera = false;
+        if (!rectObjetivo.contains((int)posicion.x,(int)posicion.y)){//!posicion.equals(posObjetivo) && !enEspera) {
             act = new PointF();
             try {
+
                 double min = 10000000;
-                int[] vecPos = {speed, -speed, 0, 0};
+                //int[] vecPos = {speed, -speed, 0, 0};
+                //int[] vecPos2 = {speed+1, -speed-1, 0, 0};
                 // de les quatre celes del voltant, miro es la que esta mes aprop de l'objectiu
+
                 for (int i = 0; i < 4; i++) {
                     p.set((int) getPosicion().x + vecPos[i], (int) getPosicion().y + vecPos[vecPos.length-1-i]);
-                    if(calculaDistancia(p,getPosObjetivo()) < min && estaDinsDeMalla(p) && esPotTrepitjar(p) && !p.equals(posAntiga)){
-                        direccio = i;
-                        min = calculaDistancia(p,getPosObjetivo());
-                        act.set(p);
+                    pp.set((int) getPosicion().x + vecPos2[i], (int) getPosicion().y + vecPos2[vecPos2.length-1-i]);
+
+                    int d=gameView.hiHaUnIA(p,posicion,direccio);
+                    if(d == 2){
+                            //TODO si es miren, que s'evitin  (ara mateix funciona, fes-ho quan tinguis temps ;)
+                            // 2: estan en horitzontal, han d'escapar un per baix i l'altre per dalt
+                            // ferho aqui o al començament (millor idea ja que aqui es calcula 4 cops
+                    }else if (d==3){
+                            // 3: estan en vertical, han d'escapar un per la dreta i l'altre per l'esquerra
+                    } else {
+
+                        double distancia = calculaDistancia(p, getPosObjetivo());
+                        if (distancia < min && estaDinsDeMalla(p) && esPotTrepitjar(p) && !p.equals(posAntiga)) {
+                                //!enEspera){//!(hihaIaInoEmPucMoure && i!=2 )  ){
+                                //&& !gameView.hiHaUnIA(p,posicion)){
+                            direccio = i;
+                            min = calculaDistancia(p, getPosObjetivo());
+                            act.set(p);
+                            act2.set(pp);
+                        }
                     }
                 }
+
             } catch (Exception e) {
                 Log.e(TAG,e.getMessage());
+                enEspera=true;
+
             }
+            /*if(gameView.hiHaUnIA(act,posicion))
+                hihaIaInoEmPucMoure = true;
+            else
+                hihaIaInoEmPucMoure = false;*/
+// 0 - 1, 2 - 3
             // si m'ho ha calculat bé, actualitzo posicio
-            if(!enEspera){ //&& !act.equals(getPosicion())) {
+            if(!enEspera && gameView.hiHaUnIA(act2,posicion,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
                 posAntiga = new PointF(getPosicion().x,getPosicion().y);
                 setPosicion(act);
-                if(haArribat())
-                    enEspera = true;
+                calculaAnimes();
+                currentFrame = ++currentFrame % BMP_COLUMNS;
             }else {
                 if(!estaDinsDeMalla(act))
                     Log.e(TAG,"No esta dins la malla");
+
             }
 
             if (enEspera)
@@ -131,13 +213,34 @@ public class IA {
             Log.d(TAG,"posX " + getPosicion().x);
             Log.d(TAG,"posY " + getPosicion().y);
 
-            currentFrame = ++currentFrame % BMP_COLUMNS;
+            //currentFrame = ++currentFrame % BMP_COLUMNS;
+        } else {
+            if(!meVoy) {
+                // se'n van a les taules
+                posObjetivo.set(caminoAseguir[gameView.getCualEsMiCamino()]);
+                gameView.setCualEsMiCamino(gameView.getCualEsMiCamino() + 1);
+                calculaRecObjetivo();
+                meVoy = true;
+                if (gameView.getCualEsMiCamino() == 4)
+                    gameView.setCualEsMiCamino(0);
+            } else {
+                posObjetivo.set(puertaAlInfierno);
+                calculaRecObjetivo();
+                if(rectObjetivo.contains((int)posicion.x,(int)posicion.y))
+                    meQuieroMorir  = true;
+            }
+            saberDireccio();
+
+
         }
+
     }
 
     private double calculaDistancia(PointF p1, PointF p2){
         return  sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
     }
+
+
 
     protected Rect onDraw(Canvas canvas) {
         Log.d(TAG,"onDraw");
@@ -159,6 +262,7 @@ public class IA {
     }
 
     private boolean esPotTrepitjar(PointF p){
+        // si per les celes proximes no toca la imatge del bitmap amb taules o merdes
         int[] vec = {gameView.getZoomBitmap()-1, -(gameView.getZoomBitmap()-1), 0, 0};
         // de les quatre celes del voltant, miro es la que esta mes aprop de l'objectiu
         try {
@@ -169,6 +273,7 @@ public class IA {
         } catch (Exception e) {
             return false;
         }
+        // Si la cela p hi ha cami:
         return gameView.getMalla()[(int)p.y][(int)p.x].contains("-");
     }
 /*
