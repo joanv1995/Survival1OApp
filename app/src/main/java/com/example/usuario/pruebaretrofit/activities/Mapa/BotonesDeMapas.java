@@ -75,16 +75,16 @@ public class BotonesDeMapas {
         this.canvasHeight = canvasHeight;
         this.canvasWidth = canvasWidth;
 
-        botonRectAncho = 100;
-        botonRectAlto = 300;
-        centreRect = 260;
-        centreRectY = canvasHeight-150;
+        botonRectAncho = (canvasWidth*100)/1920;//100;
+        botonRectAlto = (canvasHeight*300)/1008;//300;
+        centreRect = (canvasWidth*260)/1920;//260;
+        centreRectY = canvasHeight-(canvasHeight*150)/1008;//150;
 
-        centreX1 = canvasWidth- centreRect +200;
-        centreY1 = centreRectY -70;
-        radi = 70; // botons rodons (el rectangle es per fer el contains
-        centreX2 = canvasWidth- centreRect +110;
-        centreY2 = centreRectY +80;
+        centreX1 = canvasWidth- centreRect +(canvasWidth*260)/1920;//200;
+        centreY1 = centreRectY -(canvasHeight*70)/1008;//70;
+        radi = (canvasHeight*70)/1008;//70; // botons rodons (el rectangle es per fer el contains
+        centreX2 = canvasWidth- centreRect +(canvasWidth*110)/1920;//110;
+        centreY2 = centreRectY +(canvasHeight*80)/1008;//80;
 
         calculaBotones();
     }

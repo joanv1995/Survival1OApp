@@ -30,6 +30,7 @@ public class GameView extends SurfaceView {
     protected int margeAmpl = 0, margeAlt = 0;
     private Rect rectangleCanvas = new Rect();
 
+    private Jugadora jugadora;
 
     // per dibuixar
     private int x = 0, y = 0;
@@ -59,12 +60,14 @@ public class GameView extends SurfaceView {
             public void surfaceCreated(SurfaceHolder surfaceHolder) {
                 //afegirIas();
                 iasNonStop();
+                jugadora = createJugadora(R.drawable.bad3,new PointF(150,95));
                 malla = llegirMapaTxt("mapaEscola10");
                 Log.d(TAG, "Creo els ias: " + listaIas.size() + " i la malla: " + malla.length);
                 gameLoopThread.setRunning(true);
                 Log.d(TAG, "Run = true");
                 gameLoopThread.start();
                 Log.d(TAG, "gameLoopThread.start");
+
             }
 
             @Override
@@ -206,6 +209,13 @@ public class GameView extends SurfaceView {
         } else
             esperaIAs++;
 
+        // TODO: dibuixar jugadora
+        recBtm = jugadora.onDraw(canvas);
+        x = (int) jugadora.getPosicion().x * ample + margeAmpl / 2;
+        y = (int) jugadora.getPosicion().y * altura + margeAlt / 2;
+        rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
+        canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);
+
         // Poner botones
         paint.setColor(getResources().getColor(R.color.Cornsilk));
         canvas.drawRect(botones.getRecVerticalEntero(),paint);
@@ -284,6 +294,10 @@ public class GameView extends SurfaceView {
         Bitmap bmp = BitmapFactory.decodeResource(getResources(), resouce);
         return new IA(this, bmp, "v", pos, obj); // de la malla
     }
+    private Jugadora createJugadora(int resouce, PointF pos){
+        Bitmap bmp = BitmapFactory.decodeResource(getResources(), resouce);
+        return new Jugadora(this, bmp, pos);
+    }
 
     public String[][] llegirMapaTxt(String nomTxt) {
         String line = "";
@@ -326,20 +340,26 @@ public class GameView extends SurfaceView {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         synchronized (getHolder()) {
+            // direction = 0 right, 1 left, 2 up, 3 down,
             //event.getX(), event.getY()
             int x = Math.round(event.getX()), y = Math.round(event.getY());
 
             if (botones.getBotonRecHorizLeft().contains(x,y)){
                 Log.d(TAG, "boton Left");
+                jugadora.setDireccio(1);
+                jugadora.setPosicion(jugadora.getPosicion().x - jugadora.getSpeed(),jugadora.getPosicion().y);
             } else if(botones.getBotonRecHorizRigth().contains(x,y)) {
                 Log.d(TAG, "boton Right");
-
+                jugadora.setDireccio(0);
+                jugadora.setPosicion(jugadora.getPosicion().x + jugadora.getSpeed(),jugadora.getPosicion().y);
             } else if (botones.getBotonRecVertArriba().contains(x,y)){
                 Log.d(TAG, "boton Arriba");
-
+                jugadora.setDireccio(2);
+                jugadora.setPosicion(jugadora.getPosicion().x,jugadora.getPosicion().y - jugadora.getSpeed());
             } else if (botones.getBotonRecVertBajo().contains(x,y)){
                 Log.d(TAG, "boton Abajo");
-
+                jugadora.setDireccio(3);
+                jugadora.setPosicion(jugadora.getPosicion().x,jugadora.getPosicion().y + jugadora.getSpeed());
             }
 
             if(botones.getBotonCercleA().contains(x,y)){
@@ -355,7 +375,7 @@ public class GameView extends SurfaceView {
                     break;
                 }
             }*/
-            hideUI();
+            //hideUI();
             return super.onTouchEvent(event);
         }
     }

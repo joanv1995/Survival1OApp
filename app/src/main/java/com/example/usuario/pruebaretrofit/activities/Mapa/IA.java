@@ -12,7 +12,7 @@ import java.util.Random;
 
 import static java.lang.Math.sqrt;
 
-public class IA {
+public class IA extends MuevoImagenes{
 
     private final String TAG = this.getClass().getSimpleName();
 
@@ -23,9 +23,11 @@ public class IA {
 
     private GameView gameView;
     private int currentFrame = 0;
-    private int width; // del canvas
+
+    private int width; // de la imatge
     private int height;
 
+    // fin
     private String idIa;
     private PointF posicion;
     private PointF posObjetivo; // canviar la posicio objectiu per un rectangle
@@ -67,7 +69,6 @@ public class IA {
         this.idIa = idIa;
         this.posicion = posicion;
         this.posObjetivo = posObjetivo;
-        //this.noSoyUnClon = noSoyUnClon;
         calculaRecObjetivo();
         saberDireccio();
         calculaAnimes();
