@@ -158,7 +158,7 @@ public class GameView extends SurfaceView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-
+        long startTime, startTime2;
         //Log.d(TAG, "onDraw");
         canvas.drawColor(getResources().getColor(R.color.Black)); // Fondo
 
@@ -170,7 +170,7 @@ public class GameView extends SurfaceView {
 
         //Log.d(TAG,"canvasWidth " + ample);
         //Log.d(TAG,"canvasHeight " + altura);
-
+        startTime = System.currentTimeMillis();
         for (int i = 0; i < malla.length; i++) //altura
         {
             for (int j = 0; j < malla[0].length; j++) //amplada
@@ -181,9 +181,13 @@ public class GameView extends SurfaceView {
                 canvas.drawRect(rec, quinColor(malla[i][j]));
             }
         }
+        startTime = System.currentTimeMillis()-startTime;
+        Log.d(TAG,"Pintar mapa: " + startTime);
         Paint paint = new Paint();
         int a = -1;
+        startTime = System.currentTimeMillis();
         for (IA ia : listaIas) {
+            startTime2 = System.currentTimeMillis();
             recBtm = ia.onDraw(canvas);
             if (ia.isMeQuieroMorir())
                 a = listaIas.indexOf(ia);
@@ -198,13 +202,15 @@ public class GameView extends SurfaceView {
                 paint.setColor(getResources().getColor(R.color.colorPrimary));
                 canvas.drawRect(rec, paint);
             }
+            startTime2 = System.currentTimeMillis()-startTime2;
+            Log.d(TAG,"Dibuixar un Ia: " + startTime2);
         }
         if (a != -1)
             listaIas.remove(a);
 
         // respawn d'ias
         if (esperaIAs == 5) {
-            //iasNonStop();
+            iasNonStop();
             esperaIAs = 0;
         } else
             esperaIAs++;
@@ -215,6 +221,9 @@ public class GameView extends SurfaceView {
         y = (int) jugadora.getPosicion().y * altura + margeAlt / 2;
         rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
         canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);
+
+        startTime = System.currentTimeMillis()-startTime;
+        Log.d(TAG,"Dibuixar tots els Ias: " + startTime);
 
         // Poner botones
         paint.setColor(getResources().getColor(R.color.Cornsilk));
