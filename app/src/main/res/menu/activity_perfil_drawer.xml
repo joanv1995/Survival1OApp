@@ -10,13 +10,14 @@
 
             android:title="Perfil" />
         <item
+            android:id="@+id/nav_slideshow"
+            android:icon="@drawable/play"
+            android:title="Play" />
+        <item
             android:id="@+id/nav_gallery"
             android:icon="@drawable/ranking"
             android:title="Ranking" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/about"
-            android:title="About" />
+
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/logout"

@@ -17,6 +17,7 @@ import com.example.usuario.pruebaretrofit.R;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class GameView extends SurfaceView {
@@ -141,12 +142,14 @@ public class GameView extends SurfaceView {
     private int midaCanvas(int canvasT, int length) {
         boolean trobat = false;
         int ampladaCanvas = 0;
+
         if (canvasT % length != 0) {
-            for (int i = canvasT; i > length; i--) {
+           for (int i = canvasT; i > length; i--) {
                 if (i % length == 0) {
                     ampladaCanvas = i;
                     trobat = true;
-                    break;
+                    break;// TODO; mirar esto porque no redondeo hacia abajo
+
                 }
             }
         } else
@@ -204,7 +207,7 @@ public class GameView extends SurfaceView {
 
         // respawn d'ias
         if (esperaIAs == 5) {
-            //iasNonStop();
+            iasNonStop();
             esperaIAs = 0;
         } else
             esperaIAs++;
@@ -375,7 +378,7 @@ public class GameView extends SurfaceView {
                     break;
                 }
             }*/
-            //hideUI();
+            hideUI();
             return super.onTouchEvent(event);
         }
     }
@@ -386,7 +389,7 @@ public class GameView extends SurfaceView {
             public void run() {
                 GameView.this.setSystemUiVisibility(uiOptions);
             }
-        }, 60);
+        }, 0);
     }
 
 }

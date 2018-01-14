@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     Button login;
     Button signup;
     Retrofit retrofit;
-    Usuario p;
+    Usuario usuarioCargado;
     Button button;
     private static final String URL_BASE = "http://10.193.222.188:8080/1O-survival/game/"; ///nuestra api virtual
 
@@ -70,16 +70,21 @@ public class LoginActivity extends AppCompatActivity {
                 password.setTransformationMethod(new AsteriskPasswordTransformationMethod());
             }
         });
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playerName = userName.getText().toString();
-                pass = password.getText().toString();
-                connectApiService();
+        login.setBackgroundResource(R.drawable.buttonstatelogin);
+       login.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               playerName = userName.getText().toString();
+               pass = password.getText().toString();
+               usuarioCargado = new Usuario("Joan Valverde","admin","joanv1995@gmail.com");
+               //connectApiService();
+               Intent in = new Intent(LoginActivity.this,PerfilActivity.class);
+               in.putExtra("jugador",usuarioCargado);
 
+               startActivity(in);
 
-            }
-        });
+           }
+       });
 
         button = (Button) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
@@ -109,10 +114,10 @@ public class LoginActivity extends AppCompatActivity {
             Callback<Usuario> cb = new Callback<Usuario>() {
                 @Override
                 public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                    p = response.body();
+                    usuarioCargado = response.body();
 
                     //if(!p.getPassword().equals(pass))
-                    Toast.makeText(getApplicationContext(), "Contraseña incorrecta", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(), "Contraseña incorrecta", Toast.LENGTH_LONG).show();
                     //else
                     EntryUserInterface();
 
@@ -133,11 +138,20 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
         public void EntryUserInterface(){
-            Intent in = new Intent(this, InterfazUsuarioActivity.class);
-            in.putExtra("jugador",p);
-            startActivity(in);
+            if(usuarioCargado!=null)
+            {
+                Toast.makeText(this,"Usuario "+usuarioCargado.getNombre()+"ha sido logueado correctamente", Toast.LENGTH_SHORT).show();
+
+              //  Intent in = new Intent(this, PerfilActivity.class);
+               //in.putExtra("jugador",usuarioCargado);
+
+              //startActivity(in);
+            }
+            else{
+                Toast.makeText(this,"Login incorrecto", Toast.LENGTH_SHORT).show();
 
 
+            }
 
     }
 

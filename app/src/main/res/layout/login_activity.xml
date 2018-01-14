@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/holo_green_light"
+    android:background="@drawable/backlogin"
     tools:context="com.example.usuario.pruebaretrofit.activities.LoginActivity">
 <RelativeLayout
     android:layout_width="fill_parent"
-    android:layout_height="100dp"
+    android:layout_height="60dp"
     android:id="@+id/lay1">
     <TextView
         android:layout_width="match_parent"
@@ -17,7 +17,6 @@
         android:textColor="@android:color/background_dark"
         android:textStyle="bold"
         android:gravity="center"
-        android:text="1O - Survival"
         android:id="@+id/namegame"
 
         />
@@ -54,26 +53,25 @@
             />
         <Button
             android:id="@+id/login"
-        android:layout_width="100dp"
-        android:layout_height="25dp"
-        android:background="@android:color/darker_gray"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="70dp"
-        android:text="Log in "
-        android:textSize="10dp"
-
-        android:textColor="@android:color/black"/>
+            android:layout_width="100dp"
+            android:layout_height="25dp"
+            android:background="@drawable/loginbutton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="70dp"
+            android:text="Log in "
+            android:textSize="10dp"
+            android:textColor="@android:color/white"/>
         <Button
             android:id="@+id/signup"
             android:layout_width="100dp"
             android:layout_height="25dp"
-            android:background="@android:color/darker_gray"
+            android:background="@drawable/loginbutton"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="105dp"
             android:text="Sign up"
             android:textSize="10dp"
 
-            android:textColor="@android:color/black"/>
+            android:textColor="@android:color/white"/>
 
 
     </RelativeLayout>

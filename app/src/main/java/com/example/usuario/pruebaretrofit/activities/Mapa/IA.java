@@ -193,9 +193,9 @@ public class IA extends MuevoImagenes{
             Log.d(TAG,"posY " + getPosicion().y);
 
         } else { // ha arribat a la posició objectiu
-            if(!meVoy) {
+            /*if(!meVoy) {
                 // se'n van a les taules
-                posObjetivo.set(caminoAseguir[gameView.getCualEsMiCamino()]);
+                /*posObjetivo.set(caminoAseguir[gameView.getCualEsMiCamino()]);
                 gameView.setCualEsMiCamino(gameView.getCualEsMiCamino() + 1);
                 calculaRecObjetivo();
                 meVoy = true;
@@ -209,7 +209,7 @@ public class IA extends MuevoImagenes{
                         meQuieroMorir = true;
                 } else
                     tiempoVotangoPasado++;
-            }
+            }*/
             saberDireccio();
         }
     }
