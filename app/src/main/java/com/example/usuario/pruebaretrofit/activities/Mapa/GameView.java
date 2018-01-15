@@ -218,16 +218,20 @@ public class GameView extends SurfaceView {
         } else
             esperaIAs++;
 
-        // TODO: dibuixar jugadora
+        // JOAN!!! Aqui se dibuja el player
         recBtm = jugadora.onDraw(canvas);
         x = (int) jugadora.getPosicion().x * ample + margeAmpl / 2;
         y = (int) jugadora.getPosicion().y * altura + margeAlt / 2;
         rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
         canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);
+        // FIN
+
 
         startTime = System.currentTimeMillis()-startTime;
         Log.d(TAG,"Dibuixar tots els Ias: " + startTime);
 
+        // JOAN!! Aqui se pintan los "botones"
+        // los cojo de la clase BotonesDeMapas
         // Poner botones
         paint.setColor(getResources().getColor(R.color.Cornsilk));
         canvas.drawRect(botones.getRecVerticalEntero(),paint);
@@ -249,6 +253,7 @@ public class GameView extends SurfaceView {
         paint.setColor(getResources().getColor(R.color.Green));
         canvas.drawCircle(botones.getCentreX1(), botones.getCentreY1(), botones.getRadi(), paint);
         canvas.drawCircle(botones.getCentreX2(), botones.getCentreY2(), botones.getRadi(), paint);
+        // FIN
     }
 
     private int buscarIAperPosicio(PointF p) {

@@ -66,7 +66,7 @@ public class Jugadora {
 
     protected Rect onDraw(Canvas canvas) {
         Log.d(TAG,"onDraw");
-        update();
+        //update();
         int srcX = currentFrame * width;
         int srcY = getAnimationRow() * height;
         src.set(srcX, srcY, srcX + width, srcY + height); //retalla la imatge segons l'animacio
