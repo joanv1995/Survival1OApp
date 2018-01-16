@@ -8,8 +8,8 @@ import android.graphics.Rect;
 
 public class BotonesDeMapas {
 
-    private GameView gameView;
-    private int canvasHeight, canvasWidth;
+    //private GameView gameView;
+    //private int canvasHeight, canvasWidth;
     //final private instance; //TODO: fer instancia
 
     // dibuixar botons
@@ -72,8 +72,8 @@ public class BotonesDeMapas {
     }
 
     public void setMedidasCanvas(int canvasWidth, int canvasHeight){
-        this.canvasHeight = canvasHeight;
-        this.canvasWidth = canvasWidth;
+        //this.canvasHeight = canvasHeight;
+        //this.canvasWidth = canvasWidth;
 
         botonRectAncho = (canvasWidth*100)/1920;//100;
         botonRectAlto = (canvasHeight*300)/1008;//300;

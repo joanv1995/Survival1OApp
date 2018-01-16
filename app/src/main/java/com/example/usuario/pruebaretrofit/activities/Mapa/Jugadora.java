@@ -78,7 +78,7 @@ public class Jugadora {
         //int direction = (int) Math.round(dirDouble) % BMP_ROWS;
         return DIRECTION_TO_ANIMATION_MAP_JUGADORA[direccio];
     }
-    private boolean estaDinsDeMalla(PointF p){
+    /*private boolean estaDinsDeMalla(PointF p){
         return p.x <= gameView.getMalla()[0].length-gameView.getZoomBitmap()-1 && p.x >= gameView.getZoomBitmap()-1
                 && p.y <= (gameView.getMalla().length-gameView.getZoomBitmap()-1) && p.y >= gameView.getZoomBitmap()-1;
     }
@@ -97,5 +97,5 @@ public class Jugadora {
         }
         // Si la cela p hi ha cami:
         return gameView.getMalla()[(int)p.y][(int)p.x].contains("-");
-    }
+    }*/
 }

@@ -1,6 +1,7 @@
 package com.example.usuario.pruebaretrofit.activities.Mapa;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.util.Log;
 
@@ -94,6 +95,14 @@ public class MetodosParaTodos {
         return cont > 1 ? 1 : 0;
     }
 
+    protected static int buscarIAperPosicio(PointF p, java.util.List<IA> listaIas) {
+        for (IA ia : listaIas) {
+            if (ia.getPosicion().equals(p))
+                return listaIas.indexOf(ia);
+        }
+        return -1;
+    }
+
     protected static double calculaDistancia(PointF p1, PointF p2){
         return  sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
     }
@@ -117,5 +126,9 @@ public class MetodosParaTodos {
         if (!trobat)
             Log.e(TAG, "No s'ha pogut adaptar el mapa");
         return ampladaCanvas;
+    }
+
+    protected static Bitmap getResizedBitmap(Bitmap image, int bitmapWidth, int bitmapHeight) {
+        return Bitmap.createScaledBitmap(image, bitmapWidth, bitmapHeight, true);
     }
 }

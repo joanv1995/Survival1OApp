@@ -14,6 +14,7 @@ import com.example.usuario.pruebaretrofit.R;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.example.usuario.pruebaretrofit.activities.Mapa.MetodosParaTodos.*;
 
@@ -23,8 +24,6 @@ import static com.example.usuario.pruebaretrofit.activities.Mapa.MetodosParaTodo
 
 public class MapaEscuela {
     private final String TAG = this.getClass().getSimpleName();
-
-    private MetodosParaTodos metodos;
 
     private java.util.List<IA> listaIas = new ArrayList<>();
     private String[][] malla;
@@ -37,9 +36,9 @@ public class MapaEscuela {
     // cosas que inicializar en el construct
     private int x = 0, y = 0;
     private Rect rec = new Rect(), recBtm = new Rect();
-    private int canvasWidth, canvasHeight;
-    protected int margeAmpl = 0, margeAlt = 0;
-    protected int ample, altura;
+    //rivate int canvasWidth, canvasHeight;
+    //protected int margeAmpl = 0, margeAlt = 0;
+    //protected int ample, altura;
     private int zoomBitmap = 5;
     private Context context;
     private GameView gameView;
@@ -50,6 +49,29 @@ public class MapaEscuela {
 
         malla = llegirMapaTxt("mapaEscola10", context);
         jugadora = createJugadora(R.drawable.bad3,new PointF(150,95));
+        botones = new BotonesDeMapas();
+    }
+
+    public String[][] getMalla() {
+        return malla;
+    }
+    public int getZoomBitmap() {
+        return zoomBitmap;
+    }
+    public List<IA> getListaIas() {
+        return listaIas;
+    }
+    public BotonesDeMapas getBotones() {
+        return botones;
+    }
+    public int getCualEsMiCamino() {
+        return cualEsMiCamino;
+    }
+    public void setCualEsMiCamino(int cualEsMiCamino) {
+        this.cualEsMiCamino = cualEsMiCamino;
+    }
+    public Jugadora getJugadora() {
+        return jugadora;
     }
 
     private Jugadora createJugadora(int resouce, PointF pos){
@@ -57,7 +79,7 @@ public class MapaEscuela {
         return new Jugadora(gameView, bmp, pos);
     }
 
-    private Canvas dibujoElMapaEscuela(Canvas canvas){
+    protected Canvas dibujoElMapaEscuela(Canvas canvas, int ample, int altura, int margeAlt, int margeAmpl){
         //startTime = System.currentTimeMillis();
         for (int i = 0; i < malla.length; i++) //altura
         {
@@ -146,7 +168,7 @@ public class MapaEscuela {
     }
     private IA createIA(int resouce, PointF pos, PointF obj) {
         Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resouce);
-        return new IA(gameView, bmp, "v", pos, obj); // de la malla
+        return new IA(gameView, bmp, "v", pos, obj, this); // de la malla //TODO borrar gameview
     }
     private Paint quinColor(String s) {
         Paint paint = new Paint();

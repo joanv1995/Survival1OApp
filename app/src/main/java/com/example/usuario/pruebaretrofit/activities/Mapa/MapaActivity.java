@@ -21,13 +21,14 @@ public class MapaActivity extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         Log.i(TAG,"onCreate");
-        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_FULLSCREEN;
+       // int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        //        | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        int uiOptions2 = View.SYSTEM_UI_FLAG_FULLSCREEN;
         //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN );
         //View decor = getWindow().getDecorView();
         //decor.setSystemUiVisibility(uiOptions);
         View gameView = new GameView(this);
-        //gameView.setSystemUiVisibility(uiOptions);
+        gameView.setSystemUiVisibility(uiOptions2);
         setContentView(gameView);
         //setContentView(R.layout.activity_mapa);
         //super.onCreate(savedInstanceState);
