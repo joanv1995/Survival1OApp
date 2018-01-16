@@ -25,8 +25,8 @@ public class GameView extends SurfaceView {
     private SurfaceHolder holder;
     private GameLoopThread gameLoopThread;
     private BotonesDeMapas botones;
-    private java.util.List<IA> listaIas = new ArrayList<>();
-    private String[][] malla;
+    private java.util.List<IA> listaIas = new ArrayList<>(); // TODO: quitar
+    private String[][] malla;                                // TODO: quitar
     private int canvasWidth, canvasHeight;
     protected int margeAmpl = 0, margeAlt = 0;
     private Rect rectangleCanvas = new Rect();
@@ -280,7 +280,7 @@ public class GameView extends SurfaceView {
         return -1;
     }
 
-    protected int hiHaUnIA(PointF p, PointF pos, int direc) {
+    protected int hiHaUnIA(PointF p, int direc) {
         // 0: no hi ha, 1: hi ha, 2: esta de cara costat, 3 esta e cara vertical
         // 0-1 2-3
         int cont = 0;

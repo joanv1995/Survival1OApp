@@ -151,7 +151,7 @@ public class IA extends MuevoImagenes{
                     p.set((int) getPosicion().x + vecPos[i], (int) getPosicion().y + vecPos[vecPos.length-1-i]);
                     pp.set((int) getPosicion().x + vecPos2[i], (int) getPosicion().y + vecPos2[vecPos2.length-1-i]);
 
-                    int d=gameView.hiHaUnIA(p,posicion,direccio);
+                    int d=gameView.hiHaUnIA(p,direccio);
                     if(d == 2){
                             //TODO si es miren, que s'evitin  (ara mateix funciona, fes-ho quan tinguis temps ;)
                             // 2: estan en horitzontal, han d'escapar un per baix i l'altre per dalt
@@ -175,7 +175,7 @@ public class IA extends MuevoImagenes{
             }
 
             // si m'ho ha calculat bé, actualitzo posicio
-            if(!enEspera && gameView.hiHaUnIA(act2,posicion,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
+            if(!enEspera && gameView.hiHaUnIA(act2,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
                 posAntiga = new PointF(getPosicion().x,getPosicion().y);
                 setPosicion(act);
                 calculaAnimes();
@@ -193,9 +193,9 @@ public class IA extends MuevoImagenes{
             Log.d(TAG,"posY " + getPosicion().y);
 
         } else { // ha arribat a la posició objectiu
-            /*if(!meVoy) {
+            if(!meVoy) {
                 // se'n van a les taules
-                /*posObjetivo.set(caminoAseguir[gameView.getCualEsMiCamino()]);
+                posObjetivo.set(caminoAseguir[gameView.getCualEsMiCamino()]);
                 gameView.setCualEsMiCamino(gameView.getCualEsMiCamino() + 1);
                 calculaRecObjetivo();
                 meVoy = true;
@@ -209,7 +209,7 @@ public class IA extends MuevoImagenes{
                         meQuieroMorir = true;
                 } else
                     tiempoVotangoPasado++;
-            }*/
+            }
             saberDireccio();
         }
     }
