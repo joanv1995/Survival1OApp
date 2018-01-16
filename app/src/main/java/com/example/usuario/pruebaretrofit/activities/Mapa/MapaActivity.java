@@ -27,7 +27,7 @@ public class MapaActivity extends Activity {
         //View decor = getWindow().getDecorView();
         //decor.setSystemUiVisibility(uiOptions);
         View gameView = new GameView(this);
-        gameView.setSystemUiVisibility(uiOptions);
+        //gameView.setSystemUiVisibility(uiOptions);
         setContentView(gameView);
         //setContentView(R.layout.activity_mapa);
         //super.onCreate(savedInstanceState);

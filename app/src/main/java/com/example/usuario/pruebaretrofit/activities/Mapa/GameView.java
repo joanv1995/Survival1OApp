@@ -40,8 +40,8 @@ public class GameView extends SurfaceView {
     private int zoomBitmap = 5;
 
     // per amager la barra de navegacio
-    int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-            | View.SYSTEM_UI_FLAG_FULLSCREEN;
+    //int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+    //        | View.SYSTEM_UI_FLAG_FULLSCREEN;
     //private List<Sprite> sprites = new ArrayList<Sprite>();
 
     // saber el cami dels ias
@@ -55,7 +55,7 @@ public class GameView extends SurfaceView {
         Log.d(TAG, "constructor GameView");
         gameLoopThread = new GameLoopThread(this);
         botones = new BotonesDeMapas();
-        this.setSystemUiVisibility(uiOptions);
+        //this.setSystemUiVisibility(uiOptions);
 
         holder = getHolder();
         holder.addCallback(new SurfaceHolder.Callback() {
@@ -176,88 +176,10 @@ public class GameView extends SurfaceView {
         //Log.d(TAG,"canvasWidth " + ample);
         //Log.d(TAG,"canvasHeight " + altura);
 
-        if (quinMapa == 0) {
-            startTime = System.currentTimeMillis();
-            for (int i = 0; i < malla.length; i++) //altura
-            {
-                for (int j = 0; j < malla[0].length; j++) //amplada
-                {
-                    x = j * ample + margeAmpl / 2;
-                    y = i * altura + margeAlt / 2;
-                    rec.set(x, y, x + ample, y + altura);
-                    canvas.drawRect(rec, quinColor(malla[i][j]));
-                }
-            }
-            startTime = System.currentTimeMillis()-startTime;
-            Log.d(TAG,"Pintar mapa: " + startTime);
-            Paint paint = new Paint();
-            int a = -1;
-            startTime = System.currentTimeMillis();
-            for (IA ia : listaIas) {
-                startTime2 = System.currentTimeMillis();
-                recBtm = ia.onDraw(canvas);
-                if (ia.isMeQuieroMorir())
-                    a = listaIas.indexOf(ia);
-                else {
-                    x = (int) ia.getPosicion().x * ample + margeAmpl / 2;
-                    y = (int) ia.getPosicion().y * altura + margeAlt / 2;
-                    rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
-                    canvas.drawBitmap(ia.getBmp(), recBtm, rec, null);
+        if (quinMapa == 0) { //Mapa escola
 
-                    int xx = (int) ia.getPosObjetivo().x * ample + margeAmpl / 2, yy = (int) ia.getPosObjetivo().y * altura + margeAlt / 2;
-                    Rect rec = new Rect(xx - 10, yy - 10, xx + 10, yy + 10);
-                    paint.setColor(getResources().getColor(R.color.colorPrimary));
-                    canvas.drawRect(rec, paint);
-                }
-                startTime2 = System.currentTimeMillis()-startTime2;
-                Log.d(TAG,"Dibuixar un Ia: " + startTime2);
-            }
-            if (a != -1)
-                listaIas.remove(a);
+            dibujoElMapaEscuela(canvas);
 
-            // respawn d'ias
-            if (esperaIAs == 5) {
-                iasNonStop();
-                esperaIAs = 0;
-            } else
-                esperaIAs++;
-
-            // JOAN!!! Aqui se dibuja el player
-            recBtm = jugadora.onDraw(canvas);
-            x = (int) jugadora.getPosicion().x * ample + margeAmpl / 2;
-            y = (int) jugadora.getPosicion().y * altura + margeAlt / 2;
-            rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
-            canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);
-            // FIN
-
-
-            startTime = System.currentTimeMillis()-startTime;
-            Log.d(TAG,"Dibuixar tots els Ias: " + startTime);
-
-            // JOAN!! Aqui se pintan los "botones"
-            // los cojo de la clase BotonesDeMapas
-            // Poner botones
-            paint.setColor(getResources().getColor(R.color.Cornsilk));
-            canvas.drawRect(botones.getRecVerticalEntero(),paint);
-            paint.setColor(getResources().getColor(R.color.Green));
-            canvas.drawRect(botones.getBotonRecVertArriba(), paint);
-            canvas.drawRect(botones.getBotonRecVertBajo(), paint);
-
-
-            paint.setColor(getResources().getColor(R.color.AntiqueWhite));
-            canvas.drawRect(botones.getRecHorizontalEntero(), paint);
-            paint.setColor(getResources().getColor(R.color.Green));
-            canvas.drawRect(botones.getBotonRecHorizLeft(), paint);
-            canvas.drawRect(botones.getBotonRecHorizRigth(), paint);
-
-            paint.setColor(getResources().getColor(R.color.AntiqueWhite));
-
-            canvas.drawRect(botones.getBotonCercleA(), paint);
-            canvas.drawRect(botones.getBotonCercleB(), paint);
-            paint.setColor(getResources().getColor(R.color.Green));
-            canvas.drawCircle(botones.getCentreX1(), botones.getCentreY1(), botones.getRadi(), paint);
-            canvas.drawCircle(botones.getCentreX2(), botones.getCentreY2(), botones.getRadi(), paint);
-            // FIN
         } else if(quinMapa == 1){
 
 
@@ -265,6 +187,89 @@ public class GameView extends SurfaceView {
             // TODO: ALEX, qui va tu
 
         }
+    }
+
+    private void dibujoElMapaEscuela(Canvas canvas){
+        //startTime = System.currentTimeMillis();
+        for (int i = 0; i < malla.length; i++) //altura
+        {
+            for (int j = 0; j < malla[0].length; j++) //amplada
+            {
+                x = j * ample + margeAmpl / 2;
+                y = i * altura + margeAlt / 2;
+                rec.set(x, y, x + ample, y + altura);
+                canvas.drawRect(rec, quinColor(malla[i][j]));
+            }
+        }
+        //startTime = System.currentTimeMillis()-startTime;
+        //Log.d(TAG,"Pintar mapa: " + startTime);
+        Paint paint = new Paint();
+        int a = -1;
+        //startTime = System.currentTimeMillis();
+        for (IA ia : listaIas) {
+            //startTime2 = System.currentTimeMillis();
+            recBtm = ia.onDraw(canvas);
+            if (ia.isMeQuieroMorir())
+                a = listaIas.indexOf(ia);
+            else {
+                x = (int) ia.getPosicion().x * ample + margeAmpl / 2;
+                y = (int) ia.getPosicion().y * altura + margeAlt / 2;
+                rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
+                canvas.drawBitmap(ia.getBmp(), recBtm, rec, null);
+
+                int xx = (int) ia.getPosObjetivo().x * ample + margeAmpl / 2, yy = (int) ia.getPosObjetivo().y * altura + margeAlt / 2;
+                Rect rec = new Rect(xx - 10, yy - 10, xx + 10, yy + 10);
+                paint.setColor(getResources().getColor(R.color.colorPrimary));
+                canvas.drawRect(rec, paint);
+            }
+            //startTime2 = System.currentTimeMillis()-startTime2;
+            //Log.d(TAG,"Dibuixar un Ia: " + startTime2);
+        }
+        if (a != -1)
+            listaIas.remove(a);
+
+        // respawn d'ias
+        if (esperaIAs == 5) {
+            iasNonStop();
+            esperaIAs = 0;
+        } else
+            esperaIAs++;
+
+        // JOAN!!! Aqui se dibuja el player
+        recBtm = jugadora.onDraw(canvas);
+        x = (int) jugadora.getPosicion().x * ample + margeAmpl / 2;
+        y = (int) jugadora.getPosicion().y * altura + margeAlt / 2;
+        rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
+        canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);
+        // FIN
+
+
+        //startTime = System.currentTimeMillis()-startTime;
+        //Log.d(TAG,"Dibuixar tots els Ias: " + startTime);
+
+        // JOAN!! Aqui se pintan los "botones"
+        // los cojo de la clase BotonesDeMapas
+        // Poner botones
+        paint.setColor(getResources().getColor(R.color.Cornsilk));
+        canvas.drawRect(botones.getRecVerticalEntero(),paint);
+        paint.setColor(getResources().getColor(R.color.Green));
+        canvas.drawRect(botones.getBotonRecVertArriba(), paint);
+        canvas.drawRect(botones.getBotonRecVertBajo(), paint);
+
+
+        paint.setColor(getResources().getColor(R.color.AntiqueWhite));
+        canvas.drawRect(botones.getRecHorizontalEntero(), paint);
+        paint.setColor(getResources().getColor(R.color.Green));
+        canvas.drawRect(botones.getBotonRecHorizLeft(), paint);
+        canvas.drawRect(botones.getBotonRecHorizRigth(), paint);
+
+        paint.setColor(getResources().getColor(R.color.AntiqueWhite));
+
+        canvas.drawRect(botones.getBotonCercleA(), paint);
+        canvas.drawRect(botones.getBotonCercleB(), paint);
+        paint.setColor(getResources().getColor(R.color.Green));
+        canvas.drawCircle(botones.getCentreX1(), botones.getCentreY1(), botones.getRadi(), paint);
+        canvas.drawCircle(botones.getCentreX2(), botones.getCentreY2(), botones.getRadi(), paint);
     }
 
     private int buscarIAperPosicio(PointF p) {
@@ -403,18 +408,18 @@ public class GameView extends SurfaceView {
                     break;
                 }
             }*/
-            hideUI();
+            //hideUI();
             return super.onTouchEvent(event);
         }
     }
 
     private void hideUI() {
-        this.getHandler().postDelayed(new Runnable() {
+        /*this.getHandler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 GameView.this.setSystemUiVisibility(uiOptions);
             }
-        }, 0);
+        }, 0);*/
     }
 
 }
