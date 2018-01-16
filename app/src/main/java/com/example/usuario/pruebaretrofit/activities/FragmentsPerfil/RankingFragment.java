@@ -1,4 +1,4 @@
-package com.example.usuario.pruebaretrofit.activities;
+package com.example.usuario.pruebaretrofit.activities.FragmentsPerfil;
 
 import android.content.Context;
 import android.net.Uri;

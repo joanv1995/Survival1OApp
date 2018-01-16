@@ -1,9 +1,14 @@
 package com.example.usuario.pruebaretrofit.activities;
 
+import android.app.Fragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Layout;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -17,10 +22,16 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.example.usuario.pruebaretrofit.R;
+import com.example.usuario.pruebaretrofit.activities.FragmentsPerfil.PerfilFragment;
+import com.example.usuario.pruebaretrofit.activities.FragmentsPerfil.PlayFragment;
+import com.example.usuario.pruebaretrofit.activities.FragmentsPerfil.RankingFragment;
 import com.example.usuario.pruebaretrofit.model.Usuario;
 
 public class PerfilActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, PerfilFragment.OnFragmentInteractionListener, RankingFragment.OnFragmentInteractionListener{
+
+    public void onFragmentInteraction(Uri uri){};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,14 +113,19 @@ public class PerfilActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        Boolean IsFragment = false;
+        Fragment frag = null;
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_perfil) {
+            item.setChecked(true);
+            setFragment(0);
+
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_play) {
+            setFragment(1);
+        } else if (id == R.id.nav_rank) {
+            setFragment(2);
+        } else if (id == R.id.nav_logout) {
 
         } else if (id == R.id.nav_share) {
 
@@ -120,5 +136,32 @@ public class PerfilActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+    public void setFragment(int position) {
+        FragmentManager fragmentManager;
+        FragmentTransaction fragmentTransaction;
+        switch (position) {
+            case 0:
+                fragmentManager = getSupportFragmentManager();
+                fragmentTransaction = fragmentManager.beginTransaction();
+                PerfilFragment perfilFragment = new PerfilFragment();
+                fragmentTransaction.replace(R.id.basefrag, perfilFragment);
+                fragmentTransaction.commit();
+                break;
+            case 1:
+                fragmentManager = getSupportFragmentManager();
+                fragmentTransaction = fragmentManager.beginTransaction();
+                PlayFragment playFragment = new PlayFragment();
+                fragmentTransaction.replace(R.id.basefrag, playFragment);
+                fragmentTransaction.commit();
+                break;
+            case 2:
+                fragmentManager = getSupportFragmentManager();
+                fragmentTransaction = fragmentManager.beginTransaction();
+                RankingFragment rankFragment = new RankingFragment();
+                fragmentTransaction.replace(R.id.basefrag, rankFragment);
+                fragmentTransaction.commit();
+                break;
+        }
     }
 }
