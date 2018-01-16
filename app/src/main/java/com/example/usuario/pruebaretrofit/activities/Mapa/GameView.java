@@ -20,12 +20,14 @@ import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import static com.example.usuario.pruebaretrofit.activities.Mapa.MetodosParaTodos.*;
+
 public class GameView extends SurfaceView {
     private final String TAG = this.getClass().getSimpleName();
     private SurfaceHolder holder;
     private GameLoopThread gameLoopThread;
     private BotonesDeMapas botones;
-    private java.util.List<IA> listaIas = new ArrayList<>(); // TODO: quitar
+    protected java.util.List<IA> listaIas = new ArrayList<>(); // TODO: quitar
     private String[][] malla;                                // TODO: quitar
     private int canvasWidth, canvasHeight;
     protected int margeAmpl = 0, margeAlt = 0;
@@ -42,11 +44,11 @@ public class GameView extends SurfaceView {
     // per amager la barra de navegacio
     //int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
     //        | View.SYSTEM_UI_FLAG_FULLSCREEN;
-    //private List<Sprite> sprites = new ArrayList<Sprite>();
+
 
     // saber el cami dels ias
-    private int cualEsMiCamino = 0;
-    private int esperaIAs;
+    private int cualEsMiCamino = 0;         // TODO: quitar
+    private int esperaIAs;                  // TODO: quitar
 
     private int quinMapa = 0; // mapaEscuela=0, mapaGrande = 1, minijuegos = 2
 
@@ -54,7 +56,7 @@ public class GameView extends SurfaceView {
         super(context);
         Log.d(TAG, "constructor GameView");
         gameLoopThread = new GameLoopThread(this);
-        botones = new BotonesDeMapas();
+        botones = new BotonesDeMapas();   // TODO: quitar
         //this.setSystemUiVisibility(uiOptions);
 
         holder = getHolder();
@@ -64,10 +66,10 @@ public class GameView extends SurfaceView {
                 //afegirIas();
                 iasNonStop();
                 jugadora = createJugadora(R.drawable.bad3,new PointF(150,95));
-                malla = llegirMapaTxt("mapaEscola10");
-                Log.d(TAG, "Creo els ias: " + listaIas.size() + " i la malla: " + malla.length);
+                malla = llegirMapaTxt("mapaEscola10", context); // TODO: quitar
+                //Log.d(TAG, "Creo els ias: " + listaIas.size() + " i la malla: " + malla.length);
                 gameLoopThread.setRunning(true);
-                Log.d(TAG, "Run = true");
+                //Log.d(TAG, "Run = true");
                 gameLoopThread.start();
                 Log.d(TAG, "gameLoopThread.start");
 
@@ -141,7 +143,7 @@ public class GameView extends SurfaceView {
         return paint;
     }
 
-    private int midaCanvas(int canvasT, int length) {
+    /*private int midaCanvas(int canvasT, int length) {
         boolean trobat = false;
         int ampladaCanvas = 0;
 
@@ -159,7 +161,7 @@ public class GameView extends SurfaceView {
         if (!trobat)
             Log.e(TAG, "No s'ha pogut adaptar el mapa");
         return ampladaCanvas;
-    }
+    }*/
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -332,7 +334,7 @@ public class GameView extends SurfaceView {
         return new Jugadora(this, bmp, pos);
     }
 
-    public String[][] llegirMapaTxt(String nomTxt) {
+    public String[][] llegirMapaTxt2(String nomTxt) {
         String line = "";
         int cont = 1;
 

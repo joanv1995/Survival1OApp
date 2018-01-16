@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import java.util.Random;
 
+import static com.example.usuario.pruebaretrofit.activities.Mapa.MetodosParaTodos.*;
 import static java.lang.Math.sqrt;
 
 public class IA extends MuevoImagenes{
@@ -42,6 +43,8 @@ public class IA extends MuevoImagenes{
     // direction = 0 up, 1 left, 2 down, 3 right,
     // animation = 3 back, 1 left, 0 front, 2 right
     private static final int[] DIRECTION_TO_ANIMATION_MAP = {2, 1, 3, 0};//{ 3, 1, 0, 2 };
+
+    MetodosParaTodos metodos;
 
     // per dibuixar
     private PointF act = new PointF(), act2 = new PointF();
@@ -151,7 +154,7 @@ public class IA extends MuevoImagenes{
                     p.set((int) getPosicion().x + vecPos[i], (int) getPosicion().y + vecPos[vecPos.length-1-i]);
                     pp.set((int) getPosicion().x + vecPos2[i], (int) getPosicion().y + vecPos2[vecPos2.length-1-i]);
 
-                    int d=gameView.hiHaUnIA(p,direccio);
+                    int d = hiHaUnIA(p,direccio, gameView.listaIas);
                     if(d == 2){
                             //TODO si es miren, que s'evitin  (ara mateix funciona, fes-ho quan tinguis temps ;)
                             // 2: estan en horitzontal, han d'escapar un per baix i l'altre per dalt
@@ -160,12 +163,14 @@ public class IA extends MuevoImagenes{
                             // 3: estan en vertical, han d'escapar un per la dreta i l'altre per l'esquerra
                     } else {
                         double distancia = calculaDistancia(p, getPosObjetivo());
-                        if (distancia < min && estaDinsDeMalla(p) && esPotTrepitjar(p) && !p.equals(posAntiga)) {
+                        if (distancia < min && /*estaDinsDeMalla(p)*/ estaDinsDeMalla(p, gameView.getMalla(), gameView.getZoomBitmap())
+                                && esPotTrepitjar(p, gameView.getMalla(), gameView.getZoomBitmap()) && !p.equals(posAntiga)) {
                             direccio = i;
                             min = calculaDistancia(p, getPosObjetivo());
                             act.set(p);
                             act2.set(pp);
                         }
+                        //if (distancia < min && /*estaDinsDeMalla(p)*/ estaDinsDeMalla2(p,gameView.getMalla(),gameView.getZoomBitmap()) && esPotTrepitjar(p) && !p.equals(posAntiga)) {
                     }
                 }
 
@@ -175,13 +180,13 @@ public class IA extends MuevoImagenes{
             }
 
             // si m'ho ha calculat bé, actualitzo posicio
-            if(!enEspera && gameView.hiHaUnIA(act2,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
+            if(!enEspera && hiHaUnIA(act2,direccio,gameView.listaIas) == 0){//gameView.hiHaUnIA(act2,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
                 posAntiga = new PointF(getPosicion().x,getPosicion().y);
                 setPosicion(act);
                 calculaAnimes();
                 currentFrame = ++currentFrame % BMP_COLUMNS;
             }else {
-                if(!estaDinsDeMalla(act))
+                if(!estaDinsDeMalla(act, gameView.getMalla(), gameView.getZoomBitmap()))
                     Log.e(TAG,"No esta dins la malla");
 
             }
@@ -214,9 +219,9 @@ public class IA extends MuevoImagenes{
         }
     }
 
-    private double calculaDistancia(PointF p1, PointF p2){
+    /*private double calculaDistancia(PointF p1, PointF p2){
         return  sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
-    }
+    }*/
 
     protected Rect onDraw(Canvas canvas) {
         Log.d(TAG,"onDraw");
@@ -232,11 +237,10 @@ public class IA extends MuevoImagenes{
         //int direction = (int) Math.round(dirDouble) % BMP_ROWS;
         return DIRECTION_TO_ANIMATION_MAP[direccio];
     }
-    private boolean estaDinsDeMalla(PointF p){
+    /*private boolean estaDinsDeMalla(PointF p){
         return p.x <= gameView.getMalla()[0].length-gameView.getZoomBitmap()-1 && p.x >= gameView.getZoomBitmap()-1
                 && p.y <= (gameView.getMalla().length-gameView.getZoomBitmap()-1) && p.y >= gameView.getZoomBitmap()-1;
     }
-
     private boolean esPotTrepitjar(PointF p){
         // si per les celes proximes no toca la imatge del bitmap amb taules o merdes
         int[] vec = {gameView.getZoomBitmap()-1, -(gameView.getZoomBitmap()-1), 0, 0};
@@ -251,6 +255,6 @@ public class IA extends MuevoImagenes{
         }
         // Si la cela p hi ha cami:
         return gameView.getMalla()[(int)p.y][(int)p.x].contains("-");
-    }
+    }*/
 
 }
