@@ -24,6 +24,7 @@ public class MapaGrande {
     private GameView gameView;
 
     private String[][] malla;
+    private String caracterAnterior, caracterJugadora = "@";
     private int zoomBitmap = 5;
 
     private BotonesDeMapas botones;
@@ -31,6 +32,7 @@ public class MapaGrande {
 
     private int x = 0, y = 0, altoInit, anchoInit;
     private Rect rec = new Rect(), recBtm = new Rect();
+
 
 
     public MapaGrande(Context context, GameView gameView) {
@@ -87,14 +89,18 @@ public class MapaGrande {
         //startTime = System.currentTimeMillis();
         //jugadora.getPosicion().x +- 100
         //jugadora.getPosicion().y +- 50
-        // 150,95
-        int ii =0, jj =0;
-        altoInit = (int) jugadora.getPosicion().y - 50;
-        anchoInit = (int) jugadora.getPosicion().x - 100;
+
+        // muevo la jugadora
+        //recBtm = jugadora.onDraw(canvas);
+        //if(jugadora.isMeTengoQueMover())
+        //    moverJugadoraEnMalla();
+
+        // dibujo el mapa
+        altoInit = (int) jugadora.getPosicion().y - altoMalla/2;
         if(altoInit < 0)
             altoInit = 0;
-        if(anchoInit < 0)
-            anchoInit = 0;
+
+        boolean estaJug = false; int estaJugCont = 0, xx = 0, yy = 0;
         for (int i = 0; i < altoMalla; i++) //altura
         {
             anchoInit = (int) jugadora.getPosicion().x - 100;
@@ -102,14 +108,33 @@ public class MapaGrande {
                 anchoInit = 0;
             for (int j = 0; j < anchoMalla; j++) //amplada
             {
-                x = j * ample + margeAmpl / 2;
-                y = i * altura + margeAlt / 2;
-                rec.set(x, y, x + ample, y + altura);
-                canvas.drawRect(rec, quinColor(malla[altoInit][anchoInit]));
-                anchoInit++;
+                try {
+                    x = j * ample + margeAmpl / 2;
+                    y = i * altura + margeAlt / 2;
+                    rec.set(x, y, x + ample, y + altura);
+                    /*if(malla[altoInit][anchoInit].contains(caracterJugadora)){
+                        xx = anchoInit; yy = altoInit;
+                    } else*/
+                        canvas.drawRect(rec, quinColor(malla[altoInit][anchoInit]));
+                /*if(malla[altoInit][anchoInit].equals(caracterJugadora)){
+                    rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
+                    canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);
+                    estaJug = true;
+                } else if(estaJug){
+                    estaJugCont++;
+                    if(estaJugCont > zoomBitmap)
+                        estaJug = false;
+                } else if(!estaJug)
+                    canvas.drawRect(rec, quinColor(malla[altoInit][anchoInit]));*/
+                    anchoInit++;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             altoInit++;
         }
+        //rec.set(xx - zoomBitmap * ample, yy - zoomBitmap * altura, xx + zoomBitmap * ample, yy + zoomBitmap * altura);
+        //canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);
         //startTime = System.currentTimeMillis()-startTime;
         //Log.d(TAG,"Pintar mapa: " + startTime);
         Paint paint = new Paint();
@@ -146,6 +171,8 @@ public class MapaGrande {
 */
         // JOAN!!! Aqui se dibuja el player
         recBtm = jugadora.onDraw(canvas);
+        //if(jugadora.isMeTengoQueMover())
+            //moverJugadoraEnMalla();
         x = (int) jugadora.getPosicion().x * ample + margeAmpl / 2;
         y = (int) jugadora.getPosicion().y * altura + margeAlt / 2;
         rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
@@ -200,4 +227,34 @@ public class MapaGrande {
         }
     }
 
+    protected void moverJugadoraEnMalla(){
+        String s = malla[(int) jugadora.getPosicion().y][(int) jugadora.getPosicion().x];
+        malla[(int) jugadora.getPosicion().y][(int) jugadora.getPosicion().x].replace( s, caracterAnterior);
+        switch (jugadora.getDireccio()){
+            case 1:
+                caracterAnterior = malla[(int) jugadora.getPosicion().y][(int) jugadora.getPosicion().x - jugadora.getSpeed()];
+                s = malla[(int) jugadora.getPosicion().y][(int) jugadora.getPosicion().x - jugadora.getSpeed()];
+                malla[(int) jugadora.getPosicion().y][(int) jugadora.getPosicion().x - jugadora.getSpeed()].replace(s, caracterJugadora);
+                jugadora.setPosicion(jugadora.getPosicion().x - jugadora.getSpeed(),jugadora.getPosicion().y);
+                break;
+            case 0:
+                caracterAnterior = malla[(int) jugadora.getPosicion().y][(int) jugadora.getPosicion().x + jugadora.getSpeed()];
+                s = malla[(int) jugadora.getPosicion().y][(int) jugadora.getPosicion().x + jugadora.getSpeed()];// = caracterJugadora;
+                malla[(int) jugadora.getPosicion().y][(int) jugadora.getPosicion().x + jugadora.getSpeed()].replace(s,caracterJugadora);
+                jugadora.setPosicion(jugadora.getPosicion().x + jugadora.getSpeed(),jugadora.getPosicion().y);
+                break;
+            case 2:
+                caracterAnterior = malla[(int) jugadora.getPosicion().y - jugadora.getSpeed()][(int) jugadora.getPosicion().x];
+                s = malla[(int) jugadora.getPosicion().y - jugadora.getSpeed()][(int) jugadora.getPosicion().x];// =caracterJugadora;
+                malla[(int) jugadora.getPosicion().y - jugadora.getSpeed()][(int) jugadora.getPosicion().x].replace(s, caracterJugadora);
+                jugadora.setPosicion(jugadora.getPosicion().x,jugadora.getPosicion().y - jugadora.getSpeed());
+                break;
+            case 3:
+                caracterAnterior = malla[(int) jugadora.getPosicion().y + jugadora.getSpeed()][(int) jugadora.getPosicion().x];
+                s = malla[(int) jugadora.getPosicion().y + jugadora.getSpeed()][(int) jugadora.getPosicion().x]; //= caracterJugadora;
+                malla[(int) jugadora.getPosicion().y + jugadora.getSpeed()][(int) jugadora.getPosicion().x].replace(s,caracterJugadora);
+                jugadora.setPosicion(jugadora.getPosicion().x,jugadora.getPosicion().y + jugadora.getSpeed());
+                break;
+        }
+    }
 }

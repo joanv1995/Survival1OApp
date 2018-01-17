@@ -65,6 +65,9 @@ public class Jugadora {
     public void setMeTengoQueMover(boolean meTengoQueMover) {
         this.meTengoQueMover = meTengoQueMover;
     }
+    public int getDireccio() {
+        return direccio;
+    }
 
     protected void update(){
         // canviar la posicio
@@ -88,6 +91,7 @@ public class Jugadora {
         Log.d(TAG,"onDraw");
         if(meTengoQueMover) // si estoy apretando, cambio de posicion
             update();
+        Log.d(TAG,"X: " + posicion.x);Log.d(TAG,"Y: " + posicion.y);
         int srcX = currentFrame * width;
         int srcY = getAnimationRow() * height;
         src.set(srcX, srcY, srcX + width, srcY + height); //retalla la imatge segons l'animacio

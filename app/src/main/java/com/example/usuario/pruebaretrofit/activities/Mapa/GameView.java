@@ -147,10 +147,11 @@ public class GameView extends SurfaceView {
             //event.getX(), event.getY()
             int x = Math.round(event.getX()), y = Math.round(event.getY());
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
-
                 // Player has touched the screen
                 case MotionEvent.ACTION_DOWN:
-                    if(quinMapa == 1){
+                    if(quinMapa == 0){
+                        // JOAN, reproduce lo que he hecho con el mapa grande
+                    } else if(quinMapa == 1){
                         mapaGrande.cambiarDireccionJugadora(x,y); // le paso la direccion
                         mapaGrande.getJugadora().setMeTengoQueMover(true); // y le cambio el nuevo boleano para que sepa que estoy apretando el boton
                     }
@@ -158,7 +159,9 @@ public class GameView extends SurfaceView {
 
                 // Player has removed finger from screen
                 case MotionEvent.ACTION_UP:
-                    if(quinMapa == 1) {
+                    if(quinMapa == 0){
+                        // JOAN, reproduce lo que he hecho con el mapa grande
+                    } else if(quinMapa == 1) {
                         mapaGrande.getJugadora().setMeTengoQueMover(false); // en el momento que dejo de apretar, le digo que pare
                     }
                     break;
