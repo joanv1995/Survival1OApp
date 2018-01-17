@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.util.Log;
 
 import com.example.usuario.pruebaretrofit.R;
 
@@ -28,7 +29,7 @@ public class MapaGrande {
     private BotonesDeMapas botones;
     private Jugadora jugadora;
 
-    private int x = 0, y = 0;
+    private int x = 0, y = 0, altoInit, anchoInit;
     private Rect rec = new Rect(), recBtm = new Rect();
 
 
@@ -41,6 +42,15 @@ public class MapaGrande {
         botones = new BotonesDeMapas();
     }
 
+    public String[][] getMalla() {
+        return malla;
+    }
+    public BotonesDeMapas getBotones() {
+        return botones;
+    }
+    public Jugadora getJugadora() {
+        return jugadora;
+    }
 
     private Paint quinColor(String s) {
         Paint paint = new Paint();
@@ -78,15 +88,27 @@ public class MapaGrande {
         //jugadora.getPosicion().x +- 100
         //jugadora.getPosicion().y +- 50
         // 150,95
-        for (int i = (int) jugadora.getPosicion().y - 50; i < altoMalla; i++) //altura
+        int ii =0, jj =0;
+        altoInit = (int) jugadora.getPosicion().y - 50;
+        anchoInit = (int) jugadora.getPosicion().x - 100;
+        if(altoInit < 0)
+            altoInit = 0;
+        if(anchoInit < 0)
+            anchoInit = 0;
+        for (int i = 0; i < altoMalla; i++) //altura
         {
-            for (int j = (int) jugadora.getPosicion().x - 100; j < anchoMalla; j++) //amplada
+            anchoInit = (int) jugadora.getPosicion().x - 100;
+            if(anchoInit < 0)
+                anchoInit = 0;
+            for (int j = 0; j < anchoMalla; j++) //amplada
             {
                 x = j * ample + margeAmpl / 2;
                 y = i * altura + margeAlt / 2;
                 rec.set(x, y, x + ample, y + altura);
-                canvas.drawRect(rec, quinColor(malla[i][j]));
+                canvas.drawRect(rec, quinColor(malla[altoInit][anchoInit]));
+                anchoInit++;
             }
+            altoInit++;
         }
         //startTime = System.currentTimeMillis()-startTime;
         //Log.d(TAG,"Pintar mapa: " + startTime);
@@ -130,12 +152,6 @@ public class MapaGrande {
         canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);
         // FIN
 
-
-        //startTime = System.currentTimeMillis()-startTime;
-        //Log.d(TAG,"Dibuixar tots els Ias: " + startTime);
-
-        // JOAN!! Aqui se pintan los "botones"
-        // los cojo de la clase BotonesDeMapas
         // Poner botones
         paint.setColor(context.getResources().getColor(R.color.Cornsilk));
         canvas.drawRect(botones.getRecVerticalEntero(),paint);
@@ -166,6 +182,22 @@ public class MapaGrande {
         return new Jugadora(gameView, bmp, pos);
     }
 
-
+    protected void cambiarDireccionJugadora(int x, int y){ // ya que los botones se inicializan aqui, el metodo de cambiar direccion no lo puedo poner en jugadora
+        if(this.getBotones().getBotonRecHorizLeft().contains(x,y)){ //boton Left
+            jugadora.setDireccio(1);
+        }else if(this.getBotones().getBotonRecHorizRigth().contains(x,y)) {//boton Right
+            jugadora.setDireccio(0);
+        } else if (this.getBotones().getBotonRecVertArriba().contains(x,y)){//boton Arriba
+            jugadora.setDireccio(2);
+        } else if (this.getBotones().getBotonRecVertBajo().contains(x,y)){ //boton Abajo
+            jugadora.setDireccio(3);
+        }
+        if(this.getBotones().getBotonCercleA().contains(x,y)){
+            Log.d(TAG, "boton A");
+        }
+        if(this.getBotones().getBotonCercleB().contains(x,y)){
+            Log.d(TAG, "boton B");
+        }
+    }
 
 }

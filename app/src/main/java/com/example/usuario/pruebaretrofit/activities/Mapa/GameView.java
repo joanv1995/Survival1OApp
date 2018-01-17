@@ -1,26 +1,14 @@
 package com.example.usuario.pruebaretrofit.activities.Mapa;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PointF;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 
 import com.example.usuario.pruebaretrofit.R;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-
-import static com.example.usuario.pruebaretrofit.activities.Mapa.MetodosParaTodos.*;
 
 public class GameView extends SurfaceView {
     private final String TAG = this.getClass().getSimpleName();
@@ -74,7 +62,7 @@ public class GameView extends SurfaceView {
                 if(quinMapa == 0){
                     mapaEscuela.getBotones().setMedidasCanvas(canvasWidth,canvasHeight);
                 } else if (quinMapa == 1) {
-                    // TODO: lo mismo que arriba
+                    mapaGrande.getBotones().setMedidasCanvas(canvasWidth,canvasHeight);
                 }
                 margeAmpl = width - canvasWidth;
                 margeAlt = height - canvasHeight;
@@ -158,10 +146,31 @@ public class GameView extends SurfaceView {
             // direction = 0 right, 1 left, 2 up, 3 down,
             //event.getX(), event.getY()
             int x = Math.round(event.getX()), y = Math.round(event.getY());
+            switch (event.getAction() & MotionEvent.ACTION_MASK) {
 
+                // Player has touched the screen
+                case MotionEvent.ACTION_DOWN:
+                    if(quinMapa == 1){
+                        mapaGrande.cambiarDireccionJugadora(x,y); // le paso la direccion
+                        mapaGrande.getJugadora().setMeTengoQueMover(true); // y le cambio el nuevo boleano para que sepa que estoy apretando el boton
+                    }
+                    break;
+
+                // Player has removed finger from screen
+                case MotionEvent.ACTION_UP:
+                    if(quinMapa == 1) {
+                        mapaGrande.getJugadora().setMeTengoQueMover(false); // en el momento que dejo de apretar, le digo que pare
+                    }
+                    break;
+            }
+            return true;
+            /*Log.d(TAG,"onTouchevent ");
             switch (quinMapa){
                 case 0: //MapaEscola
                     mapaEscuela.interactionOneTouch(x,y);
+                    break;
+                case 1:
+                    break;*/
                 /*
                     if(mapaEscuela.getBotones().getBotonRecHorizLeft().contains(x,y)){
                         Log.d(TAG,"boton Left");
@@ -186,10 +195,10 @@ public class GameView extends SurfaceView {
                     if(mapaEscuela.getBotones().getBotonCercleB().contains(x,y)){
                         Log.d(TAG, "boton B");
                     }*/
-            }
+
 
             //hideUI();
-            return super.onTouchEvent(event);
+            //return super.onTouchEvent(event);
         }
     }
 

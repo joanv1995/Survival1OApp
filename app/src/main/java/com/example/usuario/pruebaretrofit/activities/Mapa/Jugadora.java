@@ -30,6 +30,7 @@ public class Jugadora {
     private int direccio; // direction = 0 right, 1 left, 2 up, 3 down,
     private Rect src = new Rect();
     private int speed = 1;
+    private boolean meTengoQueMover = false;
 
     public Jugadora(GameView gameView,Bitmap bmp, PointF posicion) {
         this.bmp = bmp;
@@ -55,18 +56,38 @@ public class Jugadora {
     public int getSpeed() {
         return speed;
     }
-
     public Bitmap getBmp() {
         return bmp;
     }
+    public boolean isMeTengoQueMover() {
+        return meTengoQueMover;
+    }
+    public void setMeTengoQueMover(boolean meTengoQueMover) {
+        this.meTengoQueMover = meTengoQueMover;
+    }
 
-    private void update(){
+    protected void update(){
         // canviar la posicio
+        switch (direccio){
+            case 1:
+                setPosicion(posicion.x - speed,posicion.y);
+                break;
+            case 0:
+                setPosicion(posicion.x + speed,posicion.y);
+                break;
+            case 2:
+                setPosicion(posicion.x,posicion.y - speed);
+                break;
+            case 3:
+                setPosicion(posicion.x,posicion.y + speed);
+                break;
+        }
     }
 
     protected Rect onDraw(Canvas canvas) {
         Log.d(TAG,"onDraw");
-        //update();
+        if(meTengoQueMover) // si estoy apretando, cambio de posicion
+            update();
         int srcX = currentFrame * width;
         int srcY = getAnimationRow() * height;
         src.set(srcX, srcY, srcX + width, srcY + height); //retalla la imatge segons l'animacio
@@ -79,24 +100,5 @@ public class Jugadora {
         return DIRECTION_TO_ANIMATION_MAP_JUGADORA[direccio];
     }
 
-    /*private boolean estaDinsDeMalla(PointF p){
-        return p.x <= gameView.getMalla()[0].length-gameView.getZoomBitmap()-1 && p.x >= gameView.getZoomBitmap()-1
-                && p.y <= (gameView.getMalla().length-gameView.getZoomBitmap()-1) && p.y >= gameView.getZoomBitmap()-1;
-    }
 
-    private boolean esPotTrepitjar(PointF p){
-        // si per les celes proximes no toca la imatge del bitmap amb taules o merdes
-        int[] vec = {gameView.getZoomBitmap()-1, -(gameView.getZoomBitmap()-1), 0, 0};
-        // de les quatre celes del voltant, miro es la que esta mes aprop de l'objectiu
-        try {
-            for (int i = 0; i < 4; i++) {
-                if(!gameView.getMalla()[(int) p.y + vec[vec.length-1-i]][(int) p.x + vec[i]].contains("-"))
-                    return false;
-            }
-        } catch (Exception e) {
-            return false;
-        }
-        // Si la cela p hi ha cami:
-        return gameView.getMalla()[(int)p.y][(int)p.x].contains("-");
-    }*/
 }
