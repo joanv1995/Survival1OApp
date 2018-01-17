@@ -152,8 +152,9 @@ public class GameView extends SurfaceView {
                     if(quinMapa == 0){
                         // JOAN, reproduce lo que he hecho con el mapa grande
                     } else if(quinMapa == 1){
-                        mapaGrande.cambiarDireccionJugadora(x,y); // le paso la direccion
+                        mapaGrande.processButtons(x,y); // le paso la direccion
                         mapaGrande.getJugadora().setMeTengoQueMover(true); // y le cambio el nuevo boleano para que sepa que estoy apretando el boton
+
                     }
                     break;
 

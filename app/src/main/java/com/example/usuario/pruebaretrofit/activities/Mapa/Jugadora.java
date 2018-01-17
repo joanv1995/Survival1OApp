@@ -29,7 +29,7 @@ public class Jugadora {
     private PointF posicion;
     private int direccio; // direction = 0 right, 1 left, 2 up, 3 down,
     private Rect src = new Rect();
-    private int speed = 1;
+    private int speed = 2;
     private boolean meTengoQueMover = false;
 
     public Jugadora(GameView gameView,Bitmap bmp, PointF posicion) {
@@ -47,6 +47,9 @@ public class Jugadora {
         this.posicion.set(posicionX,posicionY);
         currentFrame = ++currentFrame % BMP_COLUMNS_JUGADORA;
     }
+    public void runCurrentFrame(){
+        currentFrame = ++currentFrame % BMP_COLUMNS_JUGADORA;
+    }
     public void setDireccio(int direccio) {
         this.direccio = direccio;
     }
@@ -55,6 +58,9 @@ public class Jugadora {
     }
     public int getSpeed() {
         return speed;
+    }
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
     public Bitmap getBmp() {
         return bmp;
@@ -89,8 +95,8 @@ public class Jugadora {
 
     protected Rect onDraw(Canvas canvas) {
         Log.d(TAG,"onDraw");
-        if(meTengoQueMover) // si estoy apretando, cambio de posicion
-            update();
+        //if(meTengoQueMover) // si estoy apretando, cambio de posicion
+        //    update();
         Log.d(TAG,"X: " + posicion.x);Log.d(TAG,"Y: " + posicion.y);
         int srcX = currentFrame * width;
         int srcY = getAnimationRow() * height;
