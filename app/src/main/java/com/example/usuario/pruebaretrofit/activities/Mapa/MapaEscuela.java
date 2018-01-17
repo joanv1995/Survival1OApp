@@ -170,6 +170,36 @@ public class MapaEscuela {
         Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resouce);
         return new IA(gameView, bmp, "v", pos, obj, this); // de la malla //TODO borrar gameview
     }
+    public void interactionOneTouch(int x, int y){
+        if(this.getBotones().getBotonRecHorizLeft().contains(x,y)){
+            Log.d(TAG,"boton Left");
+            this.getJugadora().setDireccio(1);
+            this.getJugadora().setPosicion(this.getJugadora().getPosicion().x - this.getJugadora().getSpeed(),this.getJugadora().getPosicion().y);
+        }else if(this.getBotones().getBotonRecHorizRigth().contains(x,y)) {
+            Log.d(TAG, "boton Right");
+            this.getJugadora().setDireccio(0);
+            this.getJugadora().setPosicion(this.getJugadora().getPosicion().x + this.getJugadora().getSpeed(),this.getJugadora().getPosicion().y);
+        } else if (this.getBotones().getBotonRecVertArriba().contains(x,y)){
+            Log.d(TAG, "boton Arriba");
+            this.getJugadora().setDireccio(2);
+            this.getJugadora().setPosicion(this.getJugadora().getPosicion().x,this.getJugadora().getPosicion().y - this.getJugadora().getSpeed());
+        } else if (this.getBotones().getBotonRecVertBajo().contains(x,y)){
+            Log.d(TAG, "boton Abajo");
+            this.getJugadora().setDireccio(3);
+            this.getJugadora().setPosicion(this.getJugadora().getPosicion().x,this.getJugadora().getPosicion().y + this.getJugadora().getSpeed());
+        }
+        if(this.getBotones().getBotonCercleA().contains(x,y)){
+            Log.d(TAG, "boton A");
+        }
+        if(this.getBotones().getBotonCercleB().contains(x,y)){
+            Log.d(TAG, "boton B");
+        }
+
+        // mover player , interaccion de una sola respuesta por cada click
+
+
+
+    }
     private Paint quinColor(String s) {
         Paint paint = new Paint();
         switch (s) {

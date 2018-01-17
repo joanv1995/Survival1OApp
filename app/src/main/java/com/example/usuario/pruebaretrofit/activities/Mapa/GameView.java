@@ -148,15 +148,21 @@ public class GameView extends SurfaceView {
         }
     }
 
+
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         synchronized (getHolder()) {
             // direction = 0 right, 1 left, 2 up, 3 down,
             //event.getX(), event.getY()
             int x = Math.round(event.getX()), y = Math.round(event.getY());
+
             switch (quinMapa){
                 case 0: //MapaEscola
+                    mapaEscuela.interactionOneTouch(x,y);
+                /*
                     if(mapaEscuela.getBotones().getBotonRecHorizLeft().contains(x,y)){
+                        Log.d(TAG,"boton Left");
                         mapaEscuela.getJugadora().setDireccio(1);
                         mapaEscuela.getJugadora().setPosicion(mapaEscuela.getJugadora().getPosicion().x - mapaEscuela.getJugadora().getSpeed(),mapaEscuela.getJugadora().getPosicion().y);
                     }else if(mapaEscuela.getBotones().getBotonRecHorizRigth().contains(x,y)) {
@@ -177,7 +183,7 @@ public class GameView extends SurfaceView {
                     }
                     if(mapaEscuela.getBotones().getBotonCercleB().contains(x,y)){
                         Log.d(TAG, "boton B");
-                    }
+                    }*/
             }
 
             //hideUI();
