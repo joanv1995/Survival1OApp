@@ -60,17 +60,19 @@ public class MetodosParaTodos {
     protected static boolean esPotTrepitjar(PointF p, String[][] malla, int zoomBitmap){
         // si per les celes proximes no toca la imatge del bitmap amb taules o merdes
         int[] vec = {zoomBitmap-1, -(zoomBitmap-1), 0, 0};
+        String pp = "";
         // de les quatre celes del voltant, miro es la que esta mes aprop de l'objectiu
         try {
             for (int i = 0; i < 4; i++) {
-                if(!malla[(int) p.y + vec[vec.length-1-i]][(int) p.x + vec[i]].contains("-"))
+                pp = malla[(int) p.y + vec[vec.length-1-i]][(int) p.x + vec[i]];
+                if(!pp.contains("-") && !pp.contains("K") && !pp.contains("P"))
                     return false;
             }
         } catch (Exception e) {
             return false;
         }
         // Si la cela p hi ha cami:
-        return malla[(int)p.y][(int)p.x].contains("-");
+        return malla[(int)p.y][(int)p.x].contains("-") || malla[(int)p.y][(int)p.x].contains("K") || malla[(int)p.y][(int)p.x].contains("P");
     }
 
     protected static int hiHaUnIA(PointF p, int direc, java.util.List<IA> listaIas) {

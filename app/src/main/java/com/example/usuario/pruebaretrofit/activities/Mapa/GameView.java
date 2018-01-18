@@ -152,9 +152,29 @@ public class GameView extends SurfaceView {
                     if(quinMapa == 0){
                         // JOAN, reproduce lo que he hecho con el mapa grande
                     } else if(quinMapa == 1){
-                        mapaGrande.processButtons(x,y); // le paso la direccion
-                        mapaGrande.getJugadora().setMeTengoQueMover(true); // y le cambio el nuevo boleano para que sepa que estoy apretando el boton
+                        //mapaGrande.processButtons(x,y); // le paso la direccion
+                        //mapaGrande.getJugadora().setMeTengoQueMover(true); // y le cambio el nuevo boleano para que sepa que estoy apretando el boton
 
+                        if(mapaGrande.getBotones().getBotonRecHorizLeft().contains(x,y)){ //boton Left
+                            mapaGrande.getJugadora().setDireccio(1);
+                            mapaGrande.getJugadora().setMeTengoQueMover(true);
+                        }else if(mapaGrande.getBotones().getBotonRecHorizRigth().contains(x,y)) {//boton Right
+                            mapaGrande.getJugadora().setDireccio(0);
+                            mapaGrande.getJugadora().setMeTengoQueMover(true);
+                        } else if (mapaGrande.getBotones().getBotonRecVertArriba().contains(x,y)){//boton Arriba
+                            mapaGrande.getJugadora().setDireccio(2);
+                            mapaGrande.getJugadora().setMeTengoQueMover(true);
+                        } else if (mapaGrande.getBotones().getBotonRecVertBajo().contains(x,y)){ //boton Abajo
+                            mapaGrande.getJugadora().setDireccio(3);
+                            mapaGrande.getJugadora().setMeTengoQueMover(true);
+                        }
+                        if(mapaGrande.getBotones().getBotonCercleA().contains(x,y)){
+                            Log.d(TAG, "boton A");
+                        }
+                        if(mapaGrande.getBotones().getBotonCercleB().contains(x,y)){
+                            Log.d(TAG, "boton B");
+
+                        }
                     }
                     break;
 

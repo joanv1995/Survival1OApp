@@ -45,7 +45,6 @@ public class IA extends MuevoImagenes{
     // animation = 3 back, 1 left, 0 front, 2 right
     private static final int[] DIRECTION_TO_ANIMATION_MAP = {2, 1, 3, 0};//{ 3, 1, 0, 2 };
 
-    MetodosParaTodos metodos;
 
     // per dibuixar
     private PointF act = new PointF(), act2 = new PointF();
@@ -64,7 +63,7 @@ public class IA extends MuevoImagenes{
     private boolean meVoy = false, meQuieroMorir= false;
     int tiempoVotando = 10, tiempoVotangoPasado = 0;
 
-    public IA(GameView gameView, Bitmap bmp, String idIa, PointF posicion, PointF posObjetivo, MapaEscuela mapaEscuela){
+    public IA(Bitmap bmp, String idIa, PointF posicion, PointF posObjetivo, MapaEscuela mapaEscuela){
         Log.d(TAG, "inicialitzo un IA");
         //this.gameView=gameView;
         this.bmp=bmp;

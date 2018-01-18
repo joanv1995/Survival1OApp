@@ -168,7 +168,7 @@ public class MapaEscuela {
     }
     private IA createIA(int resouce, PointF pos, PointF obj) {
         Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resouce);
-        return new IA(gameView, bmp, "v", pos, obj, this); // de la malla //TODO borrar gameview
+        return new IA(bmp, "v", pos, obj, this); // de la malla //TODO borrar gameview
     }
     public void interactionOneTouch(int x, int y){
         if(this.getBotones().getBotonRecHorizLeft().contains(x,y)){

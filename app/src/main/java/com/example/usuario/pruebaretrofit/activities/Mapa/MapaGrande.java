@@ -105,7 +105,7 @@ public class MapaGrande {
         for (int i = 0; i < altoMalla; i++) //altura
         {
             anchoInit = (int) jugadora.getPosicion().x - anchoMalla/2;
-            if(anchoInit < 0) //TODO el mateix pero amb els costats de la dreta i a baix
+            if(anchoInit < 0)
                 anchoInit = 0;
             else if (jugadora.getPosicion().x > (malla[0].length - anchoMalla/2))
                 anchoInit = malla[0].length - anchoMalla;
@@ -125,36 +125,19 @@ public class MapaGrande {
                     if(estaDinsDeMalla(new PointF(anchoInit,altoInit),malla,zoomBitmap)) {
                         canvas.drawRect(rec, quinColor(malla[altoInit][anchoInit]));
                     }
-                /*if(malla[altoInit][anchoInit].equals(caracterJugadora)){
-                    rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
-                    canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);
-                    estaJug = true;
-                } else if(estaJug){
-                    estaJugCont++;
-                    if(estaJugCont > zoomBitmap)
-                        estaJug = false;
-                } else if(!estaJug)
-                    canvas.drawRect(rec, quinColor(malla[altoInit][anchoInit]));*/
                     anchoInit++;
 
             }
             altoInit++;
         }
-        //recBtm = jugadora.onDraw(canvas);
-        //if(jugadora.isMeTengoQueMover())
-        //moverJugadoraEnMalla();
-        //if(!espero) {
-            recBtm = jugadora.onDraw(canvas);
-            x = xx * ample + margeAmpl / 2;
-            y = yy * altura + margeAlt / 2;
-            rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
-            canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);
-        //}
-        //rec.set(xx - zoomBitmap * ample, yy - zoomBitmap * altura, xx + z
-            // oomBitmap * ample, yy + zoomBitmap * altura);
-        //canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);
-        //startTime = System.currentTimeMillis()-startTime;
-        //Log.d(TAG,"Pintar mapa: " + startTime);
+        if(espero)
+            jugadora.runCurrentFrame();
+        recBtm = jugadora.onDraw(canvas);
+        x = xx * ample + margeAmpl / 2;
+        y = yy * altura + margeAlt / 2;
+        rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
+        canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);
+
         Paint paint = new Paint();
         int a = -1;
         //startTime = System.currentTimeMillis();
@@ -227,7 +210,7 @@ public class MapaGrande {
         return new Jugadora(gameView, bmp, pos);
     }
 
-    protected void processButtons(int x, int y){ // ya que los botones se inicializan aqui, el metodo de cambiar direccion no lo puedo poner en jugadora
+    /*protected void processButtons(int x, int y){ // ya que los botones se inicializan aqui, el metodo de cambiar direccion no lo puedo poner en jugadora
         if(this.getBotones().getBotonRecHorizLeft().contains(x,y)){ //boton Left
             jugadora.setDireccio(1);
             //jugadora.setPosicion(jugadora.getPosicion().x - jugadora.getSpeed(),jugadora.getPosicion().y);
@@ -248,29 +231,25 @@ public class MapaGrande {
             Log.d(TAG, "boton B");
 
         }
-    }
+    }*/
 
     private boolean moverJugadora(){
         PointF p = new PointF();
         switch (jugadora.getDireccio()){
             case 1:
                 p.set(jugadora.getPosicion().x - jugadora.getSpeed(),jugadora.getPosicion().y);
-                //jugadora.setPosicion(jugadora.getPosicion().x - jugadora.getSpeed(),jugadora.getPosicion().y);
                 break;
             case 0:
                 p.set(jugadora.getPosicion().x + jugadora.getSpeed(),jugadora.getPosicion().y);
-                //jugadora.setPosicion(jugadora.getPosicion().x + jugadora.getSpeed(),jugadora.getPosicion().y);
                 break;
             case 2:
                 p.set(jugadora.getPosicion().x,jugadora.getPosicion().y - jugadora.getSpeed());
-                //jugadora.setPosicion(jugadora.getPosicion().x,jugadora.getPosicion().y - jugadora.getSpeed());
                 break;
             case 3:
                 p.set(jugadora.getPosicion().x,jugadora.getPosicion().y + jugadora.getSpeed());
-                //jugadora.setPosicion(jugadora.getPosicion().x,jugadora.getPosicion().y + jugadora.getSpeed());
                 break;
         }
-        if(estaDinsDeMalla(p,malla,zoomBitmap)){
+        if(estaDinsDeMalla(p,malla,zoomBitmap) && esPotTrepitjar(p,malla,zoomBitmap)){
             jugadora.setPosicion(p);
             return true;
         } else{
