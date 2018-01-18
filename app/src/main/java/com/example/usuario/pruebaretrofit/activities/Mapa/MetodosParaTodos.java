@@ -97,6 +97,28 @@ public class MetodosParaTodos {
         return cont > 1 ? 1 : 0;
     }
 
+    protected static int hiHaUnPoli(PointF p, int direc, java.util.List<IAPolicias> listaPolicies) {
+        // 0: no hi ha, 1: hi ha, 2: esta de cara costat, 3 esta e cara vertical
+        // 0-1 2-3
+        int cont = 0;
+        for (IAPolicias ia : listaPolicies) {
+            if (ia.getAnima().contains((int) p.x, (int) p.y)) {// && !ia.getPosicion().equals(pos)) {
+                if (Math.abs(direc - ia.getDireccio()) == 1) {
+                    if (!((direc == 2 || ia.getDireccio() == 2) &&
+                            (direc == 1 || ia.getDireccio() == 1))) {
+                        if ((direc == 0 || ia.getDireccio() == 0) &&
+                                (direc == 1 || ia.getDireccio() == 1)) {
+                            return 2;
+                        } else
+                            return 3;
+                    }
+                }
+                cont++;
+            }
+        }
+        return cont > 1 ? 1 : 0;
+    }
+
     protected static int buscarIAperPosicio(PointF p, java.util.List<IA> listaIas) {
         for (IA ia : listaIas) {
             if (ia.getPosicion().equals(p))

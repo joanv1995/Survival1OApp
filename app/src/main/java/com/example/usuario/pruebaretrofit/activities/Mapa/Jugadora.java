@@ -29,7 +29,7 @@ public class Jugadora {
     private PointF posicion;
     private int direccio; // direction = 0 right, 1 left, 2 up, 3 down,
     private Rect src = new Rect();
-    private int speed = 2;
+    private int speed = 4;
     private boolean meTengoQueMover = false;
 
     public Jugadora(GameView gameView,Bitmap bmp, PointF posicion) {
