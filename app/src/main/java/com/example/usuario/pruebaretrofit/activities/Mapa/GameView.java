@@ -3,12 +3,16 @@ package com.example.usuario.pruebaretrofit.activities.Mapa;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.example.usuario.pruebaretrofit.R;
+
+import java.util.Timer;
+import java.util.concurrent.TimeUnit;
 
 public class GameView extends SurfaceView {
     private final String TAG = this.getClass().getSimpleName();
@@ -17,6 +21,7 @@ public class GameView extends SurfaceView {
     private int canvasWidth, canvasHeight;
     protected int margeAmpl = 0, margeAlt = 0;
     private Rect rectangleCanvas = new Rect();
+    private CountDownTimer timer;
 
     // per dibuixar
     private int x = 0, y = 0;
@@ -32,7 +37,17 @@ public class GameView extends SurfaceView {
     //        | View.SYSTEM_UI_FLAG_FULLSCREEN;
 
 
-    private int quinMapa = 1; // mapaEscuela=0, mapaGrande = 1, minijuegos = 2
+
+    public int getCanvasWidth() {
+        return canvasWidth;
+    }
+
+    public int getCanvasHeight() {
+        return canvasHeight;
+    }
+
+    private int quinMapa = 0; // mapaEscuela=0, mapaGrande = 1, minijuegos = 2
+
 
     public GameView(Context context) {
         super(context);
@@ -128,7 +143,6 @@ public class GameView extends SurfaceView {
         //Log.d(TAG,"canvasHeight " + altura);
 
         if (quinMapa == 0) { //Mapa escola
-
             canvas = mapaEscuela.dibujoElMapaEscuela(canvas, ample, altura, margeAlt, margeAmpl);
 
         } else if(quinMapa == 1){
