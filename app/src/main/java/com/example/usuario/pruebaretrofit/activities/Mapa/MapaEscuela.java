@@ -92,6 +92,9 @@ public class MapaEscuela {
 
     protected Canvas dibujoElMapaEscuela(Canvas canvas, int ample, int altura, int margeAlt, int margeAmpl){
         //startTime = System.currentTimeMillis();
+        boolean espero = false;
+        if(jugadora.isMeTengoQueMover())
+            espero = !moverJugadora();
 
         for (int i = 0; i < malla.length; i++) //altura
         {
@@ -110,7 +113,7 @@ public class MapaEscuela {
         //startTime = System.currentTimeMillis();
         for (IA ia : listaIas) {
             //startTime2 = System.currentTimeMillis();
-            recBtm = ia.onDraw(canvas);
+            recBtm = ia.onDraw(canvas,jugadora);
             if (ia.isMeQuieroMorir())
                 a = listaIas.indexOf(ia);
             else {
@@ -138,6 +141,8 @@ public class MapaEscuela {
             esperaIAs++;
 
         // JOAN!!! Aqui se dibuja el player
+        if(espero)
+            jugadora.runCurrentFrame();
         recBtm = jugadora.onDraw(canvas);
         x = (int) jugadora.getPosicion().x * ample + margeAmpl / 2;
         y = (int) jugadora.getPosicion().y * altura + margeAlt / 2;
@@ -204,6 +209,31 @@ public class MapaEscuela {
     private IA createIA(int resouce, PointF pos, PointF obj) {
         Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resouce);
         return new IA(bmp, "v", pos, obj, this); // de la malla //TODO borrar gameview
+    }
+
+    private boolean moverJugadora(){
+        PointF p = new PointF();
+        switch (jugadora.getDireccio()){
+            case 1:
+                p.set(jugadora.getPosicion().x - jugadora.getSpeed(),jugadora.getPosicion().y);
+                break;
+            case 0:
+                p.set(jugadora.getPosicion().x + jugadora.getSpeed(),jugadora.getPosicion().y);
+                break;
+            case 2:
+                p.set(jugadora.getPosicion().x,jugadora.getPosicion().y - jugadora.getSpeed());
+                break;
+            case 3:
+                p.set(jugadora.getPosicion().x,jugadora.getPosicion().y + jugadora.getSpeed());
+                break;
+        }
+        if(estaDinsDeMalla(p,malla,zoomBitmap) && esPotTrepitjar(p,malla,zoomBitmap/2)){
+            jugadora.setPosicion(p);
+            jugadora.calculaAnimes(zoomBitmap);
+            return true;
+        } else{
+            return false;
+        }
     }
     public void interactionOneTouch(int x, int y){
         if(this.getBotones().getBotonRecHorizLeft().contains(x,y)){

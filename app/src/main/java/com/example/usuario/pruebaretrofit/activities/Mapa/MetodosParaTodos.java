@@ -139,6 +139,7 @@ public class MetodosParaTodos {
         return 0;
     }
 
+
     protected static int buscarIAperPosicio(PointF p, java.util.List<IA> listaIas) {
         for (IA ia : listaIas) {
             if (ia.getPosicion().equals(p))

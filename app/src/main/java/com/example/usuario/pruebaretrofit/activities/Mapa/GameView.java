@@ -36,16 +36,6 @@ public class GameView extends SurfaceView {
     //int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
     //        | View.SYSTEM_UI_FLAG_FULLSCREEN;
 
-
-
-    public int getCanvasWidth() {
-        return canvasWidth;
-    }
-
-    public int getCanvasHeight() {
-        return canvasHeight;
-    }
-
     private int quinMapa = 0; // mapaEscuela=0, mapaGrande = 1, minijuegos = 2
 
 
@@ -105,6 +95,12 @@ public class GameView extends SurfaceView {
 
     public int getZoomBitmap() {
         return zoomBitmap;
+    }
+    public int getCanvasWidth() {
+        return canvasWidth;
+    }
+    public int getCanvasHeight() {
+        return canvasHeight;
     }
 
     private int midaCanvas(int canvasT, int length) {
@@ -166,7 +162,26 @@ public class GameView extends SurfaceView {
                 // Player has touched the screen
                 case MotionEvent.ACTION_DOWN:
                     if(quinMapa == 0){
-                        // JOAN, reproduce lo que he hecho con el mapa grande
+                        if(mapaEscuela.getBotones().getBotonRecHorizLeft().contains(x,y)){ //boton Left
+                            mapaEscuela.getJugadora().setDireccio(1);
+                            mapaEscuela.getJugadora().setMeTengoQueMover(true);
+                        }else if(mapaEscuela.getBotones().getBotonRecHorizRigth().contains(x,y)) {//boton Right
+                            mapaEscuela.getJugadora().setDireccio(0);
+                            mapaEscuela.getJugadora().setMeTengoQueMover(true);
+                        } else if (mapaEscuela.getBotones().getBotonRecVertArriba().contains(x,y)){//boton Arriba
+                            mapaEscuela.getJugadora().setDireccio(2);
+                            mapaEscuela.getJugadora().setMeTengoQueMover(true);
+                        } else if (mapaEscuela.getBotones().getBotonRecVertBajo().contains(x,y)){ //boton Abajo
+                            mapaEscuela.getJugadora().setDireccio(3);
+                            mapaEscuela.getJugadora().setMeTengoQueMover(true);
+                        }
+                        if(mapaEscuela.getBotones().getBotonCercleA().contains(x,y)){
+                            Log.d(TAG, "boton A");
+                        }
+                        if(mapaEscuela.getBotones().getBotonCercleB().contains(x,y)){
+                            Log.d(TAG, "boton B");
+
+                        }
                     } else if(quinMapa == 1){
                         //mapaGrande.processButtons(x,y); // le paso la direccion
                         //mapaGrande.getJugadora().setMeTengoQueMover(true); // y le cambio el nuevo boleano para que sepa que estoy apretando el boton
@@ -198,6 +213,7 @@ public class GameView extends SurfaceView {
                 case MotionEvent.ACTION_UP:
                     if(quinMapa == 0){
                         // JOAN, reproduce lo que he hecho con el mapa grande
+                        mapaEscuela.getJugadora().setMeTengoQueMover(false);
                     } else if(quinMapa == 1) {
                         mapaGrande.getJugadora().setMeTengoQueMover(false); // en el momento que dejo de apretar, le digo que pare
                     }

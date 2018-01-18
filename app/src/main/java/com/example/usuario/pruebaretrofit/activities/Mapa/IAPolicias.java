@@ -152,7 +152,7 @@ public class IAPolicias {
 
             // si m'ho ha calculat bé, actualitzo posicio
             if(!enEspera && hiHaUnPoli(act2, direccio, mapa.getListaPolicias()) == 0 && hiHaLaJugadora(act2,  direccio, jugadora)==0){//gameView.hiHaUnIA(act2,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
-                posAntiga = new PointF(posicion.x,posicion.y);
+                posAntiga = new PointF(posicion.x, posicion.y);
                 posicion.set(act);
                 calculaAnimes();
                 currentFrame = ++currentFrame % BMP_COLUMNS;

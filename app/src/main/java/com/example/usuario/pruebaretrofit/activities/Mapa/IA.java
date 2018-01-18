@@ -135,7 +135,7 @@ public class IA extends MuevoImagenes{
         return meQuieroMorir;
     }
 
-    private void update() {
+    private void update(Jugadora jugadora) {
         Log.d(TAG, "Update: moc una casella");
         if(haArribat())
             enEspera = true;
@@ -162,7 +162,7 @@ public class IA extends MuevoImagenes{
                             // 3: estan en vertical, han d'escapar un per la dreta i l'altre per l'esquerra
                     } else {
                         double distancia = calculaDistancia(p, getPosObjetivo());
-                        if (distancia < min && /*estaDinsDeMalla(p)*/ estaDinsDeMalla(p, mapa.getMalla(), mapa.getZoomBitmap())
+                        if (distancia < min && estaDinsDeMalla(p, mapa.getMalla(), mapa.getZoomBitmap())
                                 && esPotTrepitjar(p, mapa.getMalla(), mapa.getZoomBitmap()) && !p.equals(posAntiga)) {
                             direccio = i;
                             min = calculaDistancia(p, getPosObjetivo());
@@ -179,7 +179,7 @@ public class IA extends MuevoImagenes{
             }
 
             // si m'ho ha calculat bé, actualitzo posicio
-            if(!enEspera && hiHaUnIA(act2, direccio, mapa.getListaIas()) == 0){//gameView.hiHaUnIA(act2,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
+            if(!enEspera && hiHaUnIA(act2, direccio, mapa.getListaIas()) == 0 && hiHaLaJugadora(act2,  direccio, jugadora)==0){//gameView.hiHaUnIA(act2,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
                 posAntiga = new PointF(getPosicion().x,getPosicion().y);
                 setPosicion(act);
                 calculaAnimes();
@@ -222,9 +222,9 @@ public class IA extends MuevoImagenes{
         return  sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
     }*/
 
-    protected Rect onDraw(Canvas canvas) {
+    protected Rect onDraw(Canvas canvas, Jugadora jugadora) {
         Log.d(TAG,"onDraw");
-        update();
+        update(jugadora);
         int srcX = currentFrame * width;
         int srcY = getAnimationRow() * height;
         src.set(srcX, srcY, srcX + width, srcY + height); //retalla la imatge segons l'animacio
