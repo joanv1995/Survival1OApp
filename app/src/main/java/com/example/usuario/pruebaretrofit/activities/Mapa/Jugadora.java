@@ -26,6 +26,7 @@ public class Jugadora {
     private int width; // de la imatge
     private int height;
 
+    private Rect anima = new Rect();
     private PointF posicion;
     private int direccio; // direction = 0 right, 1 left, 2 up, 3 down,
     private Rect src = new Rect();
@@ -75,7 +76,20 @@ public class Jugadora {
     public int getDireccio() {
         return direccio;
     }
+    public Rect getAnima() {
+        return anima;
+    }
 
+    public void setAnima(Rect anima) {
+        this.anima = anima;
+    }
+
+    protected void calculaAnimes(int zoom){
+        // [files][columnes]
+        this.anima.set((int) posicion.x - zoom+1, (int) posicion.y - zoom,
+                (int) posicion.x + zoom, (int) posicion.y + zoom);
+        Log.d(TAG,"ANIMA::: " + anima );
+    }
     protected void update(){
         // canviar la posicio
         switch (direccio){

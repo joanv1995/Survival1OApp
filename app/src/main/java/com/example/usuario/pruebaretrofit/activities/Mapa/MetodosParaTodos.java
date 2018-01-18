@@ -119,6 +119,26 @@ public class MetodosParaTodos {
         return cont > 1 ? 1 : 0;
     }
 
+    protected static int hiHaLaJugadora(PointF p, int direc, Jugadora jugadora) {
+        // 0: no hi ha, 1: hi ha, 2: esta de cara costat, 3 esta e cara vertical
+        // 0-1 2-3
+        int cont = 0;
+        if (jugadora.getAnima().contains((int) p.x, (int) p.y)) {// && !ia.getPosicion().equals(pos)) {
+            if (Math.abs(direc - jugadora.getDireccio()) == 1) {
+                if (!((direc == 2 || jugadora.getDireccio() == 2) &&
+                        (direc == 1 || jugadora.getDireccio() == 1))) {
+                    if ((direc == 0 || jugadora.getDireccio() == 0) &&
+                            (direc == 1 || jugadora.getDireccio() == 1)) {
+                        return 2;
+                    } else
+                        return 3;
+                }
+            }
+            return 1;
+        }
+        return 0;
+    }
+
     protected static int buscarIAperPosicio(PointF p, java.util.List<IA> listaIas) {
         for (IA ia : listaIas) {
             if (ia.getPosicion().equals(p))

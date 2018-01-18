@@ -148,15 +148,21 @@ public class MapaGrande {
             }
             altoInit++;
         }
+        Paint paint = new Paint();
+        paint.setColor(context.getResources().getColor(R.color.Olive));
         if(espero)
             jugadora.runCurrentFrame();
         recBtm = jugadora.onDraw(canvas);
         x = xx * ample + margeAmpl / 2;
         y = yy * altura + margeAlt / 2;
         rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
-        canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);
 
-        Paint paint = new Paint();
+        canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);
+        //canvas.drawRect((jugadora.getAnima().left-cuadradoMapa.left)*ample+ margeAmpl / 2,
+        //        (jugadora.getAnima().top - cuadradoMapa.top)*altura+ margeAlt / 2,(jugadora.getAnima().right - cuadradoMapa.top)*ample+ margeAmpl / 2,
+        //        (jugadora.getAnima().bottom-cuadradoMapa.top)*altura+ margeAlt / 2,paint);
+
+
         int a = -1;
         //startTime = System.currentTimeMillis();
         for (IAPolicias ia : listaPolicias) {
@@ -165,13 +171,14 @@ public class MapaGrande {
             if (ia.isMeQuieroMorir())
                 a = listaPolicias.indexOf(ia);
             else {
-                recBtm = ia.onDraw(canvas);
+                recBtm = ia.onDraw(canvas, jugadora);
                 if (cuadradoMapa.contains((int) ia.getPosicion().x, (int) ia.getPosicion().y)) {
                     //recBtm = ia.onDraw(canvas);
                     x = (int) (ia.getPosicion().x - cuadradoMapa.left) * ample + margeAmpl / 2;
                     y = (int) (ia.getPosicion().y - cuadradoMapa.top) * altura + margeAlt / 2;
                     rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
                     canvas.drawBitmap(ia.getBmp(), recBtm, rec, null);
+
 
                     int xxx = (int) (ia.getPosObjetivo().x - cuadradoMapa.left) * ample + margeAmpl / 2, yyy = (int) (ia.getPosObjetivo().y - cuadradoMapa.top) * altura + margeAlt / 2;
                     Rect rec = new Rect(xxx - 10, yyy - 10, xxx + 10, yyy + 10);
@@ -289,6 +296,7 @@ public class MapaGrande {
         }
         if(estaDinsDeMalla(p,malla,zoomBitmap) && esPotTrepitjar(p,malla,zoomBitmap/2)){
             jugadora.setPosicion(p);
+            jugadora.calculaAnimes(zoomBitmap);
             return true;
         } else{
             return false;

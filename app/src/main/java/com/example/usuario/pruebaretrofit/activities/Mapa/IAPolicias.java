@@ -90,6 +90,10 @@ public class IAPolicias {
         return posObjetivo;
     }
 
+    public void setAnima(Rect anima) {
+        this.anima = anima;
+    }
+
     public boolean isMeQuieroMorir() {
         return meQuieroMorir;
     }
@@ -104,7 +108,7 @@ public class IAPolicias {
                 (int) posicion.x + mapa.getZoomBitmap()-1, (int) posicion.y + mapa.getZoomBitmap());
     }
 
-    private void update() {
+    private void update(Jugadora jugadora) {
         Log.d(TAG, "Update: moc una casella");
         /*if(haArribat())
             enEspera = true;
@@ -147,7 +151,7 @@ public class IAPolicias {
             }
 
             // si m'ho ha calculat bé, actualitzo posicio
-            if(!enEspera && hiHaUnPoli(act2, direccio, mapa.getListaPolicias()) == 0){//gameView.hiHaUnIA(act2,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
+            if(!enEspera && hiHaUnPoli(act2, direccio, mapa.getListaPolicias()) == 0 && hiHaLaJugadora(act2,  direccio, jugadora)==0){//gameView.hiHaUnIA(act2,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
                 posAntiga = new PointF(posicion.x,posicion.y);
                 posicion.set(act);
                 calculaAnimes();
@@ -188,9 +192,9 @@ public class IAPolicias {
         }
     }
 
-    protected Rect onDraw(Canvas canvas) {
+    protected Rect onDraw(Canvas canvas, Jugadora posJug) {
         Log.d(TAG,"onDraw");
-        update();
+        update(posJug);
         int srcX = currentFrame * width;
         int srcY = getAnimationRow() * height;
         src.set(srcX, srcY, srcX + width, srcY + height); //retalla la imatge segons l'animacio

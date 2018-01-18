@@ -32,7 +32,7 @@ public class GameView extends SurfaceView {
     //        | View.SYSTEM_UI_FLAG_FULLSCREEN;
 
 
-    private int quinMapa = 0; // mapaEscuela=0, mapaGrande = 1, minijuegos = 2
+    private int quinMapa = 1; // mapaEscuela=0, mapaGrande = 1, minijuegos = 2
 
     public GameView(Context context) {
         super(context);
