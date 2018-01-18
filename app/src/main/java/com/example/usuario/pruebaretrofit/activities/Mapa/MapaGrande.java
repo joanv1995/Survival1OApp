@@ -11,6 +11,9 @@ import android.util.Log;
 
 import com.example.usuario.pruebaretrofit.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.example.usuario.pruebaretrofit.activities.Mapa.MetodosParaTodos.*;
 
 /**
@@ -26,6 +29,7 @@ public class MapaGrande {
     private String[][] malla;
     private String caracterAnterior, caracterJugadora = "@";
     private int zoomBitmap = 5;
+    private Rect cuadradoMapa = new Rect();
 
     private BotonesDeMapas botones;
     private Jugadora jugadora;
@@ -33,6 +37,8 @@ public class MapaGrande {
     private int x = 0, y = 0, altoInit, anchoInit;
     private Rect rec = new Rect(), recBtm = new Rect();
 
+    private java.util.List<IAPolicias> listaPolicias = new ArrayList<>();
+    private int esperaIAs;
 
 
     public MapaGrande(Context context, GameView gameView) {
@@ -40,7 +46,7 @@ public class MapaGrande {
         this.gameView = gameView;
 
         malla = llegirMapaTxt("mapaGeneral3", context);
-        jugadora = createJugadora(R.drawable.bad3,new PointF(150,95));
+        jugadora = createJugadora(R.drawable.bad3,new PointF(150,100));
         botones = new BotonesDeMapas();
     }
 
@@ -52,6 +58,12 @@ public class MapaGrande {
     }
     public Jugadora getJugadora() {
         return jugadora;
+    }
+    public int getZoomBitmap() {
+        return zoomBitmap;
+    }
+    public List<IAPolicias> getListaPolicias() {
+        return listaPolicias;
     }
 
     private Paint quinColor(String s) {
@@ -100,6 +112,14 @@ public class MapaGrande {
         else if (jugadora.getPosicion().y > (malla.length - (zoomBitmap + altoMalla/2)))
             altoInit = malla.length - (altoMalla + zoomBitmap);
 
+        anchoInit = (int) jugadora.getPosicion().x - anchoMalla/2;
+        if(anchoInit < 0)
+            anchoInit = 0;
+        else if (jugadora.getPosicion().x > (malla[0].length - anchoMalla/2))
+            anchoInit = malla[0].length - anchoMalla;
+
+        cuadradoMapa.set(anchoInit + zoomBitmap/3, altoInit + zoomBitmap/3,
+                anchoInit + anchoMalla - zoomBitmap/3,altoInit + altoMalla - zoomBitmap/3);
 
         boolean estaJug = false; int estaJugCont = 0, xx = 0, yy = 0;
         for (int i = 0; i < altoMalla; i++) //altura
@@ -116,16 +136,14 @@ public class MapaGrande {
                     xx = j; yy = i;
                 }
 
-                    x = j * ample + margeAmpl / 2;
-                    y = i * altura + margeAlt / 2;
-                    rec.set(x, y, x + ample, y + altura);
-                    /*if(malla[altoInit][anchoInit].contains(caracterJugadora)){
-                        xx = anchoInit; yy = altoInit;
-                    } else*/
-                    if(estaDinsDeMalla(new PointF(anchoInit,altoInit),malla,zoomBitmap)) {
-                        canvas.drawRect(rec, quinColor(malla[altoInit][anchoInit]));
-                    }
-                    anchoInit++;
+                x = j * ample + margeAmpl / 2;
+                y = i * altura + margeAlt / 2;
+                rec.set(x, y, x + ample, y + altura);
+
+                if (estaDinsDeMalla(new PointF(anchoInit, altoInit), malla, zoomBitmap)) {
+                    canvas.drawRect(rec, quinColor(malla[altoInit][anchoInit]));
+                }
+                anchoInit++;
 
             }
             altoInit++;
@@ -141,35 +159,48 @@ public class MapaGrande {
         Paint paint = new Paint();
         int a = -1;
         //startTime = System.currentTimeMillis();
-        /*for (IA ia : listaIas) {
+        for (IAPolicias ia : listaPolicias) {
             //startTime2 = System.currentTimeMillis();
-            recBtm = ia.onDraw(canvas);
-            if (ia.isMeQuieroMorir())
-                a = listaIas.indexOf(ia);
-            else {
-                x = (int) ia.getPosicion().x * ample + margeAmpl / 2;
-                y = (int) ia.getPosicion().y * altura + margeAlt / 2;
-                rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
-                canvas.drawBitmap(ia.getBmp(), recBtm, rec, null);
 
-                int xx = (int) ia.getPosObjetivo().x * ample + margeAmpl / 2, yy = (int) ia.getPosObjetivo().y * altura + margeAlt / 2;
-                Rect rec = new Rect(xx - 10, yy - 10, xx + 10, yy + 10);
-                paint.setColor(context.getResources().getColor(R.color.colorPrimary));
-                canvas.drawRect(rec, paint);
+            if (ia.isMeQuieroMorir())
+                a = listaPolicias.indexOf(ia);
+            else {
+                recBtm = ia.onDraw(canvas);
+                if (cuadradoMapa.contains((int) ia.getPosicion().x, (int) ia.getPosicion().y)) {
+                    //recBtm = ia.onDraw(canvas);
+                    x = (int) (ia.getPosicion().x - cuadradoMapa.left) * ample + margeAmpl / 2;
+                    y = (int) (ia.getPosicion().y - cuadradoMapa.top) * altura + margeAlt / 2;
+                    rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
+                    canvas.drawBitmap(ia.getBmp(), recBtm, rec, null);
+
+                    int xxx = (int) (ia.getPosObjetivo().x - cuadradoMapa.left) * ample + margeAmpl / 2, yyy = (int) (ia.getPosObjetivo().y - cuadradoMapa.top) * altura + margeAlt / 2;
+                    Rect rec = new Rect(xxx - 10, yyy - 10, xxx + 10, yyy + 10);
+                    paint.setColor(context.getResources().getColor(R.color.colorPrimary));
+                    canvas.drawRect(rec, paint);
+                }
             }
+            //}
             //startTime2 = System.currentTimeMillis()-startTime2;
             //Log.d(TAG,"Dibuixar un Ia: " + startTime2);
         }
-        if (a != -1)
-            listaIas.remove(a);
 
+        // respawn d'ias
+        if (esperaIAs == 5) {
+            polisNonStop();
+            esperaIAs = 0;
+        } else
+            esperaIAs++;
+
+        if (a != -1)
+            listaPolicias.remove(a);
+/*
         // respawn d'ias
         if (esperaIAs == 5) {
             iasNonStop();
             esperaIAs = 0;
         } else
             esperaIAs++;
-*/
+
         // JOAN!!! Aqui se dibuja el player
         /*recBtm = jugadora.onDraw(canvas);
         //if(jugadora.isMeTengoQueMover())
@@ -210,6 +241,13 @@ public class MapaGrande {
         return new Jugadora(gameView, bmp, pos);
     }
 
+    private void polisNonStop() {
+        listaPolicias.add(createPoli(R.drawable.bad4, new PointF(10, 10), new PointF(201, 120)));
+    }
+    private IAPolicias createPoli(int resouce, PointF pos, PointF obj) {
+        Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resouce);
+        return new IAPolicias(bmp, "poli", pos, obj, this); // de la malla
+    }
     /*protected void processButtons(int x, int y){ // ya que los botones se inicializan aqui, el metodo de cambiar direccion no lo puedo poner en jugadora
         if(this.getBotones().getBotonRecHorizLeft().contains(x,y)){ //boton Left
             jugadora.setDireccio(1);
@@ -249,7 +287,7 @@ public class MapaGrande {
                 p.set(jugadora.getPosicion().x,jugadora.getPosicion().y + jugadora.getSpeed());
                 break;
         }
-        if(estaDinsDeMalla(p,malla,zoomBitmap) && esPotTrepitjar(p,malla,zoomBitmap)){
+        if(estaDinsDeMalla(p,malla,zoomBitmap) && esPotTrepitjar(p,malla,zoomBitmap/2)){
             jugadora.setPosicion(p);
             return true;
         } else{

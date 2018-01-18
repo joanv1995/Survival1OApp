@@ -14,7 +14,7 @@ import static com.example.usuario.pruebaretrofit.activities.Mapa.MetodosParaTodo
 import static java.lang.Math.sqrt;
 
 public class IA extends MuevoImagenes{
-
+    /** Esta clase solo sirve para la clase MapaEscuela **/
     private final String TAG = this.getClass().getSimpleName();
 
     // Imatge bitMap
