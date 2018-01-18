@@ -4,9 +4,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.Typeface;
+import android.text.TextPaint;
 import android.util.Log;
 
 import com.example.usuario.pruebaretrofit.R;
@@ -32,6 +35,7 @@ public class MapaEscuela {
     private Jugadora jugadora;
 
     private BotonesDeMapas botones;
+    private PLayerStats stats;
 
     // cosas que inicializar en el construct
     private int x = 0, y = 0;
@@ -43,6 +47,10 @@ public class MapaEscuela {
     private Context context;
     private GameView gameView;
 
+    public PLayerStats getStats() {
+        return stats;
+    }
+
     public MapaEscuela(Context context, GameView gameView) {
         this.context = context;
         this.gameView = gameView;
@@ -50,6 +58,7 @@ public class MapaEscuela {
         malla = llegirMapaTxt("mapaEscola10", context);
         jugadora = createJugadora(R.drawable.bad3,new PointF(150,95));
         botones = new BotonesDeMapas();
+        stats = new PLayerStats();
     }
 
     public String[][] getMalla() {
@@ -139,6 +148,21 @@ public class MapaEscuela {
 
         // JOAN!! Aqui se pintan los "botones"
         // los cojo de la clase BotonesDeMapas
+
+        //Poner Rectangulo stats
+        //paint.setColor(context.getResources().getColor(R.color.Orange));
+        //canvas.drawRect(stats.getStats(),paint);
+
+        TextPaint paintt = new TextPaint();
+
+        paintt.setColor(context.getResources().getColor(R.color.Black));
+        paintt.setTextSize(25);
+        paintt.setTypeface(Typeface.create("Arial",Typeface.BOLD));
+        paintt.setStyle(Paint.Style.FILL);
+        paintt.setStrokeWidth(1);
+        canvas.drawText("Vida  "+stats.getVida(), stats.getMargenX(), stats.getLiniavida(),paintt);
+        canvas.drawText("Votos  "+stats.getVotos(), stats.getMargenX(),stats.getLiniavotos(),paintt);
+        canvas.drawText("Seguidores  "+stats.getSeguidores(), stats.getMargenX(), stats.getLiniaseguidores(),paintt);
         // Poner botones
         paint.setColor(context.getResources().getColor(R.color.Cornsilk));
         canvas.drawRect(botones.getRecVerticalEntero(),paint);
