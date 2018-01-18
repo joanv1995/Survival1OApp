@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.os.CountDownTimer;
 import android.text.TextPaint;
 import android.util.Log;
 
@@ -18,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static com.example.usuario.pruebaretrofit.activities.Mapa.MetodosParaTodos.*;
 
@@ -33,7 +35,8 @@ public class MapaEscuela {
     private int cualEsMiCamino = 0;
     private int esperaIAs;
     private Jugadora jugadora;
-
+    private CountDownTimer timer;
+    private String times;
     private BotonesDeMapas botones;
     private PLayerStats stats;
 
@@ -52,6 +55,23 @@ public class MapaEscuela {
     }
 
     public MapaEscuela(Context context, GameView gameView) {
+        timer = new CountDownTimer(180000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                long millis = millisUntilFinished;
+                times = String.format("%02d:%02d",
+                        TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+                        TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+            }
+
+            @Override
+            public void onFinish() {
+
+                ///PARTIDA ACABADA ---  NIVEL SUPERADO
+
+            }
+        }.start();
+
         this.context = context;
         this.gameView = gameView;
 
@@ -90,6 +110,7 @@ public class MapaEscuela {
 
     protected Canvas dibujoElMapaEscuela(Canvas canvas, int ample, int altura, int margeAlt, int margeAmpl){
         //startTime = System.currentTimeMillis();
+
         for (int i = 0; i < malla.length; i++) //altura
         {
             for (int j = 0; j < malla[0].length; j++) //amplada
@@ -148,21 +169,29 @@ public class MapaEscuela {
 
         // JOAN!! Aqui se pintan los "botones"
         // los cojo de la clase BotonesDeMapas
+        // MOSTRAMOS TIMER /////
 
+        TextPaint paintTimer = new TextPaint();
+        paintTimer.setColor(context.getResources().getColor(R.color.DarkBlue));
+        paintTimer.setTextSize(28);
+        paintTimer.setTypeface(Typeface.create("Arial",Typeface.BOLD));
+        paintTimer.setStyle(Paint.Style.FILL);
+        paintTimer.setStrokeWidth(2);
+        canvas.drawText(""+times,stats.getMargenX()+ gameView.getCanvasWidth()-100,stats.getLiniavida(),paintTimer);
         //Poner Rectangulo stats
         //paint.setColor(context.getResources().getColor(R.color.Orange));
         //canvas.drawRect(stats.getStats(),paint);
 
-        TextPaint paintt = new TextPaint();
+        TextPaint paintStats = new TextPaint();
 
-        paintt.setColor(context.getResources().getColor(R.color.Black));
-        paintt.setTextSize(25);
-        paintt.setTypeface(Typeface.create("Arial",Typeface.BOLD));
-        paintt.setStyle(Paint.Style.FILL);
-        paintt.setStrokeWidth(1);
-        canvas.drawText("Vida  "+stats.getVida(), stats.getMargenX(), stats.getLiniavida(),paintt);
-        canvas.drawText("Votos  "+stats.getVotos(), stats.getMargenX(),stats.getLiniavotos(),paintt);
-        canvas.drawText("Seguidores  "+stats.getSeguidores(), stats.getMargenX(), stats.getLiniaseguidores(),paintt);
+        paintStats.setColor(context.getResources().getColor(R.color.Black));
+        paintStats.setTextSize(28);
+        paintStats.setTypeface(Typeface.create("Arial",Typeface.BOLD));
+        paintStats.setStyle(Paint.Style.FILL);
+        paintStats.setStrokeWidth(1);
+        canvas.drawText("Vida  "+stats.getVida(), stats.getMargenX(), stats.getLiniavida(),paintStats);
+        canvas.drawText("Votos  "+stats.getVotos(), stats.getMargenX(),stats.getLiniavotos(),paintStats);
+        canvas.drawText("Seguidores  "+stats.getSeguidores(), stats.getMargenX(), stats.getLiniaseguidores(),paintStats);
         // Poner botones
         paint.setColor(context.getResources().getColor(R.color.Cornsilk));
         canvas.drawRect(botones.getRecVerticalEntero(),paint);
