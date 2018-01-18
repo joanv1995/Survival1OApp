@@ -35,8 +35,6 @@ public class MapaEscuela {
     private int cualEsMiCamino = 0;
     private int esperaIAs;
     private Jugadora jugadora;
-    private CountDownTimer timer;
-    private String times;
     private BotonesDeMapas botones;
     private PLayerStats stats;
 
@@ -55,22 +53,6 @@ public class MapaEscuela {
     }
 
     public MapaEscuela(Context context, GameView gameView) {
-        timer = new CountDownTimer(180000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                long millis = millisUntilFinished;
-                times = String.format("%02d:%02d",
-                        TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
-                        TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
-            }
-
-            @Override
-            public void onFinish() {
-
-                ///PARTIDA ACABADA ---  NIVEL SUPERADO
-
-            }
-        }.start();
 
         this.context = context;
         this.gameView = gameView;
@@ -177,7 +159,7 @@ public class MapaEscuela {
         paintTimer.setTypeface(Typeface.create("Arial",Typeface.BOLD));
         paintTimer.setStyle(Paint.Style.FILL);
         paintTimer.setStrokeWidth(2);
-        canvas.drawText(""+times,stats.getMargenX()+ gameView.getCanvasWidth()-100,stats.getLiniavida(),paintTimer);
+        canvas.drawText("pasa timer",stats.getMargenX()+ gameView.getCanvasWidth()-100,stats.getLiniavida(),paintTimer);
         //Poner Rectangulo stats
         //paint.setColor(context.getResources().getColor(R.color.Orange));
         //canvas.drawRect(stats.getStats(),paint);

@@ -7,12 +7,16 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.Typeface;
+import android.os.CountDownTimer;
+import android.text.TextPaint;
 import android.util.Log;
 
 import com.example.usuario.pruebaretrofit.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static com.example.usuario.pruebaretrofit.activities.Mapa.MetodosParaTodos.*;
 
@@ -31,6 +35,12 @@ public class MapaGrande {
     private int zoomBitmap = 5;
     private Rect cuadradoMapa = new Rect();
 
+    private CountDownTimer timer;
+    private String times;
+
+    private PLayerStats stats;
+
+
     private BotonesDeMapas botones;
     private Jugadora jugadora;
 
@@ -40,14 +50,35 @@ public class MapaGrande {
     private java.util.List<IAPolicias> listaPolicias = new ArrayList<>();
     private int esperaIAs;
 
+    public PLayerStats getStats() {
+        return stats;
+    }
 
     public MapaGrande(Context context, GameView gameView) {
+        timer = new CountDownTimer(180000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                long millis = millisUntilFinished;
+                times = String.format("%02d:%02d",
+                        TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+                        TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+            }
+
+            @Override
+            public void onFinish() {
+
+                ///PARTIDA ACABADA ---  NIVEL SUPERADO
+
+            }
+        }.start();
+
         this.context = context;
         this.gameView = gameView;
 
         malla = llegirMapaTxt("mapaGeneral3", context);
         jugadora = createJugadora(R.drawable.bad3,new PointF(150,100));
         botones = new BotonesDeMapas();
+        stats = new PLayerStats();
     }
 
     public String[][] getMalla() {
@@ -101,6 +132,9 @@ public class MapaGrande {
         //startTime = System.currentTimeMillis();
         //jugadora.getPosicion().x +- 100
         //jugadora.getPosicion().y +- 50
+
+
+
         boolean espero = false;
         if(jugadora.isMeTengoQueMover())
             espero = !moverJugadora();
@@ -217,6 +251,24 @@ public class MapaGrande {
         rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
         canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);*/
         // FIN
+        TextPaint paintTimer = new TextPaint();
+        paintTimer.setColor(context.getResources().getColor(R.color.DarkBlue));
+        paintTimer.setTextSize(28);
+        paintTimer.setTypeface(Typeface.create("Arial",Typeface.BOLD));
+        paintTimer.setStyle(Paint.Style.FILL);
+        paintTimer.setStrokeWidth(2);
+        canvas.drawText(""+times,stats.getMargenX()+ gameView.getCanvasWidth()-100,stats.getLiniavida(),paintTimer);
+
+        TextPaint paintStats = new TextPaint();
+
+        paintStats.setColor(context.getResources().getColor(R.color.Black));
+        paintStats.setTextSize(28);
+        paintStats.setTypeface(Typeface.create("Arial",Typeface.BOLD));
+        paintStats.setStyle(Paint.Style.FILL);
+        paintStats.setStrokeWidth(1);
+        canvas.drawText("Vida  "+stats.getVida(), stats.getMargenX(), stats.getLiniavida(),paintStats);
+        canvas.drawText("Votos  "+stats.getVotos(), stats.getMargenX(),stats.getLiniavotos(),paintStats);
+        canvas.drawText("Seguidores  "+stats.getSeguidores(), stats.getMargenX(), stats.getLiniaseguidores(),paintStats);
 
         // Poner botones
         paint.setColor(context.getResources().getColor(R.color.Cornsilk));

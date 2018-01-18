@@ -79,7 +79,7 @@ public class GameView extends SurfaceView {
                     mapaEscuela.getStats().setMedidasCanvas(canvasWidth,canvasHeight);
                 } else if (quinMapa == 1) {
                     mapaGrande.getBotones().setMedidasCanvas(canvasWidth,canvasHeight);
-
+                    mapaGrande.getStats().setMedidasCanvas(canvasWidth,canvasHeight);
                 }
                 margeAmpl = width - canvasWidth;
                 margeAlt = height - canvasHeight;
