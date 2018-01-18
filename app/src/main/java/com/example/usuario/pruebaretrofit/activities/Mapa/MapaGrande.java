@@ -93,28 +93,27 @@ public class MapaGrande {
         if(jugadora.isMeTengoQueMover())
             espero = !moverJugadora();
 
-        // muevo la jugadora
-        //recBtm = jugadora.onDraw(canvas);
-        //if(jugadora.isMeTengoQueMover())
-        //    moverJugadoraEnMalla();
-
         // dibujo el mapa
         altoInit = (int) jugadora.getPosicion().y - altoMalla/2;
         if(altoInit < 0)
             altoInit = 0;
+        else if (jugadora.getPosicion().y > (malla.length - (zoomBitmap + altoMalla/2)))
+            altoInit = malla.length - (altoMalla + zoomBitmap);
+
 
         boolean estaJug = false; int estaJugCont = 0, xx = 0, yy = 0;
         for (int i = 0; i < altoMalla; i++) //altura
         {
-            anchoInit = (int) jugadora.getPosicion().x - 100;
+            anchoInit = (int) jugadora.getPosicion().x - anchoMalla/2;
             if(anchoInit < 0) //TODO el mateix pero amb els costats de la dreta i a baix
                 anchoInit = 0;
+            else if (jugadora.getPosicion().x > (malla[0].length - anchoMalla/2))
+                anchoInit = malla[0].length - anchoMalla;
 
             for (int j = 0; j < anchoMalla; j++) //amplada
             {
                 if(altoInit == (int) jugadora.getPosicion().y && anchoInit == (int) jugadora.getPosicion().x){
-                    //if(estaDinsDeMalla(jugadora.getPosicion().y ,(int) jugadora.getPosicion().x));
-                            xx = j; yy = i;
+                    xx = j; yy = i;
                 }
 
                     x = j * ample + margeAmpl / 2;
@@ -144,17 +143,13 @@ public class MapaGrande {
         //recBtm = jugadora.onDraw(canvas);
         //if(jugadora.isMeTengoQueMover())
         //moverJugadoraEnMalla();
-        if(!espero) {
+        //if(!espero) {
             recBtm = jugadora.onDraw(canvas);
-
             x = xx * ample + margeAmpl / 2;
             y = yy * altura + margeAlt / 2;
             rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
-            //canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);
-            //} else
-            //jugadora.runCurrentFrame();
             canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);
-        }
+        //}
         //rec.set(xx - zoomBitmap * ample, yy - zoomBitmap * altura, xx + z
             // oomBitmap * ample, yy + zoomBitmap * altura);
         //canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);

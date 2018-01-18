@@ -42,6 +42,7 @@ public class Jugadora {
 
     public void setPosicion(PointF posicion) {
         this.posicion = posicion;
+        currentFrame = ++currentFrame % BMP_COLUMNS_JUGADORA;
     }
     public void setPosicion(float posicionX, float posicionY) {
         this.posicion.set(posicionX,posicionY);

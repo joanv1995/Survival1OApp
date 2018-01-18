@@ -22,7 +22,7 @@ public class GameLoopThread extends Thread {
 
     public void run() {
         Log.d(TAG, "Estic corrent");
-        long ticksPS = 3000 / FPS;
+        long ticksPS = 1000 / FPS;
         long startTime;
         long sleepTime;
         while (running) {
