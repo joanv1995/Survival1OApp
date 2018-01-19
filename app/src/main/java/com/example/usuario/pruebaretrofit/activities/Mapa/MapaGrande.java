@@ -10,7 +10,6 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.CountDownTimer;
 import android.text.TextPaint;
-import android.util.Log;
 
 import com.example.usuario.pruebaretrofit.R;
 
@@ -37,6 +36,10 @@ public class MapaGrande {
 
     private CountDownTimer timer;
     private String times;
+
+    private CountDownTimer timerPolice;
+    private String timesPolice;
+    private boolean alerta = false;
 
     private PLayerStats stats;
 
@@ -68,6 +71,25 @@ public class MapaGrande {
             public void onFinish() {
 
                 ///PARTIDA ACABADA ---  NIVEL SUPERADO
+
+            }
+        }.start();
+        timerPolice = new CountDownTimer(20000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                alerta = false;
+                long millis = millisUntilFinished;
+                timesPolice = String.format("%02d:%02d",
+                        TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+                        TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+
+            }
+
+            @Override
+            public void onFinish() {
+
+                alerta = true;
+
 
             }
         }.start();
@@ -251,6 +273,7 @@ public class MapaGrande {
         rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
         canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);*/
         // FIN
+
         TextPaint paintTimer = new TextPaint();
         paintTimer.setColor(context.getResources().getColor(R.color.DarkBlue));
         paintTimer.setTextSize(28);
@@ -258,6 +281,30 @@ public class MapaGrande {
         paintTimer.setStyle(Paint.Style.FILL);
         paintTimer.setStrokeWidth(2);
         canvas.drawText(""+times,stats.getMargenX()+ gameView.getCanvasWidth()-100,stats.getLiniavida(),paintTimer);
+
+        TextPaint paintTimerPolice = new TextPaint();
+        if(!alerta)
+        {
+                paintTimerPolice.setColor(context.getResources().getColor(R.color.Red));
+                paintTimerPolice.setTextSize(28);
+                paintTimerPolice.setTypeface(Typeface.create("Arial",Typeface.BOLD));
+                paintTimerPolice.setStyle(Paint.Style.FILL);
+                paintTimerPolice.setStrokeWidth(2);
+        }
+        else
+        {
+                paintTimerPolice.setColor(context.getResources().getColor(R.color.Red));
+                paintTimerPolice.setTextSize(34);
+                paintTimerPolice.setTypeface(Typeface.create("Arial",Typeface.BOLD));
+                paintTimerPolice.setStyle(Paint.Style.FILL);
+                paintTimerPolice.setStrokeWidth(2);
+                timesPolice = "ALERTA";
+
+        }
+        canvas.drawText(""+timesPolice,stats.getMargenX()+ gameView.getCanvasWidth()-100,stats.getLiniaseguidores(),paintTimerPolice);
+
+
+
 
         TextPaint paintStats = new TextPaint();
 
@@ -272,19 +319,38 @@ public class MapaGrande {
 
         // Poner botones
         paint.setColor(context.getResources().getColor(R.color.Cornsilk));
-        canvas.drawRect(botones.getRecVerticalEntero(),paint);
+        //canvas.drawRect(botones.getRecVerticalEntero(),paint);
         paint.setColor(context.getResources().getColor(R.color.Green));
-        canvas.drawRect(botones.getBotonRecVertArriba(), paint);
-        canvas.drawRect(botones.getBotonRecVertBajo(), paint);
 
+        //canvas.drawRect(botones.getBotonRecVertArriba(), paint);
+        //canvas.drawRect(botones.getBotonRecVertBajo(), paint);
+
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),R.drawable.bddown);
+        canvas.drawBitmap(bitmap, null, botones.getBotonRecVertBajo(), null);
+
+        Bitmap bitmap2 = BitmapFactory.decodeResource(context.getResources(),R.drawable.bdtop);
+        canvas.drawBitmap(bitmap2, null, botones.getBotonRecVertArriba(), null);
+
+
+
+       // paint.setColor(context.getResources().getColor(R.color.AntiqueWhite));
+       // canvas.drawRect(botones.getRecHorizontalEntero(), paint);
+        paint.setColor(context.getResources().getColor(R.color.Green));
+
+        Bitmap bitmap3 = BitmapFactory.decodeResource(context.getResources(),R.drawable.bdleft);
+        canvas.drawBitmap(bitmap3, null, botones.getBotonRecHorizLeft(), null);
+
+        Bitmap bitmap4 = BitmapFactory.decodeResource(context.getResources(),R.drawable.bdright);
+        canvas.drawBitmap(bitmap4, null, botones.getBotonRecHorizRigth(), null);
+
+
+        //canvas.drawRect(botones.getBotonRecHorizLeft(), paint);
+        //canvas.drawRect(botones.getBotonRecHorizRigth(), paint);
 
         paint.setColor(context.getResources().getColor(R.color.AntiqueWhite));
-        canvas.drawRect(botones.getRecHorizontalEntero(), paint);
-        paint.setColor(context.getResources().getColor(R.color.Green));
-        canvas.drawRect(botones.getBotonRecHorizLeft(), paint);
-        canvas.drawRect(botones.getBotonRecHorizRigth(), paint);
 
-        paint.setColor(context.getResources().getColor(R.color.AntiqueWhite));
+
+
 
         canvas.drawRect(botones.getBotonCercleA(), paint);
         canvas.drawRect(botones.getBotonCercleB(), paint);
