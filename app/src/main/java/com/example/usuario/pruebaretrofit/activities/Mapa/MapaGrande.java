@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.CountDownTimer;
 import android.text.TextPaint;
+import android.util.Log;
 
 import com.example.usuario.pruebaretrofit.R;
 
@@ -51,6 +52,8 @@ public class MapaGrande {
     private Rect rec = new Rect(), recBtm = new Rect();
 
     private java.util.List<IAPolicias> listaPolicias = new ArrayList<>();
+    private java.util.List<IATranseunte> listaTranseuntes = new ArrayList<>();
+    private int numTranseuntes = 0;
     private int esperaIAs;
 
     public PLayerStats getStats() {
@@ -117,6 +120,9 @@ public class MapaGrande {
     }
     public List<IAPolicias> getListaPolicias() {
         return listaPolicias;
+    }
+    public List<IATranseunte> getListaTranseuntes() {
+        return listaTranseuntes;
     }
 
     private Paint quinColor(String s) {
@@ -220,11 +226,8 @@ public class MapaGrande {
 
 
         int a = -1;
-        //startTime = System.currentTimeMillis();
         for (IAPolicias ia : listaPolicias) {
-            //startTime2 = System.currentTimeMillis();
-
-            if (ia.isMeQuieroMorir())
+             if (ia.isMeQuieroMorir())
                 a = listaPolicias.indexOf(ia);
             else {
                 recBtm = ia.onDraw(canvas, jugadora);
@@ -242,21 +245,47 @@ public class MapaGrande {
                     canvas.drawRect(rec, paint);
                 }
             }
-            //}
-            //startTime2 = System.currentTimeMillis()-startTime2;
-            //Log.d(TAG,"Dibuixar un Ia: " + startTime2);
         }
 
         // respawn d'ias
-        if (esperaIAs == 5) {
+        if (esperaIAs == 10) {
             polisNonStop();
             esperaIAs = 0;
+            if(numTranseuntes < 6) {
+                transNonStop();
+                numTranseuntes++;
+            }
         } else
             esperaIAs++;
 
         if (a != -1)
             listaPolicias.remove(a);
-/*
+
+        for (IATranseunte ia : listaTranseuntes) {
+            //startTime2 = System.currentTimeMillis();
+            if(ia.isLaEstoySiguiendo()){
+                ia.setPosObjetivo(jugadora.getPosicion());
+            }
+            if (ia.isMeQuieroMorir())
+                a = listaPolicias.indexOf(ia);
+            else {
+                recBtm = ia.onDraw(canvas, jugadora,zoomBitmap);
+                if (cuadradoMapa.contains((int) ia.getPosicion().x, (int) ia.getPosicion().y)) {
+                    //recBtm = ia.onDraw(canvas);
+                    x = (int) (ia.getPosicion().x - cuadradoMapa.left) * ample + margeAmpl / 2;
+                    y = (int) (ia.getPosicion().y - cuadradoMapa.top) * altura + margeAlt / 2;
+                    rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
+                    canvas.drawBitmap(ia.getBmp(), recBtm, rec, null);
+
+
+                    int xxx = (int) (ia.getPosObjetivo().x - cuadradoMapa.left) * ample + margeAmpl / 2, yyy = (int) (ia.getPosObjetivo().y - cuadradoMapa.top) * altura + margeAlt / 2;
+                    Rect rec = new Rect(xxx - 10, yyy - 10, xxx + 10, yyy + 10);
+                    paint.setColor(context.getResources().getColor(R.color.colorPrimary));
+                    canvas.drawRect(rec, paint);
+                }
+            }
+        }
+        /*
         // respawn d'ias
         if (esperaIAs == 5) {
             iasNonStop();
@@ -376,6 +405,23 @@ public class MapaGrande {
         Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resouce);
         return new IAPolicias(bmp, "poli", pos, obj, this); // de la malla
     }
+    private void transNonStop() {
+        listaTranseuntes.add(createTrans(R.drawable.good3 ));
+    }
+    private IATranseunte createTrans(int resouce) {
+        Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resouce);
+        return new IATranseunte(bmp, "tra", this); // de la malla
+    }
+
+    protected void puedeElTranseunteSeguirme(){
+        int a = hiHaUnTransEnRectangle(jugadora.getPosicion(), jugadora.getDireccio(), listaTranseuntes, zoomBitmap);
+        if(a != -1){
+            listaTranseuntes.get(a).setLaEstoySiguiendo(true);
+            listaTranseuntes.get(a).setPosObjetivo(jugadora.getPosicion());
+            Log.d(TAG,"Lo ha encontrado");
+        }
+    }
+
     /*protected void processButtons(int x, int y){ // ya que los botones se inicializan aqui, el metodo de cambiar direccion no lo puedo poner en jugadora
         if(this.getBotones().getBotonRecHorizLeft().contains(x,y)){ //boton Left
             jugadora.setDireccio(1);
