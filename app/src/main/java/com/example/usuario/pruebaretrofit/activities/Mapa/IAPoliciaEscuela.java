@@ -5,15 +5,14 @@ import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.util.Log;
-import android.view.WindowManager;
-import android.widget.Toast;
-
-import java.util.Random;
 
 import static com.example.usuario.pruebaretrofit.activities.Mapa.MetodosParaTodos.*;
-import static java.lang.Math.sqrt;
 
-public class IA extends MuevoImagenes{
+/**
+ * Created by annag on 19/01/2018.
+ */
+
+public class IAPoliciaEscuela {
     /** Esta clase solo sirve para la clase MapaEscuela **/
     private final String TAG = this.getClass().getSimpleName();
 
@@ -40,7 +39,7 @@ public class IA extends MuevoImagenes{
     private boolean direccioX_Left, direccioY_Up; // true: up, false: down
     private int direccio; // direction = 0 right, 1 left, 2 up, 3 down,
     private Rect anima = new Rect();
-
+    private boolean hihaIaInoEmPucMoure;
     // direction = 0 up, 1 left, 2 down, 3 right,
     // animation = 3 back, 1 left, 0 front, 2 right
     private static final int[] DIRECTION_TO_ANIMATION_MAP = {2, 1, 3, 0};//{ 3, 1, 0, 2 };
@@ -51,21 +50,15 @@ public class IA extends MuevoImagenes{
     private PointF p = new PointF();
     private PointF pp = new PointF();
     private Rect src = new Rect();
-    private int[] vecPos = {speed, -speed, 0, 0};
-    private int[] vecPos2 = {speed+1, -speed-1, 0, 0};
+    int[] vecPos = {speed, -speed, 0, 0};
+    int[] vecPos2 = {speed+1, -speed-1, 0, 0};
 
-
-    private PointF[] caminoAseguir = {new PointF(55, 36),
-                                new PointF(145, 36),
-                                new PointF(55, 66),
-                                new PointF(145,66)};
-    private PointF puertaAlInfierno = new PointF(100,2);
+    PointF puertaAlInfierno = new PointF(203,119);
     private boolean meVoy = false, meQuieroMorir= false;
-    private int tiempoVotando = 10, tiempoVotangoPasado = 0;
     private boolean estoyCansadoDeEsperar = false;
     private int contEspera = 0;
 
-    public IA(Bitmap bmp, String idIa, PointF posicion, PointF posObjetivo, MapaEscuela mapaEscuela){
+    public IAPoliciaEscuela(Bitmap bmp, String idIa, PointF posicion, PointF posObjetivo, MapaEscuela mapa){
         Log.d(TAG, "inicialitzo un IA");
         //this.gameView=gameView;
         this.bmp=bmp;
@@ -74,10 +67,37 @@ public class IA extends MuevoImagenes{
         this.idIa = idIa;
         this.posicion = posicion;
         this.posObjetivo = posObjetivo;
-        this.mapa = mapaEscuela;
+        this.mapa = mapa;
         calculaRecObjetivo();
-        saberDireccio();
+        //saberDireccio();
         calculaAnimes();
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+    public int getDireccio() {
+        return direccio;
+    }
+    public Rect getAnima() {
+        return anima;
+    }
+    public PointF getPosicion() {
+        return posicion;
+    }
+    public Bitmap getBmp() {
+        return bmp;
+    }
+    public PointF getPosObjetivo() {
+        return posObjetivo;
+    }
+
+    public void setAnima(Rect anima) {
+        this.anima = anima;
+    }
+
+    public boolean isMeQuieroMorir() {
+        return meQuieroMorir;
     }
 
     private void calculaRecObjetivo(){
@@ -86,60 +106,13 @@ public class IA extends MuevoImagenes{
     }
     private void calculaAnimes(){
         // [files][columnes]
-        /*this.anima.set((int) posicion.x + matrix[0][direccio] * gameView.getZoomBitmap(),
-                (int) posicion.y + matrix[1][direccio] * gameView.getZoomBitmap(),
-                (int) posicion.x + matrix[2][direccio] * gameView.getZoomBitmap(),
-                (int) posicion.y + matrix[3][direccio] * gameView.getZoomBitmap());*/
-            this.anima.set((int) posicion.x - mapa.getZoomBitmap()+1, (int) posicion.y - mapa.getZoomBitmap(),
-                    (int) posicion.x + mapa.getZoomBitmap()-1, (int) posicion.y + mapa.getZoomBitmap());
-    }
-    private void saberDireccio(){
-        this.direccioX_Left = posicion.x >= posObjetivo.x ;
-        this.direccioY_Up = posicion.y >= posObjetivo.y ;
-    }
-
-    private boolean haArribat(){
-        // TODO: pensar una altre manera de fer aixo
-        if(direccioY_Up){
-            if (direccioX_Left)
-                return posicion.y <= posObjetivo.y && posicion.x <= posObjetivo.x;
-            else
-                return posicion.y <= posObjetivo.y && posicion.x >= posObjetivo.x;
-        } else {
-            if (direccioX_Left)
-                return posicion.y >= posObjetivo.y && posicion.x <= posObjetivo.x;
-            else
-                return posicion.y >= posObjetivo.y && posicion.x >= posObjetivo.x;
-        }
-    }
-    public PointF getPosicion() {
-        return posicion;
-    }
-    public void setPosicion(PointF posicion) {
-        this.posicion = posicion;
-    }
-    public PointF getPosObjetivo() {
-        return posObjetivo;
-    }
-    public void setPosObjetivo(PointF posObjetivo) {
-        this.posObjetivo = posObjetivo;
-    }
-    public Bitmap getBmp() {
-        return bmp;
-    }
-    public Rect getAnima() {
-        return anima;
-    }
-    public int getDireccio() {
-        return direccio;
-    }
-    public boolean isMeQuieroMorir() {
-        return meQuieroMorir;
+        this.anima.set((int) posicion.x - mapa.getZoomBitmap()+1, (int) posicion.y - mapa.getZoomBitmap(),
+                (int) posicion.x + mapa.getZoomBitmap()-1, (int) posicion.y + mapa.getZoomBitmap());
     }
 
     private void update(Jugadora jugadora) {
         Log.d(TAG, "Update: moc una casella");
-       /* if(haArribat())
+        /*if(haArribat())
             enEspera = true;
         else
             enEspera = false;*/
@@ -152,27 +125,25 @@ public class IA extends MuevoImagenes{
                 // de les quatre celes del voltant, miro es la que esta mes aprop de l'objectiu
 
                 for (int i = 0; i < 4; i++) {
-                    p.set((int) getPosicion().x + vecPos[i], (int) getPosicion().y + vecPos[vecPos.length-1-i]);
-                    pp.set((int) getPosicion().x + vecPos2[i], (int) getPosicion().y + vecPos2[vecPos2.length-1-i]);
+                    p.set((int) posicion.x + vecPos[i], (int) posicion.y + vecPos[vecPos.length-1-i]);
+                    pp.set((int) posicion.x + vecPos2[i], (int) posicion.y + vecPos2[vecPos2.length-1-i]);
 
                     int d = hiHaUnIA(p,direccio, mapa.getListaIas());//gameView.listaIas);
-                    int dd = hiHaUnPoliAEscola(p,direccio, mapa.getListaPolicias());
-                    if(d == 2 || dd == 2){
-                            //TODO si es miren, que s'evitin  (ara mateix funciona, fes-ho quan tinguis temps ;)
-                            // 2: estan en horitzontal, han d'escapar un per baix i l'altre per dalt
-                            // ferho aqui o al començament (millor idea ja que aqui es calcula 4 cops
-                    }else if (d==3 || dd == 3){
-                            // 3: estan en vertical, han d'escapar un per la dreta i l'altre per l'esquerra
+                    if(d == 2){
+                        //TODO si es miren, que s'evitin  (ara mateix funciona, fes-ho quan tinguis temps ;)
+                        // 2: estan en horitzontal, han d'escapar un per baix i l'altre per dalt
+                        // ferho aqui o al començament (millor idea ja que aqui es calcula 4 cops
+                    }else if (d==3){
+                        // 3: estan en vertical, han d'escapar un per la dreta i l'altre per l'esquerra
                     } else {
-                        double distancia = calculaDistancia(p, getPosObjetivo());
+                        double distancia = calculaDistancia(p, posObjetivo);
                         if (distancia < min && estaDinsDeMalla(p, mapa.getMalla(), mapa.getZoomBitmap())
                                 && esPotTrepitjar(p, mapa.getMalla(), mapa.getZoomBitmap()) && !p.equals(posAntiga)) {
                             direccio = i;
-                            min = calculaDistancia(p, getPosObjetivo());
+                            min = calculaDistancia(p, posObjetivo);
                             act.set(p);
                             act2.set(pp);
                         }
-                        //if (distancia < min && /*estaDinsDeMalla(p)*/ estaDinsDeMalla2(p,gameView.getMalla(),gameView.getZoomBitmap()) && esPotTrepitjar(p) && !p.equals(posAntiga)) {
                     }
                 }
 
@@ -185,8 +156,8 @@ public class IA extends MuevoImagenes{
             if((!enEspera && hiHaUnIA(act2,direccio, mapa.getListaIas()) == 0
                     && hiHaUnPoliAEscola(act2, direccio, mapa.getListaPolicias()) == 0
                     && hiHaLaJugadora(act2,  direccio, jugadora)==0) || estoyCansadoDeEsperar){//gameView.hiHaUnIA(act2,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
-                posAntiga = new PointF(getPosicion().x,getPosicion().y);
-                setPosicion(act);
+                posAntiga = new PointF(posicion.x, posicion.y);
+                posicion.set(act);
                 calculaAnimes();
                 currentFrame = ++currentFrame % BMP_COLUMNS;
             }else {
@@ -197,6 +168,7 @@ public class IA extends MuevoImagenes{
                     estoyCansadoDeEsperar = true;
                     contEspera = 0;
                 }
+
             }
 
             if (enEspera)
@@ -206,7 +178,9 @@ public class IA extends MuevoImagenes{
             //Log.d(TAG,"posY " + getPosicion().y);
 
         } else { // ha arribat a la posició objectiu
-            if(!meVoy) {
+            //if (rectObjetivo.contains((int) posicion.x, (int) posicion.y))
+                //meQuieroMorir = true;
+            /*if(!meVoy) {
                 // se'n van a les taules
                 posObjetivo.set(caminoAseguir[mapa.getCualEsMiCamino()]);
                 mapa.setCualEsMiCamino(mapa.getCualEsMiCamino() + 1);
@@ -223,17 +197,13 @@ public class IA extends MuevoImagenes{
                 } else
                     tiempoVotangoPasado++;
             }
-            saberDireccio();
+            saberDireccio();*/
         }
     }
 
-    /*private double calculaDistancia(PointF p1, PointF p2){
-        return  sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
-    }*/
-
-    protected Rect onDraw(Canvas canvas, Jugadora jugadora) {
+    protected Rect onDraw(Canvas canvas, Jugadora posJug) {
         Log.d(TAG,"onDraw");
-        update(jugadora);
+        update(posJug);
         int srcX = currentFrame * width;
         int srcY = getAnimationRow() * height;
         src.set(srcX, srcY, srcX + width, srcY + height); //retalla la imatge segons l'animacio
@@ -245,24 +215,6 @@ public class IA extends MuevoImagenes{
         //int direction = (int) Math.round(dirDouble) % BMP_ROWS;
         return DIRECTION_TO_ANIMATION_MAP[direccio];
     }
-    /*private boolean estaDinsDeMalla(PointF p){
-        return p.x <= gameView.getMalla()[0].length-gameView.getZoomBitmap()-1 && p.x >= gameView.getZoomBitmap()-1
-                && p.y <= (gameView.getMalla().length-gameView.getZoomBitmap()-1) && p.y >= gameView.getZoomBitmap()-1;
-    }
-    private boolean esPotTrepitjar(PointF p){
-        // si per les celes proximes no toca la imatge del bitmap amb taules o merdes
-        int[] vec = {gameView.getZoomBitmap()-1, -(gameView.getZoomBitmap()-1), 0, 0};
-        // de les quatre celes del voltant, miro es la que esta mes aprop de l'objectiu
-        try {
-            for (int i = 0; i < 4; i++) {
-                if(!gameView.getMalla()[(int) p.y + vec[vec.length-1-i]][(int) p.x + vec[i]].contains("-"))
-                    return false;
-            }
-        } catch (Exception e) {
-            return false;
-        }
-        // Si la cela p hi ha cami:
-        return gameView.getMalla()[(int)p.y][(int)p.x].contains("-");
-    }*/
-
 }
+
+
