@@ -174,7 +174,7 @@ public class IATranseunte {
                     p.set((int) getPosicion().x + vecPos[i], (int) getPosicion().y + vecPos[vecPos.length-1-i]);
                     pp.set((int) getPosicion().x + vecPos2[i], (int) getPosicion().y + vecPos2[vecPos2.length-1-i]);
 
-                    int d = hiHaUnTrans(p,direccio, mapa.getListaTranseuntes(),zoomBitmap);//gameView.listaIas);
+                    int d = hiHaUnTrans(p,direccio, mapa.getListaTranseuntes());//gameView.listaIas);
                     int dd = hiHaUnPoli(p,direccio, mapa.getListaPolicias());
                     if(d == 2 || dd == 2){
                         //TODO fer que el que vagin cap a dalt o cap a baix sigui random
@@ -238,7 +238,7 @@ public class IATranseunte {
             }
 
             // si m'ho ha calculat bé, actualitzo posicio
-            if((!enEspera && hiHaUnTrans(act2,direccio, mapa.getListaTranseuntes(),zoomBitmap) == 0
+            if((!enEspera && hiHaUnTrans(act2,direccio, mapa.getListaTranseuntes()) == 0
                     && hiHaUnPoli(act2, direccio, mapa.getListaPolicias()) == 0
                     && hiHaLaJugadora(act2,  direccio, jugadora)==0) || estoyCansadoDeEsperar){//gameView.hiHaUnIA(act2,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
                 posAntiga = new PointF(getPosicion().x,getPosicion().y);
