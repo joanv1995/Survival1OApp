@@ -63,6 +63,8 @@ public class IATranseunte {
     int maxX = 361, maxY = 120;
     Random r = new Random();
     private boolean laEstoySiguiendo = false;
+    private boolean meParoAdefender = false;
+    private boolean meVoyAlHospital = false;
 
     PointF puertaAlInfierno = new PointF(100,2);
     private boolean meVoy = false, meQuieroMorir= false;
@@ -100,7 +102,7 @@ public class IATranseunte {
         calculaAnimes();
     }
 
-    private void calculaRecObjetivo(){
+    protected void calculaRecObjetivo(){
         rectObjetivo.set((int)posObjetivo.x-4,(int)posObjetivo.y-4,
                 (int)posObjetivo.x+4,(int)posObjetivo.y+4);
     }
@@ -143,6 +145,15 @@ public class IATranseunte {
     }
     public void setLaEstoySiguiendo(boolean laEstoySiguiendo) {
         this.laEstoySiguiendo = laEstoySiguiendo;
+    }
+    public boolean isMeParoAdefender() {
+        return meParoAdefender;
+    }
+    public void setMeParoAdefender(boolean meParoAdefender) {
+        this.meParoAdefender = meParoAdefender;
+    }
+    public void setRectObjetivo(Rect rectObjetivo) {
+        this.rectObjetivo = rectObjetivo;
     }
 
     private void update(Jugadora jugadora, int zoomBitmap) {
@@ -251,34 +262,17 @@ public class IATranseunte {
 
         } else { // ha arribat a la posició objectiu
 
-            if(!laEstoySiguiendo) {
+            if(!laEstoySiguiendo && !meParoAdefender) {
                 posObjetivo.set(new PointF(r.nextInt(maxX - minX + 1) + minX, r.nextInt(maxY - minY + 1) + minY));
                 calculaRecObjetivo();
                 posAntiga = new PointF();
-            } else{
-
+            } else if(meParoAdefender){
+                enEspera = true;
+            } else if(meVoyAlHospital) {
+                posObjetivo.set(81,60);
+                calculaRecObjetivo();
             }
 
-            /*if(!meVoy) {
-                // se'n van a les taules
-                posObjetivo.set(caminoAseguir[mapa.getCualEsMiCamino()]);
-                mapa.setCualEsMiCamino(mapa.getCualEsMiCamino() + 1);
-                calculaRecObjetivo();
-                posAntiga = new PointF();
-                meVoy = true;
-                if (mapa.getCualEsMiCamino() == caminoAseguir.length)
-                    mapa.setCualEsMiCamino(0);
-            } else {
-                if(tiempoVotangoPasado >= tiempoVotando) {
-                    posObjetivo.set(puertaAlInfierno);
-                    posAntiga = new PointF();
-                    calculaRecObjetivo();
-                    if (rectObjetivo.contains((int) posicion.x, (int) posicion.y))
-                        meQuieroMorir = true;
-                } else
-                    tiempoVotangoPasado++;
-            }*/
-            //saberDireccio();
         }
     }
     protected Rect onDraw(Canvas canvas, Jugadora jugadora, int zoomBitmap) {
