@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.CountDownTimer;
 import android.text.TextPaint;
+import android.util.Log;
 
 import com.example.usuario.pruebaretrofit.R;
 
@@ -51,6 +52,8 @@ public class MapaGrande {
     private Rect rec = new Rect(), recBtm = new Rect();
 
     private java.util.List<IAPolicias> listaPolicias = new ArrayList<>();
+    private java.util.List<IATranseunte> listaTranseuntes = new ArrayList<>();
+    private int numTranseuntes = 0;
     private int esperaIAs;
 
     public PLayerStats getStats() {
@@ -117,6 +120,9 @@ public class MapaGrande {
     }
     public List<IAPolicias> getListaPolicias() {
         return listaPolicias;
+    }
+    public List<IATranseunte> getListaTranseuntes() {
+        return listaTranseuntes;
     }
 
     private Paint quinColor(String s) {
@@ -220,11 +226,8 @@ public class MapaGrande {
 
 
         int a = -1;
-        //startTime = System.currentTimeMillis();
         for (IAPolicias ia : listaPolicias) {
-            //startTime2 = System.currentTimeMillis();
-
-            if (ia.isMeQuieroMorir())
+             if (ia.isMeQuieroMorir())
                 a = listaPolicias.indexOf(ia);
             else {
                 recBtm = ia.onDraw(canvas, jugadora);
@@ -242,37 +245,48 @@ public class MapaGrande {
                     canvas.drawRect(rec, paint);
                 }
             }
-            //}
-            //startTime2 = System.currentTimeMillis()-startTime2;
-            //Log.d(TAG,"Dibuixar un Ia: " + startTime2);
         }
 
         // respawn d'ias
-        if (esperaIAs == 5) {
+        if (esperaIAs == 10) {
             polisNonStop();
             esperaIAs = 0;
+            if(numTranseuntes < 6) {
+                transNonStop();
+                numTranseuntes++;
+            }
         } else
             esperaIAs++;
 
         if (a != -1)
             listaPolicias.remove(a);
-/*
-        // respawn d'ias
-        if (esperaIAs == 5) {
-            iasNonStop();
-            esperaIAs = 0;
-        } else
-            esperaIAs++;
 
-        // JOAN!!! Aqui se dibuja el player
-        /*recBtm = jugadora.onDraw(canvas);
-        //if(jugadora.isMeTengoQueMover())
-            //moverJugadoraEnMalla();
-        x = (int) jugadora.getPosicion().x * ample + margeAmpl / 2;
-        y = (int) jugadora.getPosicion().y * altura + margeAlt / 2;
-        rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
-        canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);*/
-        // FIN
+        for (IATranseunte ia : listaTranseuntes) {
+            //startTime2 = System.currentTimeMillis();
+            if(ia.isLaEstoySiguiendo()){
+                ia.setPosObjetivo(jugadora.getPosicion());
+                ia.setRectObjetivo(new Rect());
+            }
+            if (ia.isMeQuieroMorir())
+                a = listaPolicias.indexOf(ia);
+            else {
+                recBtm = ia.onDraw(canvas, jugadora,zoomBitmap);
+                if (cuadradoMapa.contains((int) ia.getPosicion().x, (int) ia.getPosicion().y)) {
+                    //recBtm = ia.onDraw(canvas);
+                    x = (int) (ia.getPosicion().x - cuadradoMapa.left) * ample + margeAmpl / 2;
+                    y = (int) (ia.getPosicion().y - cuadradoMapa.top) * altura + margeAlt / 2;
+                    rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
+                    canvas.drawBitmap(ia.getBmp(), recBtm, rec, null);
+
+
+                    int xxx = (int) (ia.getPosObjetivo().x - cuadradoMapa.left) * ample + margeAmpl / 2, yyy = (int) (ia.getPosObjetivo().y - cuadradoMapa.top) * altura + margeAlt / 2;
+                    Rect rec = new Rect(xxx - 10, yyy - 10, xxx + 10, yyy + 10);
+                    paint.setColor(context.getResources().getColor(R.color.colorPrimary));
+                    canvas.drawRect(rec, paint);
+                }
+            }
+        }
+
 
         TextPaint paintTimer = new TextPaint();
         paintTimer.setColor(context.getResources().getColor(R.color.DarkBlue));
@@ -299,11 +313,8 @@ public class MapaGrande {
                 paintTimerPolice.setStyle(Paint.Style.FILL);
                 paintTimerPolice.setStrokeWidth(2);
                 timesPolice = "ALERTA";
-
         }
         canvas.drawText(""+timesPolice,stats.getMargenX()+ gameView.getCanvasWidth()-100,stats.getLiniaseguidores(),paintTimerPolice);
-
-
 
 
         TextPaint paintStats = new TextPaint();
@@ -332,7 +343,6 @@ public class MapaGrande {
         canvas.drawBitmap(bitmap2, null, botones.getBotonRecVertArriba(), null);
 
 
-
        // paint.setColor(context.getResources().getColor(R.color.AntiqueWhite));
        // canvas.drawRect(botones.getRecHorizontalEntero(), paint);
         paint.setColor(context.getResources().getColor(R.color.Green));
@@ -352,8 +362,6 @@ public class MapaGrande {
         canvas.drawBitmap(bitmap5, null, botones.getBotonCercleA(), null);
         Bitmap bitmap6 = BitmapFactory.decodeResource(context.getResources(),R.drawable.circlebutton);
         canvas.drawBitmap(bitmap6, null, botones.getBotonCercleB(), null);
-
-
 
         //canvas.drawRect(botones.getBotonCercleA(), paint);
         //canvas.drawRect(botones.getBotonCercleB(), paint);
@@ -376,6 +384,56 @@ public class MapaGrande {
         Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resouce);
         return new IAPolicias(bmp, "poli", pos, obj, this); // de la malla
     }
+    private void transNonStop() {
+        listaTranseuntes.add(createTrans(R.drawable.good3 ));
+    }
+    private IATranseunte createTrans(int resouce) {
+        Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resouce);
+        return new IATranseunte(bmp, "tra", this); // de la malla
+    }
+
+    protected void puedeElTranseunteSeguirme(){
+        int a = hiHaUnTransEnRectangle(jugadora.getPosicion(), jugadora.getDireccio(), listaTranseuntes, zoomBitmap);
+        if(a != -1){ // Cojo un ia
+            listaTranseuntes.get(a).setLaEstoySiguiendo(true);
+            listaTranseuntes.get(a).setPosObjetivo(jugadora.getPosicion());
+            Log.d(TAG,"Lo ha encontrado");
+        } else { // lo dejo
+            int b = buscoTranseunteSeguidor();
+            if(b != -1){
+                listaTranseuntes.get(b).setLaEstoySiguiendo(false);
+                listaTranseuntes.get(b).setMeParoAdefender(true);
+                listaTranseuntes.get(b).setPosObjetivo(buscoPosicionParaDejarTranseuntes());
+                listaTranseuntes.get(b).calculaRecObjetivo();
+                Log.d(TAG,"Lo dejo");
+            }
+        }
+    }
+
+    private PointF buscoPosicionParaDejarTranseuntes(){
+        // direction = 0 right, 1 left, 2 up, 3 down,
+        if(jugadora.getDireccio() == 0){
+            return new PointF(jugadora.getPosicion().x + 6,jugadora.getPosicion().y);
+        } else if(jugadora.getDireccio() == 1){
+            return new PointF(jugadora.getPosicion().x - 6,jugadora.getPosicion().y);
+        }else if(jugadora.getDireccio() == 2){
+            return new PointF(jugadora.getPosicion().x,jugadora.getPosicion().y - 6);
+        } else if(jugadora.getDireccio() == 3){
+            return new PointF(jugadora.getPosicion().x,jugadora.getPosicion().y + 6);
+        }
+        return new PointF();
+    }
+    private int buscoTranseunteSeguidor(){
+        for(IATranseunte ia: listaTranseuntes){
+            if(ia.isLaEstoySiguiendo()){
+                return listaTranseuntes.indexOf(ia);
+            }
+        }
+        return -1;
+    }
+
+
+
     /*protected void processButtons(int x, int y){ // ya que los botones se inicializan aqui, el metodo de cambiar direccion no lo puedo poner en jugadora
         if(this.getBotones().getBotonRecHorizLeft().contains(x,y)){ //boton Left
             jugadora.setDireccio(1);

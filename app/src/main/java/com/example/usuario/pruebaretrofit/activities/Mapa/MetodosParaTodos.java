@@ -83,11 +83,25 @@ public class MetodosParaTodos {
                 {-1, -1, -1, 0},
                 {1, 0, 1, 1},
                 {1, 1, 0, 1}};
-        a.set((int) p.x + matrix[0][direc] * (zoomBitmap/2),
-                (int) p.y + matrix[1][direc] * (zoomBitmap/2),
-                (int) p.x + matrix[2][direc] * (zoomBitmap/2),
-                (int) p.y + matrix[3][direc] * (zoomBitmap/2));
+        a.set((int) p.x + matrix[0][direc] * (zoomBitmap),
+                (int) p.y + matrix[1][direc] * (zoomBitmap),
+                (int) p.x + matrix[2][direc] * (zoomBitmap),
+                (int) p.y + matrix[3][direc] * (zoomBitmap));
         return a;
+    }
+
+    protected static int hiHaUnTransEnRectangle(PointF p, int direc, java.util.List<IATranseunte> listaIas, int zoomBitmap){//}, int zoomBitmap) {
+        // 0: no hi ha, 1: hi ha, 2: esta de cara costat, 3 esta e cara vertical
+        // 0-1 2-3
+        Rect a;
+        for (IATranseunte ia : listaIas) {
+            a = definirRectangle(p,direc,zoomBitmap);
+            //if (ia.getAnima().contains((int) p.x, (int) p.y)) {// && !ia.getPosicion().equals(pos)) {
+            if(intersects(ia.getAnima(),a)){
+                return listaIas.indexOf(ia);
+            }
+        }
+        return -1;
     }
 
     protected static int hiHaUnIA(PointF p, int direc, java.util.List<IA> listaIas, int zoomBitmap){//}, int zoomBitmap) {
@@ -99,6 +113,31 @@ public class MetodosParaTodos {
             //a = definirRectangle(p,direc,zoomBitmap);
             if (ia.getAnima().contains((int) p.x, (int) p.y)) {// && !ia.getPosicion().equals(pos)) {
             //if(intersects(ia.getAnima(),a)){
+                if (Math.abs(direc - ia.getDireccio()) == 1) {
+                    if (!((direc == 2 || ia.getDireccio() == 2) &&
+                            (direc == 1 || ia.getDireccio() == 1))) {
+                        if ((direc == 0 || ia.getDireccio() == 0) &&
+                                (direc == 1 || ia.getDireccio() == 1)) {
+                            return 2;
+                        } else
+                            return 3;
+                    }
+                }
+                cont++;
+            }
+        }
+        return cont > 1 ? 1 : 0;
+    }
+
+    protected static int hiHaUnTrans(PointF p, int direc, java.util.List<IATranseunte> listaIas){//}, int zoomBitmap) {
+        // 0: no hi ha, 1: hi ha, 2: esta de cara costat, 3 esta e cara vertical
+        // 0-1 2-3
+        int cont = 0;
+        Rect a;
+        for (IATranseunte ia : listaIas) {
+            //a = definirRectangle(p,direc,zoomBitmap);
+            if (ia.getAnima().contains((int) p.x, (int) p.y)) {// && !ia.getPosicion().equals(pos)) {
+                //if(intersects(ia.getAnima(),a)){
                 if (Math.abs(direc - ia.getDireccio()) == 1) {
                     if (!((direc == 2 || ia.getDireccio() == 2) &&
                             (direc == 1 || ia.getDireccio() == 1))) {

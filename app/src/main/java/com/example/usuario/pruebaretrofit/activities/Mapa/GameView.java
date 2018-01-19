@@ -175,11 +175,11 @@ public class GameView extends SurfaceView {
                             mapaEscuela.getJugadora().setDireccio(3);
                             mapaEscuela.getJugadora().setMeTengoQueMover(true);
                         }
-                        if(mapaEscuela.getBotones().getBotonCercleA().contains(x,y)){
-                            Log.d(TAG, "boton A");
+                        if(mapaEscuela.getBotones().getBotonCercleA().contains(x,y)){ // boton A
+
                         }
-                        if(mapaEscuela.getBotones().getBotonCercleB().contains(x,y)){
-                            Log.d(TAG, "boton B");
+                        if(mapaEscuela.getBotones().getBotonCercleB().contains(x,y)){ // boton B
+
 
                         }
                     } else if(quinMapa == 1){
@@ -199,11 +199,11 @@ public class GameView extends SurfaceView {
                             mapaGrande.getJugadora().setDireccio(3);
                             mapaGrande.getJugadora().setMeTengoQueMover(true);
                         }
-                        if(mapaGrande.getBotones().getBotonCercleA().contains(x,y)){
-                            Log.d(TAG, "boton A");
+                        if(mapaGrande.getBotones().getBotonCercleA().contains(x,y)){ // boton A
+                            mapaGrande.puedeElTranseunteSeguirme();
                         }
-                        if(mapaGrande.getBotones().getBotonCercleB().contains(x,y)){
-                            Log.d(TAG, "boton B");
+                        if(mapaGrande.getBotones().getBotonCercleB().contains(x,y)){ // boton B
+
 
                         }
                     }
