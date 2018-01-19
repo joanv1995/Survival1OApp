@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -30,9 +31,11 @@ import static com.example.usuario.pruebaretrofit.activities.Mapa.MetodosParaTodo
 public class MapaEscuela {
     private final String TAG = this.getClass().getSimpleName();
 
+    private java.util.List<IAPoliciaEscuela> listaPolicias = new ArrayList<>();
     private java.util.List<IA> listaIas = new ArrayList<>();
     private String[][] malla;
     private int cualEsMiCamino = 0;
+    private int iMiCaminoP = 0;
     private int esperaIAs;
     private Jugadora jugadora;
     private BotonesDeMapas botones;
@@ -48,9 +51,10 @@ public class MapaEscuela {
     private Context context;
     private GameView gameView;
 
-    public PLayerStats getStats() {
-        return stats;
-    }
+    PointF[] caminoAseguir = {new PointF(25, 36),
+            new PointF(175, 36),
+            new PointF(25, 66),
+            new PointF(175,66)};
 
     public MapaEscuela(Context context, GameView gameView) {
 
@@ -63,6 +67,9 @@ public class MapaEscuela {
         stats = new PLayerStats();
     }
 
+    public PLayerStats getStats() {
+        return stats;
+    }
     public String[][] getMalla() {
         return malla;
     }
@@ -83,6 +90,9 @@ public class MapaEscuela {
     }
     public Jugadora getJugadora() {
         return jugadora;
+    }
+    public List<IAPoliciaEscuela> getListaPolicias() {
+        return listaPolicias;
     }
 
     private Jugadora createJugadora(int resouce, PointF pos){
@@ -134,11 +144,40 @@ public class MapaEscuela {
             listaIas.remove(a);
 
         // respawn d'ias
-        if (esperaIAs == 5) {
+        if (esperaIAs == 10) {
             iasNonStop();
             esperaIAs = 0;
-        } else
+            if(iMiCaminoP < 4) {
+                iaPoliNonStop(caminoAseguir[iMiCaminoP]);
+                iMiCaminoP++;
+            }
+        } else {
             esperaIAs++;
+        }
+        a = -1;
+        //startTime = System.currentTimeMillis();
+        for (IAPoliciaEscuela ia : listaPolicias) {
+            //startTime2 = System.currentTimeMillis();
+            recBtm = ia.onDraw(canvas,jugadora);
+            if (ia.isMeQuieroMorir())
+                a = listaPolicias.indexOf(ia);
+            else {
+                x = (int) ia.getPosicion().x * ample + margeAmpl / 2;
+                y = (int) ia.getPosicion().y * altura + margeAlt / 2;
+                rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
+                canvas.drawBitmap(ia.getBmp(), recBtm, rec, null);
+
+                int xx = (int) ia.getPosObjetivo().x * ample + margeAmpl / 2, yy = (int) ia.getPosObjetivo().y * altura + margeAlt / 2;
+                Rect rec = new Rect(xx - 10, yy - 10, xx + 10, yy + 10);
+                paint.setColor(context.getResources().getColor(R.color.colorPrimary));
+                canvas.drawRect(rec, paint);
+            }
+            //startTime2 = System.currentTimeMillis()-startTime2;
+            //Log.d(TAG,"Dibuixar un Ia: " + startTime2);
+        }
+        if (a != -1)
+            listaIas.remove(a);
+
 
         // JOAN!!! Aqui se dibuja el player
         if(espero)
@@ -209,6 +248,13 @@ public class MapaEscuela {
     private IA createIA(int resouce, PointF pos, PointF obj) {
         Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resouce);
         return new IA(bmp, "v", pos, obj, this); // de la malla //TODO borrar gameview
+    }
+    private void iaPoliNonStop(PointF p) {
+        listaPolicias.add(createIAPoli(R.drawable.bad4, new PointF(100, 95), p));
+    }
+    private IAPoliciaEscuela createIAPoli(int resouce, PointF pos, PointF obj) {
+        Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resouce);
+        return new IAPoliciaEscuela(bmp, "v", pos, obj, this); // de la malla //TODO borrar gameview
     }
 
     private boolean moverJugadora(){
