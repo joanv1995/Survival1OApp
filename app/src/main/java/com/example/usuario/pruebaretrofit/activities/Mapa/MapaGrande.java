@@ -348,15 +348,18 @@ public class MapaGrande {
         //canvas.drawRect(botones.getBotonRecHorizRigth(), paint);
 
         paint.setColor(context.getResources().getColor(R.color.AntiqueWhite));
+        Bitmap bitmap5 = BitmapFactory.decodeResource(context.getResources(),R.drawable.circlebutton);
+        canvas.drawBitmap(bitmap5, null, botones.getBotonCercleA(), null);
+        Bitmap bitmap6 = BitmapFactory.decodeResource(context.getResources(),R.drawable.circlebutton);
+        canvas.drawBitmap(bitmap6, null, botones.getBotonCercleB(), null);
 
 
 
-
-        canvas.drawRect(botones.getBotonCercleA(), paint);
-        canvas.drawRect(botones.getBotonCercleB(), paint);
+        //canvas.drawRect(botones.getBotonCercleA(), paint);
+        //canvas.drawRect(botones.getBotonCercleB(), paint);
         paint.setColor(context.getResources().getColor(R.color.Green));
-        canvas.drawCircle(botones.getCentreX1(), botones.getCentreY1(), botones.getRadi(), paint);
-        canvas.drawCircle(botones.getCentreX2(), botones.getCentreY2(), botones.getRadi(), paint);
+        //canvas.drawCircle(botones.getCentreX1(), botones.getCentreY1(), botones.getRadi(), paint);
+        //canvas.drawCircle(botones.getCentreX2(), botones.getCentreY2(), botones.getRadi(), paint);
 
         return canvas;
     }
