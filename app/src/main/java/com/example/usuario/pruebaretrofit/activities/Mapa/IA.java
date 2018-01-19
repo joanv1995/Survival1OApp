@@ -137,14 +137,14 @@ public class IA extends MuevoImagenes{
         return meQuieroMorir;
     }
 
-    private void update(Jugadora jugadora) {
+    private void update(Jugadora jugadora, int zoomBitmap) {
         Log.d(TAG, "Update: moc una casella");
        /* if(haArribat())
             enEspera = true;
         else
             enEspera = false;*/
         if (!rectObjetivo.contains((int)posicion.x,(int)posicion.y)){//!posicion.equals(posObjetivo) && !enEspera) {
-            act = new PointF();
+            act = new PointF();//.set(posicion.x, posicion.y); // si no es troba ningun punt, act es (0,0)
             try {
                 double min = 10000000;
                 //int[] vecPos = {speed, -speed, 0, 0};
@@ -155,14 +155,52 @@ public class IA extends MuevoImagenes{
                     p.set((int) getPosicion().x + vecPos[i], (int) getPosicion().y + vecPos[vecPos.length-1-i]);
                     pp.set((int) getPosicion().x + vecPos2[i], (int) getPosicion().y + vecPos2[vecPos2.length-1-i]);
 
-                    int d = hiHaUnIA(p,direccio, mapa.getListaIas());//gameView.listaIas);
-                    int dd = hiHaUnPoliAEscola(p,direccio, mapa.getListaPolicias());
+                    int d = hiHaUnIA(p,direccio, mapa.getListaIas(),zoomBitmap);//gameView.listaIas);
+                    int dd = hiHaUnPoliAEscola(p,direccio, mapa.getListaPolicias(), zoomBitmap);
                     if(d == 2 || dd == 2){
-                            //TODO si es miren, que s'evitin  (ara mateix funciona, fes-ho quan tinguis temps ;)
+                            //TODO fer que el que vagin cap a dalt o cap a baix sigui random
                             // 2: estan en horitzontal, han d'escapar un per baix i l'altre per dalt
                             // ferho aqui o al començament (millor idea ja que aqui es calcula 4 cops
+                        p.set((int) posicion.x, (int) posicion.y - speed);
+                        pp.set((int) posicion.x, (int) posicion.y - speed - 1);
+                        if (estaDinsDeMalla(p, mapa.getMalla(), mapa.getZoomBitmap())
+                                && esPotTrepitjar(p, mapa.getMalla(), mapa.getZoomBitmap()) && !p.equals(posAntiga)) {
+                            direccio = 2;
+                            act.set(p); //forço a que baixi cap a baix
+                            act2.set(pp);
+                            break;
+                        } else {
+                            p.set((int) posicion.x, (int) posicion.y + speed);
+                            pp.set((int) posicion.x, (int) posicion.y + speed + 1);
+                            if (estaDinsDeMalla(p, mapa.getMalla(), mapa.getZoomBitmap())
+                                    && esPotTrepitjar(p, mapa.getMalla(), mapa.getZoomBitmap()) && !p.equals(posAntiga)) {
+                                direccio = 3;
+                                act.set(p); //forço a que baixi cap a baix
+                                act2.set(pp);
+                                break;
+                            }
+                        }
                     }else if (d==3 || dd == 3){
                             // 3: estan en vertical, han d'escapar un per la dreta i l'altre per l'esquerra
+                        p.set((int) posicion.x - speed, (int) posicion.y);
+                        pp.set((int) posicion.x - speed - 1, (int) posicion.y);
+                        if (estaDinsDeMalla(p, mapa.getMalla(), mapa.getZoomBitmap())
+                                && esPotTrepitjar(p, mapa.getMalla(), mapa.getZoomBitmap()) && !p.equals(posAntiga)) {
+                            direccio = 1;
+                            act.set(p); //forço a que baixi cap a baix
+                            act2.set(pp);
+                            break;
+                        } else {
+                            p.set((int) posicion.x + speed, (int) posicion.y);
+                            pp.set((int) posicion.x + speed + 1, (int) posicion.y);
+                            if (estaDinsDeMalla(p, mapa.getMalla(), mapa.getZoomBitmap())
+                                    && esPotTrepitjar(p, mapa.getMalla(), mapa.getZoomBitmap()) && !p.equals(posAntiga)) {
+                                direccio = 0;
+                                act.set(p); //forço a que baixi cap a baix
+                                act2.set(pp);
+                                break;
+                            }
+                        }
                     } else {
                         double distancia = calculaDistancia(p, getPosObjetivo());
                         if (distancia < min && estaDinsDeMalla(p, mapa.getMalla(), mapa.getZoomBitmap())
@@ -182,13 +220,15 @@ public class IA extends MuevoImagenes{
             }
 
             // si m'ho ha calculat bé, actualitzo posicio
-            if((!enEspera && hiHaUnIA(act2,direccio, mapa.getListaIas()) == 0
-                    && hiHaUnPoliAEscola(act2, direccio, mapa.getListaPolicias()) == 0
+            if((!enEspera && hiHaUnIA(act2,direccio, mapa.getListaIas(),zoomBitmap) == 0
+                    && hiHaUnPoliAEscola(act2, direccio, mapa.getListaPolicias(),zoomBitmap) == 0
                     && hiHaLaJugadora(act2,  direccio, jugadora)==0) || estoyCansadoDeEsperar){//gameView.hiHaUnIA(act2,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
                 posAntiga = new PointF(getPosicion().x,getPosicion().y);
-                setPosicion(act);
+                if(!act.equals(0,0))
+                    setPosicion(act);
                 calculaAnimes();
                 currentFrame = ++currentFrame % BMP_COLUMNS;
+                estoyCansadoDeEsperar = false;
             }else {
                 if(!estaDinsDeMalla(act, mapa.getMalla(), mapa.getZoomBitmap()))
                     Log.e(TAG,"No esta dins la malla");
@@ -211,19 +251,21 @@ public class IA extends MuevoImagenes{
                 posObjetivo.set(caminoAseguir[mapa.getCualEsMiCamino()]);
                 mapa.setCualEsMiCamino(mapa.getCualEsMiCamino() + 1);
                 calculaRecObjetivo();
+                posAntiga = new PointF();
                 meVoy = true;
                 if (mapa.getCualEsMiCamino() == caminoAseguir.length)
                     mapa.setCualEsMiCamino(0);
             } else {
                 if(tiempoVotangoPasado >= tiempoVotando) {
                     posObjetivo.set(puertaAlInfierno);
+                    posAntiga = new PointF();
                     calculaRecObjetivo();
                     if (rectObjetivo.contains((int) posicion.x, (int) posicion.y))
                         meQuieroMorir = true;
                 } else
                     tiempoVotangoPasado++;
             }
-            saberDireccio();
+            //saberDireccio();
         }
     }
 
@@ -231,9 +273,9 @@ public class IA extends MuevoImagenes{
         return  sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
     }*/
 
-    protected Rect onDraw(Canvas canvas, Jugadora jugadora) {
+    protected Rect onDraw(Canvas canvas, Jugadora jugadora, int zoomBitmap) {
         Log.d(TAG,"onDraw");
-        update(jugadora);
+        update(jugadora,zoomBitmap);
         int srcX = currentFrame * width;
         int srcY = getAnimationRow() * height;
         src.set(srcX, srcY, srcX + width, srcY + height); //retalla la imatge segons l'animacio

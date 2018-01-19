@@ -123,7 +123,7 @@ public class MapaEscuela {
         //startTime = System.currentTimeMillis();
         for (IA ia : listaIas) {
             //startTime2 = System.currentTimeMillis();
-            recBtm = ia.onDraw(canvas,jugadora);
+            recBtm = ia.onDraw(canvas,jugadora,zoomBitmap);
             if (ia.isMeQuieroMorir())
                 a = listaIas.indexOf(ia);
             else {
@@ -144,7 +144,7 @@ public class MapaEscuela {
             listaIas.remove(a);
 
         // respawn d'ias
-        if (esperaIAs == 10) {
+        if (esperaIAs == 5) {
             iasNonStop();
             esperaIAs = 0;
             if(iMiCaminoP < 4) {
@@ -158,7 +158,7 @@ public class MapaEscuela {
         //startTime = System.currentTimeMillis();
         for (IAPoliciaEscuela ia : listaPolicias) {
             //startTime2 = System.currentTimeMillis();
-            recBtm = ia.onDraw(canvas,jugadora);
+            recBtm = ia.onDraw(canvas,jugadora,zoomBitmap);
             if (ia.isMeQuieroMorir())
                 a = listaPolicias.indexOf(ia);
             else {
@@ -176,7 +176,7 @@ public class MapaEscuela {
             //Log.d(TAG,"Dibuixar un Ia: " + startTime2);
         }
         if (a != -1)
-            listaIas.remove(a);
+            listaPolicias.remove(a);
 
 
         // JOAN!!! Aqui se dibuja el player

@@ -3,6 +3,7 @@ package com.example.usuario.pruebaretrofit.activities.Mapa;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -75,12 +76,28 @@ public class MetodosParaTodos {
         return malla[(int)p.y][(int)p.x].contains("-") || malla[(int)p.y][(int)p.x].contains("K") || malla[(int)p.y][(int)p.x].contains("P");
     }
 
-    protected static int hiHaUnIA(PointF p, int direc, java.util.List<IA> listaIas) {
+    protected static Rect definirRectangle(PointF p, int direc, int zoomBitmap){
+        Rect a = new Rect(); //TODO suposu que funciona be, pero revisaho per si de cas
+        int[][] matrix ={{0, -1, -1, -1},
+                {-1, -1, -1, 0},
+                {1, 0, 1, 1},
+                {1, 1, 0, 1}};
+        a.set((int) p.x + matrix[0][direc] * (zoomBitmap/2),
+                (int) p.y + matrix[1][direc] * (zoomBitmap/2),
+                (int) p.x + matrix[2][direc] * (zoomBitmap/2),
+                (int) p.y + matrix[3][direc] * (zoomBitmap/2));
+        return a;
+    }
+
+    protected static int hiHaUnIA(PointF p, int direc, java.util.List<IA> listaIas, int zoomBitmap){//}, int zoomBitmap) {
         // 0: no hi ha, 1: hi ha, 2: esta de cara costat, 3 esta e cara vertical
         // 0-1 2-3
         int cont = 0;
+        Rect a;
         for (IA ia : listaIas) {
+            //a = definirRectangle(p,direc,zoomBitmap);
             if (ia.getAnima().contains((int) p.x, (int) p.y)) {// && !ia.getPosicion().equals(pos)) {
+            //if(intersects(ia.getAnima(),a)){
                 if (Math.abs(direc - ia.getDireccio()) == 1) {
                     if (!((direc == 2 || ia.getDireccio() == 2) &&
                             (direc == 1 || ia.getDireccio() == 1))) {
@@ -119,18 +136,22 @@ public class MetodosParaTodos {
         return cont > 1 ? 1 : 0;
     }
 
-    protected static int hiHaUnPoliAEscola(PointF p, int direc, java.util.List<IAPoliciaEscuela> listaPolicies) {
+    protected static int hiHaUnPoliAEscola(PointF p, int direc, java.util.List<IAPoliciaEscuela> listaPolicies, int zoomBitmap) {
         // 0: no hi ha, 1: hi ha, 2: esta de cara costat, 3 esta e cara vertical
         // 0-1 2-3
+        // direction = 0 right, 1 left, 2 up, 3 down,
         int cont = 0;
+        Rect a;
         for (IAPoliciaEscuela ia : listaPolicies) {
+            //a = definirRectangle(p,direc,zoomBitmap);
             if (ia.getAnima().contains((int) p.x, (int) p.y)) {// && !ia.getPosicion().equals(pos)) {
+            //if(intersects(ia.getAnima(),a)){
                 if (Math.abs(direc - ia.getDireccio()) == 1) {
                     if (!((direc == 2 || ia.getDireccio() == 2) &&
                             (direc == 1 || ia.getDireccio() == 1))) {
                         if ((direc == 0 || ia.getDireccio() == 0) &&
                                 (direc == 1 || ia.getDireccio() == 1)) {
-                            return 2;
+                            return 2; //retornar "2" + "index ia" per saber quin es l'altre ia per canviarli la posicio
                         } else
                             return 3;
                     }
@@ -161,6 +182,10 @@ public class MetodosParaTodos {
         return 0;
     }
 
+    public static boolean intersects(Rect rect, Rect otherRect) {
+        return  rect.left <= otherRect.right && otherRect.left <= rect.right
+                && rect.top <= otherRect.bottom && otherRect.top <= rect.bottom;
+    }
 
     protected static int buscarIAperPosicio(PointF p, java.util.List<IA> listaIas) {
         for (IA ia : listaIas) {

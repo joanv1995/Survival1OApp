@@ -36,7 +36,7 @@ public class GameView extends SurfaceView {
     //int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
     //        | View.SYSTEM_UI_FLAG_FULLSCREEN;
 
-    private int quinMapa = 1; // mapaEscuela=0, mapaGrande = 1, minijuegos = 2
+    private int quinMapa = 0; // mapaEscuela=0, mapaGrande = 1, minijuegos = 2
 
 
     public GameView(Context context) {
@@ -138,7 +138,7 @@ public class GameView extends SurfaceView {
         //Log.d(TAG,"canvasWidth " + ample);
         //Log.d(TAG,"canvasHeight " + altura);
 
-        if (quinMapa == 0) { //Mapa escola
+        if (quinMapa == 0) { //mapa escola
             canvas = mapaEscuela.dibujoElMapaEscuela(canvas, ample, altura, margeAlt, margeAmpl);
 
         } else if(quinMapa == 1){

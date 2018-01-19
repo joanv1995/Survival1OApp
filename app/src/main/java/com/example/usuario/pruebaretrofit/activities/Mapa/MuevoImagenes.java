@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
  */
 
 public abstract class MuevoImagenes {
+    /** Esta clase no se utiliza actualmente **/
     // TODO: veure com faig aixo
     private static final int BMP_ROWS = 4;
     private static final int BMP_COLUMNS = 3;
