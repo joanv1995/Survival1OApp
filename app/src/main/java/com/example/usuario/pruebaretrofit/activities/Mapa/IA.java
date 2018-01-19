@@ -39,6 +39,9 @@ public class IA extends MuevoImagenes{
     private int speed = 2; // TODO: mirar que faig amb la velocitat
     private boolean direccioX_Left, direccioY_Up; // true: up, false: down
     private int direccio; // direction = 0 right, 1 left, 2 up, 3 down,
+
+
+
     private Rect anima = new Rect();
 
     // direction = 0 up, 1 left, 2 down, 3 right,
@@ -63,6 +66,8 @@ public class IA extends MuevoImagenes{
     private boolean meVoy = false, meQuieroMorir= false;
     private int tiempoVotando = 10, tiempoVotangoPasado = 0;
     private boolean estoyCansadoDeEsperar = false;
+
+    private boolean votando = false;
     private int contEspera = 0;
 
     public IA(Bitmap bmp, String idIa, PointF posicion, PointF posObjetivo, MapaEscuela mapaEscuela){
@@ -111,6 +116,14 @@ public class IA extends MuevoImagenes{
             else
                 return posicion.y >= posObjetivo.y && posicion.x >= posObjetivo.x;
         }
+    }
+
+    public Rect getRectObjetivo() {
+        return rectObjetivo;
+    }
+
+    public boolean isVotando() {
+        return votando;
     }
     public PointF getPosicion() {
         return posicion;
@@ -257,13 +270,17 @@ public class IA extends MuevoImagenes{
                     mapa.setCualEsMiCamino(0);
             } else {
                 if(tiempoVotangoPasado >= tiempoVotando) {
+                    votando = false;
                     posObjetivo.set(puertaAlInfierno);
                     posAntiga = new PointF();
                     calculaRecObjetivo();
                     if (rectObjetivo.contains((int) posicion.x, (int) posicion.y))
                         meQuieroMorir = true;
-                } else
+                } else {
+                    //// VOTANTE VOTANDO
+                    votando = true;
                     tiempoVotangoPasado++;
+                }
             }
             //saberDireccio();
         }

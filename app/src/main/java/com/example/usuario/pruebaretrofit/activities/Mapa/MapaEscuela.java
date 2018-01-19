@@ -37,10 +37,11 @@ public class MapaEscuela {
     private int cualEsMiCamino = 0;
     private int iMiCaminoP = 0;
     private int esperaIAs;
+
     private Jugadora jugadora;
     private BotonesDeMapas botones;
     private PLayerStats stats;
-
+    private Rect rectUrna;
     // cosas que inicializar en el construct
     private int x = 0, y = 0;
     private Rect rec = new Rect(), recBtm = new Rect();
@@ -122,6 +123,8 @@ public class MapaEscuela {
         int a = -1;
         //startTime = System.currentTimeMillis();
         for (IA ia : listaIas) {
+
+
             //startTime2 = System.currentTimeMillis();
             recBtm = ia.onDraw(canvas,jugadora,zoomBitmap);
             if (ia.isMeQuieroMorir())
@@ -137,6 +140,32 @@ public class MapaEscuela {
                 paint.setColor(context.getResources().getColor(R.color.colorPrimary));
                 canvas.drawRect(rec, paint);
             }
+            if(ia.isVotando()){
+                Rect rectEstavotando00 = new Rect(50,30,70,41);
+                Rect rectEstavotando10 = new Rect(131,30,151,41);
+                Rect rectEstavotando01 = new Rect(50,60,70,71);
+                Rect rectEstavotando11 = new Rect(131,60,151,71);
+                rectUrna = new Rect();
+                if(rectEstavotando00.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
+                    rectUrna.set(rectEstavotando00.left -18, rectEstavotando00.top+2, rectEstavotando00.right-20, rectEstavotando00.bottom -2);
+                }
+                else if(rectEstavotando10.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
+                    rectUrna.set(rec.left, rec.top, rec.right, rec.bottom);
+                }
+                else if(rectEstavotando01.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
+                    rectUrna.set(rec.left, rec.top, rec.right, rec.bottom);
+                }
+                else if(rectEstavotando11.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
+                    rectUrna.set(rec.left, rec.top, rec.right, rec.bottom);
+                }
+
+
+                Bitmap bitmap1 = BitmapFactory.decodeResource(context.getResources(),R.drawable.voting);
+
+                canvas.drawBitmap(bitmap1,null,rectUrna,null);
+
+
+            }
             //startTime2 = System.currentTimeMillis()-startTime2;
             //Log.d(TAG,"Dibuixar un Ia: " + startTime2);
         }
@@ -144,17 +173,20 @@ public class MapaEscuela {
             listaIas.remove(a);
 
         // respawn d'ias
-        if (esperaIAs == 5) {
+        if (esperaIAs == 20) {
             iasNonStop();
             esperaIAs = 0;
             if(iMiCaminoP < 4) {
                 iaPoliNonStop(caminoAseguir[iMiCaminoP]);
                 iMiCaminoP++;
             }
-        } else {
-            esperaIAs++;
         }
+        else
+            {
+                esperaIAs++;
+            }
         a = -1;
+        //IAS
         //startTime = System.currentTimeMillis();
         for (IAPoliciaEscuela ia : listaPolicias) {
             //startTime2 = System.currentTimeMillis();
@@ -192,6 +224,11 @@ public class MapaEscuela {
 
         //startTime = System.currentTimeMillis()-startTime;
         //Log.d(TAG,"Dibuixar tots els Ias: " + startTime);
+
+        // Imagen urna votante votando
+
+
+
 
         // JOAN!! Aqui se pintan los "botones"
         // los cojo de la clase BotonesDeMapas
@@ -243,7 +280,7 @@ public class MapaEscuela {
         return canvas;
     }
     private void iasNonStop() {
-        listaIas.add(createIA(R.drawable.bad1, new PointF(165, 95), new PointF(100, 60)));
+        listaIas.add(createIA(R.drawable.bad1, new PointF(165, 6), new PointF(100, 45)));
     }
     private IA createIA(int resouce, PointF pos, PointF obj) {
         Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resouce);
@@ -281,6 +318,7 @@ public class MapaEscuela {
             return false;
         }
     }
+    ///DE MOMENTO...NO SE USA ( NEVER KNOWS)
     public void interactionOneTouch(int x, int y){
         if(this.getBotones().getBotonRecHorizLeft().contains(x,y)){
             Log.d(TAG,"boton Left");

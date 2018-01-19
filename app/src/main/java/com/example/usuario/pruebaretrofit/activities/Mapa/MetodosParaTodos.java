@@ -58,6 +58,7 @@ public class MetodosParaTodos {
                 && p.y <= (malla.length-zoomBitmap-1) && p.y >= zoomBitmap-1;
     }
 
+
     protected static boolean esPotTrepitjar(PointF p, String[][] malla, int zoomBitmap){
         // si per les celes proximes no toca la imatge del bitmap amb taules o merdes
         int[] vec = {zoomBitmap-1, -(zoomBitmap-1), 0, 0};

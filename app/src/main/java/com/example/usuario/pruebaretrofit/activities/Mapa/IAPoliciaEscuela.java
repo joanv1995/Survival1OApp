@@ -237,8 +237,12 @@ public class IAPoliciaEscuela {
                     calculaRecObjetivo();
                     if (rectObjetivo.contains((int) posicion.x, (int) posicion.y))
                         meQuieroMorir = true;
-                } else
+                } else {
+                    /// poLICIAS SE LLEVA URNA PROGRESS BAR O ALGO ASI
+
+
                     tiempoVotangoPasado++;
+                }
             //}
         }
     }
