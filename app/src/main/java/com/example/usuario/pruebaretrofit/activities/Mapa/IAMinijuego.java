@@ -12,7 +12,7 @@ import static com.example.usuario.pruebaretrofit.activities.Mapa.MetodosParaTodo
  * Created by annag on 19/01/2018.
  */
 
-public class IAPoliciaEscuela {
+public class IAMinijuego {
     /** Esta clase solo sirve para la clase MapaEscuela **/
     private final String TAG = this.getClass().getSimpleName();
 
@@ -22,7 +22,7 @@ public class IAPoliciaEscuela {
     private Bitmap bmp;
 
     //private GameView gameView;
-    private MapaEscuela mapa;
+    private Minijuego mapa;
     private int currentFrame = 0;
 
     private int width; // de la imatge
@@ -44,7 +44,6 @@ public class IAPoliciaEscuela {
     // animation = 3 back, 1 left, 0 front, 2 right
     private static final int[] DIRECTION_TO_ANIMATION_MAP = {2, 1, 3, 0};//{ 3, 1, 0, 2 };
 
-    private boolean cancelandoUrna = false;
     // per dibuixar
     private PointF act = new PointF(), act2 = new PointF();
     private PointF p = new PointF();
@@ -59,7 +58,7 @@ public class IAPoliciaEscuela {
     private boolean estoyCansadoDeEsperar = false;
     private int contEspera = 0;
 
-    public IAPoliciaEscuela(Bitmap bmp, String idIa, PointF posicion, PointF posObjetivo, MapaEscuela mapa){
+    public IAMinijuego(Bitmap bmp, String idIa, PointF posicion, PointF posObjetivo, Minijuego mapa){
         Log.d(TAG, "inicialitzo un IA");
         //this.gameView=gameView;
         this.bmp=bmp;
@@ -74,9 +73,6 @@ public class IAPoliciaEscuela {
         calculaAnimes();
     }
 
-    public boolean isCancelandoUrna() {
-        return cancelandoUrna;
-    }
 
     public int getSpeed() {
         return speed;
@@ -210,7 +206,7 @@ public class IAPoliciaEscuela {
                 if(!estaDinsDeMalla(act, mapa.getMalla(), mapa.getZoomBitmap()))
                     Log.e(TAG,"No esta dins la malla");
                 contEspera++;
-                if(contEspera > 10) {
+                if(contEspera > 35) {
                     estoyCansadoDeEsperar = true;
                     contEspera = 0;
                 }
@@ -225,28 +221,28 @@ public class IAPoliciaEscuela {
 
         } else { // ha arribat a la posició objectiu
             //if (rectObjetivo.contains((int) posicion.x, (int) posicion.y))
-                //meQuieroMorir = true;
+            //meQuieroMorir = true;
             //if(!meVoy) {
-                // se'n van a les taules
+            // se'n van a les taules
 
-                //mapa.setCualEsMiCamino(mapa.getCualEsMiCamino() + 1);
-                //calculaRecObjetivo();
-                //meVoy = true;
-                //if (mapa.getCualEsMiCamino() == caminoAseguir.length)
-                //    mapa.setCualEsMiCamino(0);
+            //mapa.setCualEsMiCamino(mapa.getCualEsMiCamino() + 1);
+            //calculaRecObjetivo();
+            //meVoy = true;
+            //if (mapa.getCualEsMiCamino() == caminoAseguir.length)
+            //    mapa.setCualEsMiCamino(0);
             //} else {
-                if(tiempoVotangoPasado >= tiempoVotando) {
-                    posObjetivo.set(puertaAlInfierno);
-                    posAntiga = new PointF();
-                    calculaRecObjetivo();
-                    if (rectObjetivo.contains((int) posicion.x, (int) posicion.y))
-                        meQuieroMorir = true;
-                } else {
-                    /// poLICIAS SE LLEVA URNA PROGRESS BAR O ALGO ASI
-                    cancelandoUrna = true;
+            if(tiempoVotangoPasado >= tiempoVotando) {
+                posObjetivo.set(puertaAlInfierno);
+                posAntiga = new PointF();
+                calculaRecObjetivo();
+                if (rectObjetivo.contains((int) posicion.x, (int) posicion.y))
+                    meQuieroMorir = true;
+            } else {
+                /// poLICIAS SE LLEVA URNA PROGRESS BAR O ALGO ASI
+                cancelandoUrna = true;
 
-                    tiempoVotangoPasado++;
-                }
+                tiempoVotangoPasado++;
+            }
             //}
         }
     }
