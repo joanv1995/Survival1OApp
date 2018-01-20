@@ -26,10 +26,10 @@ import com.example.usuario.pruebaretrofit.R;
 import com.example.usuario.pruebaretrofit.activities.FragmentsPerfil.PerfilFragment;
 import com.example.usuario.pruebaretrofit.activities.FragmentsPerfil.PlayFragment;
 import com.example.usuario.pruebaretrofit.activities.FragmentsPerfil.RankingFragment;
-import com.example.usuario.pruebaretrofit.model.Usuario;
+import com.example.usuario.pruebaretrofit.model.Usuario2;
 
 public class PerfilActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, PerfilFragment.OnFragmentInteractionListener, RankingFragment.OnFragmentInteractionListener{
+        implements NavigationView.OnNavigationItemSelectedListener, PerfilFragment.OnFragmentInteractionListener, RankingFragment.OnFragmentInteractionListener, PlayFragment.OnFragmentInteractionListener{
 
     public void onFragmentInteraction(Uri uri){};
 
@@ -57,16 +57,13 @@ public class PerfilActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
-
-
             }
 
     @Override
     protected void onStart() {
         super.onStart();
         Intent in = getIntent();
-        Usuario player = (Usuario)in.getSerializableExtra("jugador");
+        Usuario2 player = (Usuario2)in.getSerializableExtra("jugador");
 
         final NavigationView navigation = (NavigationView)findViewById(R.id.nav_view);
         navigation.setNavigationItemSelectedListener(this);
