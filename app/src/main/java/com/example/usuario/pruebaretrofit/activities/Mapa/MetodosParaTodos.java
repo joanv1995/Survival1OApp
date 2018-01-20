@@ -160,6 +160,21 @@ public class MetodosParaTodos {
         return cont > 1 ? 1 : 0;
     }
 
+    protected static int hiHaUnTransPoli(PointF p, int direc, java.util.List<IATranseunte> listaIas){//}, int zoomBitmap) {
+        // 0: no hi ha, 1: hi ha, 2: esta de cara costat, 3 esta e cara vertical
+        // 0-1 2-3
+        int cont = 0;
+        Rect a;
+        for (IATranseunte ia : listaIas) {
+            //a = definirRectangle(p,direc,zoomBitmap);
+            if (ia.getAnima().contains((int) p.x, (int) p.y)) {// && !ia.getPosicion().equals(pos)) {
+                //if(intersects(ia.getAnima(),a)){
+                return 1;
+            }
+        }
+        return 0;
+    }
+
     protected static int hiHaUnPoli(PointF p, int direc, java.util.List<IAPolicias> listaPolicies) {
         // 0: no hi ha, 1: hi ha, 2: esta de cara costat, 3 esta e cara vertical
         // 0-1 2-3

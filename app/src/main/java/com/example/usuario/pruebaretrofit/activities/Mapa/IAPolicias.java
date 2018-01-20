@@ -55,6 +55,7 @@ public class IAPolicias {
 
     PointF puertaAlInfierno = new PointF(203,119);
     private boolean meVoy = false, meQuieroMorir= false;
+    private boolean meEncaroConTrans = false;
 
     public IAPolicias(Bitmap bmp, String idIa, PointF posicion, PointF posObjetivo, MapaGrande mapa){
         Log.d(TAG, "inicialitzo un IA");
@@ -89,13 +90,17 @@ public class IAPolicias {
     public PointF getPosObjetivo() {
         return posObjetivo;
     }
-
     public void setAnima(Rect anima) {
         this.anima = anima;
     }
-
     public boolean isMeQuieroMorir() {
         return meQuieroMorir;
+    }
+    public boolean isMeEncaroConTrans() {
+        return meEncaroConTrans;
+    }
+    public void setMeEncaroConTrans(boolean meEncaroConTrans) {
+        this.meEncaroConTrans = meEncaroConTrans;
     }
 
     private void calculaRecObjetivo(){
@@ -109,7 +114,7 @@ public class IAPolicias {
     }
 
     private void update(Jugadora jugadora) {
-        Log.d(TAG, "Update: moc una casella");
+        //Log.d(TAG, "Update: moc una casella");
         /*if(haArribat())
             enEspera = true;
         else
@@ -150,9 +155,13 @@ public class IAPolicias {
                 enEspera=true;
             }
 
+            if(hiHaUnTransPoli(act2,direccio,mapa.getListaTranseuntes())==1) {
+                mapa.decirATransQueSeEstaEncarando(this);
+            }
+
             // si m'ho ha calculat bé, actualitzo posicio
             if(!enEspera && hiHaUnPoli(act2, direccio, mapa.getListaPolicias()) == 0 && hiHaLaJugadora(act2,  direccio, jugadora)==0
-                    && hiHaUnTrans(act2,direccio,mapa.getListaTranseuntes())==0){//gameView.hiHaUnIA(act2,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
+                    && hiHaUnTransPoli(act2,direccio,mapa.getListaTranseuntes())==0){//gameView.hiHaUnIA(act2,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
                 posAntiga = new PointF(posicion.x, posicion.y);
                 if(!act.equals(0,0))
                     posicion.set(act);
@@ -195,7 +204,7 @@ public class IAPolicias {
     }
 
     protected Rect onDraw(Canvas canvas, Jugadora posJug) {
-        Log.d(TAG,"onDraw");
+        //Log.d(TAG,"onDraw");
         update(posJug);
         int srcX = currentFrame * width;
         int srcY = getAnimationRow() * height;
