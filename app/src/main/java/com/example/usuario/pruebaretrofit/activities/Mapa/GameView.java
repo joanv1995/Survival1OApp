@@ -31,12 +31,16 @@ public class GameView extends SurfaceView {
 
     private MapaEscuela mapaEscuela;
     private MapaGrande mapaGrande;
+    private Minijuego minijuego;
     private int anchoMalla = 200, altoMalla = 100;  // Que todas las mallas de mapas sean de 200*100
     // per amager la barra de navegacio
     //int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
     //        | View.SYSTEM_UI_FLAG_FULLSCREEN;
 
+
     private int quinMapa = 0; // mapaEscuela=0, mapaGrande = 1, minijuegos = 2
+
+
 
 
     public GameView(Context context) {
@@ -45,6 +49,7 @@ public class GameView extends SurfaceView {
         gameLoopThread = new GameLoopThread(this);
         mapaEscuela = new MapaEscuela(context, this); // AQUI ESTA EL MAPA
         mapaGrande = new MapaGrande(context, this);
+        minijuego = new Minijuego(context, this);
         //this.setSystemUiVisibility(uiOptions);
 
         holder = getHolder();
@@ -70,6 +75,8 @@ public class GameView extends SurfaceView {
                 } else if (quinMapa == 1) {
                     mapaGrande.getBotones().setMedidasCanvas(canvasWidth,canvasHeight);
                     mapaGrande.getStats().setMedidasCanvas(canvasWidth,canvasHeight);
+                } else if (quinMapa == 2){
+                    minijuego.getBotones().setMedidasCanvas(canvasWidth,canvasHeight);
                 }
                 margeAmpl = width - canvasWidth;
                 margeAlt = height - canvasHeight;
@@ -146,7 +153,7 @@ public class GameView extends SurfaceView {
 
         }else if(quinMapa == 2){
             // TODO: ALEX, qui va tu
-
+            canvas = minijuego.dibujoMinijuego(canvas, ample, altura, margeAlt, margeAmpl);
         }
     }
 
