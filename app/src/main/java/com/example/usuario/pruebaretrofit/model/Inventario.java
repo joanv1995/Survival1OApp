@@ -39,7 +39,7 @@ public class Inventario implements Serializable {
         this.listaObjetos = listaObjetos;
         this.pesoActual = 0;
         for (Objeto o : listaObjetos) {
-            pesoActual = pesoActual + o.getPeso();
+            //pesoActual = pesoActual + o.getPeso();
         }
     }
 }

@@ -6,6 +6,8 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.util.Log;
 
+import com.example.usuario.pruebaretrofit.model.Objeto;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
@@ -65,7 +67,7 @@ public class MetodosParaTodos {
     }
 
 
-    protected static boolean esPotTrepitjar(PointF p, String[][] malla, int zoomBitmap){
+    public static boolean esPotTrepitjar(PointF p, String[][] malla, int zoomBitmap){
         // si per les celes proximes no toca la imatge del bitmap amb taules o merdes
         int[] vec = {zoomBitmap-1, -(zoomBitmap-1), 0, 0};
         String pp = "";
@@ -105,6 +107,20 @@ public class MetodosParaTodos {
             //if (ia.getAnima().contains((int) p.x, (int) p.y)) {// && !ia.getPosicion().equals(pos)) {
             if(intersects(ia.getAnima(),a)){
                 return listaIas.indexOf(ia);
+            }
+        }
+        return -1;
+    }
+
+    protected static int hiHaUnObjecteEnRectangle(PointF p, int direc, java.util.List<Objeto> listaObj, int zoomBitmap){//}, int zoomBitmap) {
+        // 0: no hi ha, 1: hi ha, 2: esta de cara costat, 3 esta e cara vertical
+        // 0-1 2-3
+        Rect a;
+        for (Objeto ia : listaObj) {
+            a = definirRectangle(p,direc,zoomBitmap);
+            //if (ia.getAnima().contains((int) p.x, (int) p.y)) {// && !ia.getPosicion().equals(pos)) {
+            if(intersects(ia.getAnima(),a)){
+                return listaObj.indexOf(ia);
             }
         }
         return -1;
@@ -166,6 +182,21 @@ public class MetodosParaTodos {
         int cont = 0;
         Rect a;
         for (IATranseunte ia : listaIas) {
+            //a = definirRectangle(p,direc,zoomBitmap);
+            if (ia.getAnima().contains((int) p.x, (int) p.y)) {// && !ia.getPosicion().equals(pos)) {
+                //if(intersects(ia.getAnima(),a)){
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    protected static int hiHaUnObjecte(PointF p, java.util.List<Objeto> listaIas){//}, int zoomBitmap) {
+        // 0: no hi ha, 1: hi ha, 2: esta de cara costat, 3 esta e cara vertical
+        // 0-1 2-3
+        int cont = 0;
+        Rect a;
+        for (Objeto ia : listaIas) {
             //a = definirRectangle(p,direc,zoomBitmap);
             if (ia.getAnima().contains((int) p.x, (int) p.y)) {// && !ia.getPosicion().equals(pos)) {
                 //if(intersects(ia.getAnima(),a)){

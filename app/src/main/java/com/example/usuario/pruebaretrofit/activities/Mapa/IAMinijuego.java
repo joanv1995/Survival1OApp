@@ -129,8 +129,8 @@ public class IAMinijuego {
                     p.set((int) posicion.x + vecPos[i], (int) posicion.y + vecPos[vecPos.length-1-i]);
                     pp.set((int) posicion.x + vecPos2[i], (int) posicion.y + vecPos2[vecPos2.length-1-i]);
 
-                    int d = hiHaUnIA(p,direccio, mapa.getListaIas(),zoomBitmap);//gameView.listaIas);
-                    int dd = hiHaUnPoliAEscola(p,direccio, mapa.getListaPolicias(),zoomBitmap);//gameView.listaIas);
+                    int d = 0;//hiHaUnIA(p,direccio, mapa.getListaIas(),zoomBitmap);//gameView.listaIas);
+                    int dd = 0;//hiHaUnPoliAEscola(p,direccio, mapa.getListaPolicias(),zoomBitmap);//gameView.listaIas);
                     if(d == 2 || dd == 2){ // direction = 0 right, 1 left, 2 up, 3 down,
                         //TODO si es miren, que s'evitin  (ara mateix funciona, fes-ho quan tinguis temps ;)
                         // 2: estan en horitzontal, han d'escapar un per baix i l'altre per dalt
@@ -193,8 +193,8 @@ public class IAMinijuego {
             }
 
             // si m'ho ha calculat bé, actualitzo posicio
-            if((!enEspera && hiHaUnIA(act2,direccio, mapa.getListaIas(),zoomBitmap) == 0
-                    && hiHaUnPoliAEscola(act2, direccio, mapa.getListaPolicias(), zoomBitmap) == 0
+            if((!enEspera /*&& hiHaUnIA(act2,direccio, mapa.getListaIas(),zoomBitmap) == 0
+                    && hiHaUnPoliAEscola(act2, direccio, mapa.getListaPolicias(), zoomBitmap) == 0*/
                     && hiHaLaJugadora(act2,  direccio, jugadora)==0) || estoyCansadoDeEsperar){//gameView.hiHaUnIA(act2,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
                 posAntiga = new PointF(posicion.x, posicion.y);
                 if(!act.equals(0,0))
@@ -239,7 +239,7 @@ public class IAMinijuego {
                     meQuieroMorir = true;
             } else {
                 /// poLICIAS SE LLEVA URNA PROGRESS BAR O ALGO ASI
-                cancelandoUrna = true;
+                //cancelandoUrna = true;
 
                 tiempoVotangoPasado++;
             }
