@@ -29,7 +29,7 @@ import com.example.usuario.pruebaretrofit.activities.FragmentsPerfil.RankingFrag
 import com.example.usuario.pruebaretrofit.model.Usuario;
 
 public class PerfilActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, PerfilFragment.OnFragmentInteractionListener, RankingFragment.OnFragmentInteractionListener{
+        implements NavigationView.OnNavigationItemSelectedListener, PerfilFragment.OnFragmentInteractionListener, RankingFragment.OnFragmentInteractionListener, PlayFragment.OnFragmentInteractionListener{
 
     public void onFragmentInteraction(Uri uri){};
 
