@@ -220,18 +220,18 @@ public class MapaGrande {
             altoInit++;
         }
         Paint paint = new Paint();
-        //paint.setColor(context.getResources().getColor(R.color.Olive));
+        // dibujo jugadora
         if(espero)
             jugadora.runCurrentFrame();
         recBtm = jugadora.onDraw(canvas);
-        x = xx * ample + margeAmpl / 2;
-        y = yy * altura + margeAlt / 2;
-        rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
 
-        canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);
-        //canvas.drawRect((jugadora.getAnima().left-cuadradoMapa.left)*ample+ margeAmpl / 2,
-        //        (jugadora.getAnima().top - cuadradoMapa.top)*altura+ margeAlt / 2,(jugadora.getAnima().right - cuadradoMapa.top)*ample+ margeAmpl / 2,
-        //        (jugadora.getAnima().bottom-cuadradoMapa.top)*altura+ margeAlt / 2,paint);
+        if (!jugadora.isEstoyEnElHospital()) {
+            x = xx * ample + margeAmpl / 2;
+            y = yy * altura + margeAlt / 2;
+            rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
+            canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);
+        }
+
         int a = -1;
         for(Objeto op:listaObjetos){
             if(op.isMeEstanDestruyendo()){
@@ -424,34 +424,43 @@ public class MapaGrande {
     }
 
     protected void puedeElTranseunteSeguirme(){
-        int a = hiHaUnTransEnRectangle(jugadora.getPosicion(), jugadora.getDireccio(), listaTranseuntes, zoomBitmap);
-        if(a != -1){ // Cojo un ia
-            listaTranseuntes.get(a).setLaEstoySiguiendo(true);
-            listaTranseuntes.get(a).setPosObjetivo(jugadora.getPosicion());
-            Log.d(TAG,"Lo ha encontrado");
-        } else { // lo dejo
-            int b = buscoTranseunteSeguidor();
-            if(b != -1){
-                listaTranseuntes.get(b).setLaEstoySiguiendo(false);
-                listaTranseuntes.get(b).setMeParoAdefender(true);
-                listaTranseuntes.get(b).setPosObjetivo(buscoPosicionParaDejarTranseuntes());
-                listaTranseuntes.get(b).calculaRecObjetivo();
-                Log.d(TAG,"Lo dejo");
-            } else {
-                // Comprovar si hay objeto
-                int c = hiHaUnObjecteEnRectangle(jugadora.getPosicion(), jugadora.getDireccio(), listaObjetos, zoomBitmap);
-                if (c != -1 ){
-                    listaObjetos.get(c).setEnInventario(true);
-                    jugadora.getInventario().getListaObjetos().add(listaObjetos.get(c));
+        if(jugadora.isEstoyEnElHospital())
+            jugadora.setEstoyEnElHospital(false);
+        else {
+            int a = hiHaUnTransEnRectangle(jugadora.getPosicion(), jugadora.getDireccio(), listaTranseuntes, zoomBitmap);
+            if (a != -1) { // Cojo un ia
+                listaTranseuntes.get(a).setLaEstoySiguiendo(true);
+                listaTranseuntes.get(a).setPosObjetivo(jugadora.getPosicion());
+                Log.d(TAG, "Lo ha encontrado");
+            } else { // lo dejo
+                int b = buscoTranseunteSeguidor();
+                if (b != -1) {
+                    listaTranseuntes.get(b).setLaEstoySiguiendo(false);
+                    listaTranseuntes.get(b).setMeParoAdefender(true);
+                    listaTranseuntes.get(b).setPosObjetivo(buscoPosicionParaDejarTranseuntes());
+                    listaTranseuntes.get(b).calculaRecObjetivo();
+                    Log.d(TAG, "Lo dejo");
                 } else {
-                    int d = buscoObjetoDeInventario();
-                    if ( d!= -1){
-                        listaObjetos.get(d).setEnInventario(false);
-                        listaObjetos.get(d).setPosicion(buscoPosicionParaDejarTranseuntes());
-                    }
-                    if(jugadora.getInventario().hayObjetosEnInventario()){ //esta parte no hace nada en verdad
-                        jugadora.getInventario().getListaObjetos().get(0).setEnInventario(false);
-                        jugadora.getInventario().getListaObjetos().remove(0);
+                    // Comprovar si hay objeto
+                    int c = hiHaUnObjecteEnRectangle(jugadora.getPosicion(), jugadora.getDireccio(), listaObjetos, zoomBitmap);
+                    if (c != -1) {
+                        listaObjetos.get(c).setEnInventario(true);
+                        jugadora.getInventario().getListaObjetos().add(listaObjetos.get(c));
+                    } else {
+                        if (jugadora.getInventario().hayObjetosEnInventario()) { //esta parte no hace nada en verdad
+                            jugadora.getInventario().getListaObjetos().get(0).setEnInventario(false);
+                            jugadora.getInventario().getListaObjetos().remove(0);
+                        }
+                        int d = buscoObjetoDeInventario();
+                        if (d != -1) {
+                            listaObjetos.get(d).setEnInventario(false);
+                            listaObjetos.get(d).setPosicion(buscoPosicionParaDejarTranseuntes());
+                        } else {
+                            Rect r = new Rect(76, 59, 85, 62);
+                            if (r.contains((int) jugadora.getPosicion().x, (int) jugadora.getPosicion().y)) {
+                                jugadora.setEstoyEnElHospital(true);
+                            }
+                        }
                     }
                 }
             }
@@ -541,9 +550,10 @@ public class MapaGrande {
                 p.set(jugadora.getPosicion().x,jugadora.getPosicion().y + jugadora.getSpeed());
                 break;
         }
-        if(estaDinsDeMalla(p,malla,zoomBitmap) && esPotTrepitjar(p,malla,zoomBitmap/2)){
+        if(estaDinsDeMalla(p,malla,zoomBitmap) && esPotTrepitjar(p,malla,zoomBitmap/2) && !jugadora.isEstoyEnElHospital()){
             jugadora.setPosicion(p);
             jugadora.calculaAnimes(zoomBitmap);
+
             return true;
         } else{
             return false;

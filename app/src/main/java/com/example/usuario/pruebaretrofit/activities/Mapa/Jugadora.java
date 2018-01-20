@@ -34,6 +34,7 @@ public class Jugadora {
     private Rect src = new Rect();
     private int speed = 4;
     private boolean meTengoQueMover = false;
+    private boolean estoyEnElHospital = false;
 
     private Inventario inventario;
 
@@ -90,7 +91,12 @@ public class Jugadora {
     public void setInventario(Inventario inventario) {
         this.inventario = inventario;
     }
-
+    public boolean isEstoyEnElHospital() {
+        return estoyEnElHospital;
+    }
+    public void setEstoyEnElHospital(boolean estoyEnElHospital) {
+        this.estoyEnElHospital = estoyEnElHospital;
+    }
     public void setAnima(Rect anima) {
         this.anima = anima;
     }

@@ -291,8 +291,6 @@ public class IATranseunte {
                         enEspera = false;
                     }
             } else if(meVoyAlHospital) {
-                //posObjetivo.set(81,60);
-                //calculaRecObjetivo();
                 meQuieroMorir = true;
             }
 
