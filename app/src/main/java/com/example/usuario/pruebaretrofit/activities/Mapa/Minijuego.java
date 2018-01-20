@@ -15,6 +15,7 @@ import com.example.usuario.pruebaretrofit.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static com.example.usuario.pruebaretrofit.activities.Mapa.MetodosParaTodos.esPotTrepitjar;
 import static com.example.usuario.pruebaretrofit.activities.Mapa.MetodosParaTodos.estaDinsDeMalla;
@@ -41,6 +42,9 @@ public class Minijuego {
     private Context context;
     private GameView gameView;
 
+    private IAMinijuego[] policias;
+
+
     public Minijuego(Context context, GameView gameView) {
 
         this.context = context;
@@ -48,7 +52,22 @@ public class Minijuego {
 
         malla = llegirMapaTxt("mapaMinijuego", context);
         botones = new BotonesDeMapas();
+        PointF meta=new PointF(95,0);
+        policias=new IAMinijuego[4];
+        for(int i=0;i<policias.length;i++){
+            policias[i]=new IAMinijuego(R.drawable.bad4,"poli",spawn(),meta,);
+        }
+
     }
+    public PointF spawn(){
+        Random generator=new Random();
+        int pos0=generator.nextInt(100);
+        if(pos0<5) pos0=5;
+        if(pos0<95) pos0=95;
+        PointF pos=new PointF(0,pos0);
+        return pos;
+        //spawn++;
+    } //Random elije a que altura spawnea el poli y lo añade al array
 
     public String[][] getMalla() {
         return malla;
@@ -66,17 +85,11 @@ public class Minijuego {
             case "+":
                 paint.setColor(context.getResources().getColor(R.color.Brown));
                 break;
-            case "U":
-                paint.setColor(context.getResources().getColor(R.color.Cornsilk));
-                break;
-            case "P":
-                paint.setColor(context.getResources().getColor(R.color.Black));
-                break;
             case "-":
-                paint.setColor(context.getResources().getColor(R.color.Peru));
+                paint.setColor(context.getResources().getColor(R.color.Olive));
                 break;
             default:
-                paint.setColor(context.getResources().getColor(R.color.Peru));
+                paint.setColor(context.getResources().getColor(R.color.Black));
                 break;
         }
         return paint;
