@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.example.usuario.pruebaretrofit.R;
 import com.example.usuario.pruebaretrofit.activities.Mapa.MapaActivity;
-import com.example.usuario.pruebaretrofit.model.Usuario;
+import com.example.usuario.pruebaretrofit.model.Usuario2;
 import com.example.usuario.pruebaretrofit.service.RestClient;
 
 import retrofit2.Call;
@@ -32,9 +32,9 @@ public class LoginActivity extends AppCompatActivity {
     Button login;
     Button signup;
     Retrofit retrofit;
-    Usuario usuarioCargado;
+    Usuario2 user;
     Button button;
-    private static final String URL_BASE = "http://10.193.222.188:8080/1O-survival/game/"; ///nuestra api virtual
+    private static final String URL_BASE = "http://147.83.7.206:8088/1O-survival/game/"; ///nuestra api virtual
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,12 +78,10 @@ public class LoginActivity extends AppCompatActivity {
            public void onClick(View v) {
                playerName = userName.getText().toString();
                pass = password.getText().toString();
-               usuarioCargado = new Usuario("Joan Valverde","admin","joanv1995@gmail.com");
-               //connectApiService();
-               Intent in = new Intent(LoginActivity.this,PerfilActivity.class);
-               in.putExtra("jugador",usuarioCargado);
+               //user = new Usuario2("Joan Valverde","admin","joanv1995@gmail.com");
+               connectApiService();
 
-               startActivity(in);
+
 
            }
        });
@@ -110,25 +108,29 @@ public class LoginActivity extends AppCompatActivity {
         }
         RestClient service = retrofit.create(RestClient.class);
 
-        Call<Usuario> call = service.loginUser(playerName,pass);
+        user = new Usuario2(playerName,pass);
+
+
+        Call<Usuario2> call = service.esUser(user);
         try {
 
-            Callback<Usuario> cb = new Callback<Usuario>() {
+            Callback<Usuario2> cb = new Callback<Usuario2>() {
                 @Override
-                public void onResponse(Call<Usuario> call, Response<Usuario> response) {
-                    usuarioCargado = response.body();
+                public void onResponse(Call<Usuario2> call, Response<Usuario2> response) {
+
+                    user = new Usuario2(response.body().getNombre(), response.body().getPassword(), response.body().getCorreo(), response.body().getPuntFinal(), response.body().getResponse());
+
+                    EntryUserInterface(user.getResponse());
 
                     //if(!p.getPassword().equals(pass))
                     //Toast.makeText(getApplicationContext(), "Contraseña incorrecta", Toast.LENGTH_LONG).show();
                     //else
-                    EntryUserInterface();
-
 
 
                 }
 
                 @Override
-                public void onFailure(Call<Usuario> call, Throwable t) {
+                public void onFailure(Call<Usuario2> call, Throwable t) {
                     //Log.e("players", t.toString());
                 }
             };
@@ -139,21 +141,31 @@ public class LoginActivity extends AppCompatActivity {
             Log.e("error", er.getMessage());
         }
     }
-        public void EntryUserInterface(){
-            if(usuarioCargado!=null)
-            {
-                Toast.makeText(this,"Usuario "+usuarioCargado.getNombre()+"ha sido logueado correctamente", Toast.LENGTH_SHORT).show();
+        public void EntryUserInterface(int response){
+            //if(user!=null)
+            //{
+            //    Toast.makeText(this,"Usuario "+user.getNombre()+"ha sido logueado correctamente", Toast.LENGTH_SHORT).show();
 
               //  Intent in = new Intent(this, PerfilActivity.class);
-               //in.putExtra("jugador",usuarioCargado);
+               //in.putExtra("jugador",user);
 
               //startActivity(in);
+            //}
+           // else{
+            if(response ==0) {
+                Toast.makeText(this,"Usuario "+ user.getNombre()+" ha sido logueado correctamente", Toast.LENGTH_LONG).show();
+                Intent in = new Intent(LoginActivity.this,PerfilActivity.class);
+                in.putExtra("jugador", user);
+                startActivity(in);
             }
-            else{
-                Toast.makeText(this,"Login incorrecto", Toast.LENGTH_SHORT).show();
+            if (response == -3){
+                Toast.makeText(this,"Usuario no existe o credenciales mal introducidas, intente de nuevo.", Toast.LENGTH_LONG).show();
+                userName.setText("");
+                password.setText("");
+            }
 
 
-            }
+            //}
 
     }
 

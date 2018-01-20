@@ -10,7 +10,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.usuario.pruebaretrofit.R;
-import com.example.usuario.pruebaretrofit.model.Usuario;
+import com.example.usuario.pruebaretrofit.model.Usuario2;
 import com.example.usuario.pruebaretrofit.service.RestClient;
 
 import okhttp3.ResponseBody;
@@ -26,13 +26,14 @@ String name;
 String pass;
 String passRep;
 String email;
-Usuario user;
+Usuario2 user;
+Usuario2 userReturned;
 
 EditText nombre;
 EditText pass1;
 EditText pass2;
 EditText mail;
-    private static final String URL_BASE = "http://10.193.222.188:8080/1O-survival/game/"; ///nuestra api virtual
+    private static final String URL_BASE = "http://147.83.7.206:8088/1O-survival/game/"; ///nuestra api virtual
     private Retrofit retrofit=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +52,6 @@ EditText mail;
                 passRep = pass2.getText().toString();
                 email = mail.getText().toString();
                 if(pass.equals(passRep)) {
-
-
                     connectService();
                 }
         else{
@@ -82,18 +81,25 @@ EditText mail;
         RestClient service = retrofit.create(RestClient.class);
 
 
-            user = new Usuario(name, pass, email);
-            Call<Integer> call = service.signupUser(user);
+            user = new Usuario2(name, pass, email);
+            Call<Usuario2> call = service.signupUser(user);
             try {
-                call.enqueue(new Callback<Integer>() {
+                call.enqueue(new Callback<Usuario2>() {
                     @Override
-                    public void onResponse(Call<Integer> call, Response<Integer> response) {
+                    public void onResponse(Call<Usuario2> call, Response<Usuario2> response) {
                         pd.dismiss();
-                        signUpAnswer(response.body());
+
+                        userReturned = new Usuario2(response.body().getNombre(), response.body().getPassword(), response.body().getCorreo(), response.body().getPuntFinal(), response.body().getResponse());
+                        //userReturned = response.body();
+
+                        signUpAnswer(userReturned.getResponse());
+
+
+
                     }
 
                     @Override
-                    public void onFailure(Call<Integer> call, Throwable t) {
+                    public void onFailure(Call<Usuario2> call, Throwable t) {
                         t.getMessage();
 
                     }
@@ -105,9 +111,24 @@ EditText mail;
             }
 
     }
-    public void signUpAnswer(Integer i){
+    public void signUpAnswer(int response){
 
-            switch (i){
+        if(response == 0) {
+            Toast.makeText(this, "Usuario registrado correctamente", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+        if (response == -1) {
+            Toast.makeText(this, "Usuario ya registrado, pruebe con otras credenciales.", Toast.LENGTH_SHORT).show();
+            nombre.setText("");
+            pass1.setText("");
+            pass2.setText("");
+            mail.setText("");
+        }
+
+
+
+
+            /*switch (i){
 
                 case 1:
                     Toast.makeText(this, "Usuario registrado correctamente", Toast.LENGTH_SHORT).show();
@@ -119,8 +140,10 @@ EditText mail;
 
 
             }
-            finish();
+            finish();*/
 
-            }
+
+
+    }
 
 }
