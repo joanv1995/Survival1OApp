@@ -41,7 +41,26 @@ public class MapaEscuela {
     private Jugadora jugadora;
     private BotonesDeMapas botones;
     private PLayerStats stats;
+
+
     private Rect rectUrna;
+    Rect rectEstavotando00 = new Rect(50,30,70,41);
+    Rect rectEstavotando10 = new Rect(131,30,151,41);
+    Rect rectEstavotando01 = new Rect(50,60,70,71);
+    Rect rectEstavotando11 = new Rect(131,60,151,71);
+
+
+
+
+
+    Rect urna00;
+    Rect urna10;
+    Rect urna01;
+    Rect urna11;
+    int counter = 0;
+
+
+
     // cosas que inicializar en el construct
     private int x = 0, y = 0;
     private Rect rec = new Rect(), recBtm = new Rect();
@@ -122,8 +141,9 @@ public class MapaEscuela {
         Paint paint = new Paint();
         int a = -1;
         //startTime = System.currentTimeMillis();
-        for (IA ia : listaIas) {
 
+        for (IA ia : listaIas) {
+            boolean iaHaVotado = false;
 
             //startTime2 = System.currentTimeMillis();
             recBtm = ia.onDraw(canvas,jugadora,zoomBitmap);
@@ -140,14 +160,17 @@ public class MapaEscuela {
                 paint.setColor(context.getResources().getColor(R.color.colorPrimary));
                 canvas.drawRect(rec, paint);
             }
-            if(ia.isVotando()){
-                Rect rectEstavotando00 = new Rect(50,30,70,41);
-                Rect rectEstavotando10 = new Rect(131,30,151,41);
-                Rect rectEstavotando01 = new Rect(50,60,70,71);
-                Rect rectEstavotando11 = new Rect(131,60,151,71);
-                int[] mm;
-                int[] mm2;
 
+            if(ia.isVotando()){
+                counter++;
+
+                if(counter ==10){
+
+                    stats.setVotos(stats.getVotos()+1);
+                    iaHaVotado= true;
+                    counter = 0;
+
+                }
                 rectUrna = new Rect();
                 if(rectEstavotando00.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
 
@@ -155,6 +178,8 @@ public class MapaEscuela {
                     xs = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando00.left -18,rectEstavotando00.top +2);
                     int[] ys;
                     ys = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando00.right -20,rectEstavotando00.bottom -2);
+
+                    urna00 = new Rect(xs[0],xs[1],ys[0],ys[1]);
 
                     rectUrna.set(xs[0], xs[1], ys[0], ys[1]);
                 }
@@ -164,7 +189,7 @@ public class MapaEscuela {
                     xs = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando10.left +21,rectEstavotando10.top +2);
                     int[] ys;
                     ys = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando10.right +19,rectEstavotando10.bottom -2);
-
+                    urna10 = new Rect(xs[0],xs[1],ys[0],ys[1]);
                     rectUrna.set(xs[0], xs[1], ys[0], ys[1]);
                 }
                 else if(rectEstavotando01.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
@@ -172,6 +197,7 @@ public class MapaEscuela {
                     xs = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando01.left -18,rectEstavotando01.top +2);
                     int[] ys;
                     ys = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando01.right -19,rectEstavotando01.bottom -2);
+                    urna01 = new Rect(xs[0],xs[1],ys[0],ys[1]);
 
                     rectUrna.set(xs[0], xs[1], ys[0], ys[1]);
                 }
@@ -180,12 +206,13 @@ public class MapaEscuela {
                     xs = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando11.left +21,rectEstavotando11.top +2);
                     int[] ys;
                     ys = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando11.right +19,rectEstavotando11.bottom -2);
+                    urna11 = new Rect(xs[0],xs[1],ys[0],ys[1]);
 
                     rectUrna.set(xs[0], xs[1], ys[0], ys[1]);
                 }
 
 
-                Bitmap bitmap1 = BitmapFactory.decodeResource(context.getResources(),R.drawable.voting);
+                Bitmap bitmap1 = BitmapFactory.decodeResource(context.getResources(),R.drawable.votinggreen);
 
                 canvas.drawBitmap(bitmap1,null,rectUrna,null);
 
@@ -231,6 +258,19 @@ public class MapaEscuela {
             }
             //startTime2 = System.currentTimeMillis()-startTime2;
             //Log.d(TAG,"Dibuixar un Ia: " + startTime2);
+            if(ia.isCancelandoUrna()){
+                Bitmap bitmap1 = BitmapFactory.decodeResource(context.getResources(),R.drawable.redcross);
+
+                canvas.drawBitmap(bitmap1,null,urna00,null);
+
+
+
+
+
+
+
+
+            }
         }
         if (a != -1)
             listaPolicias.remove(a);

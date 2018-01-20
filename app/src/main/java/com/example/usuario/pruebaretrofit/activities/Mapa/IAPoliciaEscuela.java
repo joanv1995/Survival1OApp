@@ -44,7 +44,7 @@ public class IAPoliciaEscuela {
     // animation = 3 back, 1 left, 0 front, 2 right
     private static final int[] DIRECTION_TO_ANIMATION_MAP = {2, 1, 3, 0};//{ 3, 1, 0, 2 };
 
-
+    private boolean cancelandoUrna = false;
     // per dibuixar
     private PointF act = new PointF(), act2 = new PointF();
     private PointF p = new PointF();
@@ -72,6 +72,10 @@ public class IAPoliciaEscuela {
         calculaRecObjetivo();
         //saberDireccio();
         calculaAnimes();
+    }
+
+    public boolean isCancelandoUrna() {
+        return cancelandoUrna;
     }
 
     public int getSpeed() {
@@ -239,7 +243,7 @@ public class IAPoliciaEscuela {
                         meQuieroMorir = true;
                 } else {
                     /// poLICIAS SE LLEVA URNA PROGRESS BAR O ALGO ASI
-
+                    cancelandoUrna = true;
 
                     tiempoVotangoPasado++;
                 }
