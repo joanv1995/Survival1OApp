@@ -34,7 +34,7 @@ public class Minijuego {
     // cosas que inicializar en el construct
     private int x = 0, y = 0;
     private Rect rec = new Rect(), recBtm = new Rect();
-    //rivate int canvasWidth, canvasHeight;
+    //private int canvasWidth, canvasHeight;
     //protected int margeAmpl = 0, margeAlt = 0;
     //protected int ample, altura;
     private int zoomBitmap = 5;
@@ -46,7 +46,7 @@ public class Minijuego {
         this.context = context;
         this.gameView = gameView;
 
-        malla = llegirMapaTxt("", context);
+        malla = llegirMapaTxt("mapaMinijuego", context);
         botones = new BotonesDeMapas();
     }
 
@@ -63,7 +63,7 @@ public class Minijuego {
     private Paint quinColor(String s) {
         Paint paint = new Paint();
         switch (s) {
-            case "T":
+            case "+":
                 paint.setColor(context.getResources().getColor(R.color.Brown));
                 break;
             case "U":
