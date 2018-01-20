@@ -176,7 +176,7 @@ public class MetodosParaTodos {
         return cont > 1 ? 1 : 0;
     }
 
-    protected static int hiHaUnTransPoli(PointF p, int direc, java.util.List<IATranseunte> listaIas){//}, int zoomBitmap) {
+    /*protected static int hiHaUnTransPoli(PointF p, int direc, java.util.List<IATranseunte> listaIas){//}, int zoomBitmap) {
         // 0: no hi ha, 1: hi ha, 2: esta de cara costat, 3 esta e cara vertical
         // 0-1 2-3
         int cont = 0;
@@ -189,7 +189,7 @@ public class MetodosParaTodos {
             }
         }
         return 0;
-    }
+    }*/
 
     protected static int hiHaUnObjecte(PointF p, java.util.List<Objeto> listaIas){//}, int zoomBitmap) {
         // 0: no hi ha, 1: hi ha, 2: esta de cara costat, 3 esta e cara vertical

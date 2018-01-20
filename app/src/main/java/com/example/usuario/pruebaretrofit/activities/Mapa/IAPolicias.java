@@ -230,4 +230,14 @@ public class IAPolicias {
         //int direction = (int) Math.round(dirDouble) % BMP_ROWS;
         return DIRECTION_TO_ANIMATION_MAP[direccio];
     }
+    private int hiHaUnTransPoli(PointF p, int direc, java.util.List<IATranseunte> listaIas){//}, int zoomBitmap) {
+        for (IATranseunte ia : listaIas) {
+            //a = definirRectangle(p,direc,zoomBitmap);
+            if (ia.getAnima().contains((int) p.x, (int) p.y) && ia.isMeParoAdefender()) {// && !ia.getPosicion().equals(pos)) {
+                //if(intersects(ia.getAnima(),a)){
+                return 1;
+            }
+        }
+        return 0;
+    }
 }

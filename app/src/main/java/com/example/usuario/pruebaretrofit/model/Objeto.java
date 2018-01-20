@@ -98,9 +98,9 @@ public class Objeto implements Serializable
     public void setNombreObjeto(String nombreObjeto) {
         this.nombreObjeto = nombreObjeto;
     }
-    /*public Integer getPeso() {
+    public Integer getPeso() {
         return peso;
-    }*/
+    }
     public void setPeso(Integer peso) {
         this.peso = peso;
     }
@@ -109,6 +109,7 @@ public class Objeto implements Serializable
     }
     public void setPosicion(PointF posicion) {
         this.posicion = posicion;
+        calculaAnimes();
     }
     public Integer getTamanoObjCelda() {
         return tamanoObjCelda;

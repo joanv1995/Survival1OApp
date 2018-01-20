@@ -269,17 +269,6 @@ public class IATranseunte {
                     contEspera = 0;
                 }
             }
-
-            /*if (enEspera) {
-                if(contadorEncaro > 10){
-                    posObjetivo.set(81,60);
-                    calculaRecObjetivo();
-                    meVoyAlHospital = true;
-                    meParoAdefender = false;
-                    enEspera = false;
-                }
-            }*/
-
         } else { // ha arribat a la posició objectiu
 
             if(!laEstoySiguiendo && !meParoAdefender && !meVoyAlHospital) {
@@ -288,6 +277,7 @@ public class IATranseunte {
                 while (!esPotTrepitjar(p, mapa.getMalla(), mapa.getZoomBitmap())){
                     p.set(r.nextInt(maxX - minX + 1) + minX, r.nextInt(maxY - minY + 1) + minY);
                 }
+                posObjetivo.set(p);
                 calculaRecObjetivo();
                 posAntiga = new PointF();
             } else if(meParoAdefender){
@@ -300,7 +290,6 @@ public class IATranseunte {
                         meParoAdefender = false;
                         enEspera = false;
                     }
-
             } else if(meVoyAlHospital) {
                 //posObjetivo.set(81,60);
                 //calculaRecObjetivo();

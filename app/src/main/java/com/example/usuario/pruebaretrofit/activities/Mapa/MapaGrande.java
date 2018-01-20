@@ -442,10 +442,22 @@ public class MapaGrande {
                 int c = hiHaUnObjecteEnRectangle(jugadora.getPosicion(), jugadora.getDireccio(), listaObjetos, zoomBitmap);
                 if (c != -1 ){
                     listaObjetos.get(c).setEnInventario(true);
+                    jugadora.getInventario().getListaObjetos().add(listaObjetos.get(c));
+                } else {
+                    int d = buscoObjetoDeInventario();
+                    if ( d!= -1){
+                        listaObjetos.get(d).setEnInventario(false);
+                        listaObjetos.get(d).setPosicion(buscoPosicionParaDejarTranseuntes());
+                    }
+                    if(jugadora.getInventario().hayObjetosEnInventario()){ //esta parte no hace nada en verdad
+                        jugadora.getInventario().getListaObjetos().get(0).setEnInventario(false);
+                        jugadora.getInventario().getListaObjetos().remove(0);
+                    }
                 }
             }
         }
     }
+
     private PointF buscoPosicionParaDejarTranseuntes(){
         // direction = 0 right, 1 left, 2 up, 3 down,
         if(jugadora.getDireccio() == 0){
@@ -467,7 +479,14 @@ public class MapaGrande {
         }
         return -1;
     }
-
+    private int buscoObjetoDeInventario(){
+        for(Objeto op: listaObjetos){
+            if(op.isEnInventario()){
+                return listaObjetos.indexOf(op);
+            }
+        }
+        return -1;
+    }
     protected void decirATransQueSeEstaEncarando(IAPolicias poli){
         int i = hiHaUnTransEnRectangle(poli.getPosicion(), poli.getDireccio(), listaTranseuntes, zoomBitmap+5);
         if(i != -1){
