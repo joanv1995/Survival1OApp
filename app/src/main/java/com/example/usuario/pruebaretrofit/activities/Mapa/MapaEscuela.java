@@ -145,18 +145,43 @@ public class MapaEscuela {
                 Rect rectEstavotando10 = new Rect(131,30,151,41);
                 Rect rectEstavotando01 = new Rect(50,60,70,71);
                 Rect rectEstavotando11 = new Rect(131,60,151,71);
+                int[] mm;
+                int[] mm2;
+
                 rectUrna = new Rect();
                 if(rectEstavotando00.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
-                    rectUrna.set(rectEstavotando00.left -18, rectEstavotando00.top+2, rectEstavotando00.right-20, rectEstavotando00.bottom -2);
+
+                    int[] xs;
+                    xs = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando00.left -18,rectEstavotando00.top +2);
+                    int[] ys;
+                    ys = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando00.right -20,rectEstavotando00.bottom -2);
+
+                    rectUrna.set(xs[0], xs[1], ys[0], ys[1]);
                 }
                 else if(rectEstavotando10.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
-                    rectUrna.set(rec.left, rec.top, rec.right, rec.bottom);
+
+                    int[] xs;
+                    xs = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando10.left +21,rectEstavotando10.top +2);
+                    int[] ys;
+                    ys = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando10.right +19,rectEstavotando10.bottom -2);
+
+                    rectUrna.set(xs[0], xs[1], ys[0], ys[1]);
                 }
                 else if(rectEstavotando01.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
-                    rectUrna.set(rec.left, rec.top, rec.right, rec.bottom);
+                    int[] xs;
+                    xs = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando01.left -18,rectEstavotando01.top +2);
+                    int[] ys;
+                    ys = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando01.right -19,rectEstavotando01.bottom -2);
+
+                    rectUrna.set(xs[0], xs[1], ys[0], ys[1]);
                 }
                 else if(rectEstavotando11.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
-                    rectUrna.set(rec.left, rec.top, rec.right, rec.bottom);
+                    int[] xs;
+                    xs = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando11.left +21,rectEstavotando11.top +2);
+                    int[] ys;
+                    ys = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando11.right +19,rectEstavotando11.bottom -2);
+
+                    rectUrna.set(xs[0], xs[1], ys[0], ys[1]);
                 }
 
 
@@ -231,6 +256,32 @@ public class MapaEscuela {
 
 
         // JOAN!! Aqui se pintan los "botones"
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),R.drawable.bddown);
+        canvas.drawBitmap(bitmap, null, botones.getBotonRecVertBajo(), null);
+
+        Bitmap bitmap2 = BitmapFactory.decodeResource(context.getResources(),R.drawable.bdtop);
+        canvas.drawBitmap(bitmap2, null, botones.getBotonRecVertArriba(), null);
+
+
+        // paint.setColor(context.getResources().getColor(R.color.AntiqueWhite));
+        // canvas.drawRect(botones.getRecHorizontalEntero(), paint);
+        paint.setColor(context.getResources().getColor(R.color.Green));
+
+        Bitmap bitmap3 = BitmapFactory.decodeResource(context.getResources(),R.drawable.bdleft);
+        canvas.drawBitmap(bitmap3, null, botones.getBotonRecHorizLeft(), null);
+
+        Bitmap bitmap4 = BitmapFactory.decodeResource(context.getResources(),R.drawable.bdright);
+        canvas.drawBitmap(bitmap4, null, botones.getBotonRecHorizRigth(), null);
+
+
+        //canvas.drawRect(botones.getBotonRecHorizLeft(), paint);
+        //canvas.drawRect(botones.getBotonRecHorizRigth(), paint);
+
+        paint.setColor(context.getResources().getColor(R.color.AntiqueWhite));
+        Bitmap bitmap5 = BitmapFactory.decodeResource(context.getResources(),R.drawable.circlebutton);
+        canvas.drawBitmap(bitmap5, null, botones.getBotonCercleA(), null);
+        Bitmap bitmap6 = BitmapFactory.decodeResource(context.getResources(),R.drawable.circlebutton);
+        canvas.drawBitmap(bitmap6, null, botones.getBotonCercleB(), null);
         // los cojo de la clase BotonesDeMapas
         // MOSTRAMOS TIMER /////
 
@@ -257,25 +308,25 @@ public class MapaEscuela {
         canvas.drawText("Seguidores  "+stats.getSeguidores(), stats.getMargenX(), stats.getLiniaseguidores(),paintStats);
         // Poner botones
         paint.setColor(context.getResources().getColor(R.color.Cornsilk));
-        canvas.drawRect(botones.getRecVerticalEntero(),paint);
+        //canvas.drawRect(botones.getRecVerticalEntero(),paint);
         paint.setColor(context.getResources().getColor(R.color.Green));
-        canvas.drawRect(botones.getBotonRecVertArriba(), paint);
-        canvas.drawRect(botones.getBotonRecVertBajo(), paint);
+        //canvas.drawRect(botones.getBotonRecVertArriba(), paint);
+        //canvas.drawRect(botones.getBotonRecVertBajo(), paint);
 
 
         paint.setColor(context.getResources().getColor(R.color.AntiqueWhite));
-        canvas.drawRect(botones.getRecHorizontalEntero(), paint);
+        //canvas.drawRect(botones.getRecHorizontalEntero(), paint);
         paint.setColor(context.getResources().getColor(R.color.Green));
-        canvas.drawRect(botones.getBotonRecHorizLeft(), paint);
-        canvas.drawRect(botones.getBotonRecHorizRigth(), paint);
+       // canvas.drawRect(botones.getBotonRecHorizLeft(), paint);
+        //canvas.drawRect(botones.getBotonRecHorizRigth(), paint);
 
         paint.setColor(context.getResources().getColor(R.color.AntiqueWhite));
 
-        canvas.drawRect(botones.getBotonCercleA(), paint);
-        canvas.drawRect(botones.getBotonCercleB(), paint);
+        //canvas.drawRect(botones.getBotonCercleA(), paint);
+       // canvas.drawRect(botones.getBotonCercleB(), paint);
         paint.setColor(context.getResources().getColor(R.color.Green));
-        canvas.drawCircle(botones.getCentreX1(), botones.getCentreY1(), botones.getRadi(), paint);
-        canvas.drawCircle(botones.getCentreX2(), botones.getCentreY2(), botones.getRadi(), paint);
+       // canvas.drawCircle(botones.getCentreX1(), botones.getCentreY1(), botones.getRadi(), paint);
+       // canvas.drawCircle(botones.getCentreX2(), botones.getCentreY2(), botones.getRadi(), paint);
 
         return canvas;
     }
