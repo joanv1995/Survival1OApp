@@ -82,12 +82,12 @@ public class Minijuego {
         return paint;
     }
 
-    protected Canvas dibujoElMapaEscuela(Canvas canvas, int ample, int altura, int margeAlt, int margeAmpl){
+    protected Canvas dibujoMinijuego(Canvas canvas, int ample, int altura, int margeAlt, int margeAmpl){
         //startTime = System.currentTimeMillis();
-        boolean espero = false;
+        /*boolean espero = false;
         if(jugadora.isMeTengoQueMover())
             espero = !moverJugadora();
-
+*/
         for (int i = 0; i < malla.length; i++) //altura
         {
             for (int j = 0; j < malla[0].length; j++) //amplada
