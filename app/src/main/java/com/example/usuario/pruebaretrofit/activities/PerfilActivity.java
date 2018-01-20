@@ -35,12 +35,10 @@ public class PerfilActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        super.onCreate(savedInstanceState);
         //View view =  R.layout.activity_perfil;
         setContentView(R.layout.activity_perfil);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        int uiOptions2 = View.SYSTEM_UI_FLAG_FULLSCREEN;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
