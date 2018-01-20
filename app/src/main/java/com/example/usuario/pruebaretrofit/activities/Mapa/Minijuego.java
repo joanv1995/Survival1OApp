@@ -55,7 +55,7 @@ public class Minijuego {
         PointF meta=new PointF(95,0);
         policias=new IAMinijuego[4];
         for(int i=0;i<policias.length;i++){
-            policias[i]=new IAMinijuego(R.drawable.bad4,"poli",spawn(),meta,);
+            //policias[i]=new IAMinijuego(R.drawable.bad4,"poli",spawn(),meta,this);
         }
 
     }
