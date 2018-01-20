@@ -49,6 +49,11 @@ public class MapaEscuela {
     Rect rectEstavotando01 = new Rect(50,60,70,71);
     Rect rectEstavotando11 = new Rect(131,60,151,71);
 
+    Rect cancelandoUrna00 = new Rect(11,30,31,41);
+    Rect cancelandoUrna10 = new Rect(171,30,191,41);
+    Rect cancelandoUrna01 = new Rect(11,60,31,71);
+    Rect cancelandoUrna11 = new Rect(171,60,191,71);
+
 
 
 
@@ -259,14 +264,30 @@ public class MapaEscuela {
             //startTime2 = System.currentTimeMillis()-startTime2;
             //Log.d(TAG,"Dibuixar un Ia: " + startTime2);
             if(ia.isCancelandoUrna()){
+                rectUrna = new Rect();
+
+                if(cancelandoUrna00.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
+
+                    rectUrna = urna00;
+
+                }
+                else if(cancelandoUrna10.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
+
+                    rectUrna = urna10;
+                }
+                else if(cancelandoUrna01.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
+
+                    rectUrna = urna01;
+                }
+                else if(cancelandoUrna11.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
+
+                    rectUrna = urna11;
+                }
+
+
                 Bitmap bitmap1 = BitmapFactory.decodeResource(context.getResources(),R.drawable.redcross);
 
-                canvas.drawBitmap(bitmap1,null,urna00,null);
-
-
-
-
-
+                canvas.drawBitmap(bitmap1,null,rectUrna,null);
 
 
 
