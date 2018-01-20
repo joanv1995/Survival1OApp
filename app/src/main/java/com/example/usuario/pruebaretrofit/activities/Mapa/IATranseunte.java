@@ -65,6 +65,8 @@ public class IATranseunte {
     private boolean laEstoySiguiendo = false;
     private boolean meParoAdefender = false;
     private boolean meVoyAlHospital = false;
+    private boolean meEstoyEncarando = false;
+    private int contadorEncaro = 0;
 
     PointF puertaAlInfierno = new PointF(100,2);
     private boolean meVoy = false, meQuieroMorir= false;
@@ -155,9 +157,18 @@ public class IATranseunte {
     public void setRectObjetivo(Rect rectObjetivo) {
         this.rectObjetivo = rectObjetivo;
     }
+    public boolean isMeEstoyEncarando() {
+        return meEstoyEncarando;
+    }
+    public void setMeEstoyEncarando(boolean meEstoyEncarando) {
+        this.meEstoyEncarando = meEstoyEncarando;
+    }
+    public void runContadorEncaro(){
+        contadorEncaro++;
+    }
 
     private void update(Jugadora jugadora, int zoomBitmap) {
-        Log.d(TAG, "Update: moc una casella");
+        //Log.d(TAG, "Update: moc una casella");
        /* if(haArribat())
             enEspera = true;
         else
@@ -239,7 +250,7 @@ public class IATranseunte {
 
             // si m'ho ha calculat bé, actualitzo posicio
             if((!enEspera && hiHaUnTrans(act2,direccio, mapa.getListaTranseuntes()) == 0
-                    && hiHaUnPoli(act2, direccio, mapa.getListaPolicias()) == 0
+                    && (hiHaUnPoli(act2, direccio, mapa.getListaPolicias()) == 0 || meVoyAlHospital)
                     && hiHaLaJugadora(act2,  direccio, jugadora)==0) || estoyCansadoDeEsperar){//gameView.hiHaUnIA(act2,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
                 posAntiga = new PointF(getPosicion().x,getPosicion().y);
                 if(!act.equals(0,0))
@@ -257,26 +268,43 @@ public class IATranseunte {
                 }
             }
 
-            if (enEspera)
-                Log.d(TAG,"Ha arribat");
+            /*if (enEspera) {
+                if(contadorEncaro > 10){
+                    posObjetivo.set(81,60);
+                    calculaRecObjetivo();
+                    meVoyAlHospital = true;
+                    meParoAdefender = false;
+                    enEspera = false;
+                }
+            }*/
 
         } else { // ha arribat a la posició objectiu
 
-            if(!laEstoySiguiendo && !meParoAdefender) {
+            if(!laEstoySiguiendo && !meParoAdefender && !meVoyAlHospital) {
                 posObjetivo.set(new PointF(r.nextInt(maxX - minX + 1) + minX, r.nextInt(maxY - minY + 1) + minY));
                 calculaRecObjetivo();
                 posAntiga = new PointF();
             } else if(meParoAdefender){
                 enEspera = true;
+
+                    if(contadorEncaro > 10){
+                        posObjetivo.set(81,60);
+                        calculaRecObjetivo();
+                        meVoyAlHospital = true;
+                        meParoAdefender = false;
+                        enEspera = false;
+                    }
+
             } else if(meVoyAlHospital) {
-                posObjetivo.set(81,60);
-                calculaRecObjetivo();
+                //posObjetivo.set(81,60);
+                //calculaRecObjetivo();
+                meQuieroMorir = true;
             }
 
         }
     }
     protected Rect onDraw(Canvas canvas, Jugadora jugadora, int zoomBitmap) {
-        Log.d(TAG,"onDraw");
+        //Log.d(TAG,"onDraw");
         update(jugadora,zoomBitmap);
         int srcX = currentFrame * width;
         int srcY = getAnimationRow() * height;

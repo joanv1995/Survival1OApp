@@ -227,7 +227,10 @@ public class MapaGrande {
 
         int a = -1;
         for (IAPolicias ia : listaPolicias) {
-             if (ia.isMeQuieroMorir())
+            if(ia.isMeEncaroConTrans()){
+
+            }
+            if (ia.isMeQuieroMorir())
                 a = listaPolicias.indexOf(ia);
             else {
                 recBtm = ia.onDraw(canvas, jugadora);
@@ -260,12 +263,15 @@ public class MapaGrande {
 
         if (a != -1)
             listaPolicias.remove(a);
-
+        a = -1;
         for (IATranseunte ia : listaTranseuntes) {
             //startTime2 = System.currentTimeMillis();
             if(ia.isLaEstoySiguiendo()){
                 ia.setPosObjetivo(jugadora.getPosicion());
                 ia.setRectObjetivo(new Rect());
+            }
+            if(ia.isMeEstoyEncarando()){
+                ia.runContadorEncaro();
             }
             if (ia.isMeQuieroMorir())
                 a = listaPolicias.indexOf(ia);
@@ -286,7 +292,8 @@ public class MapaGrande {
                 }
             }
         }
-
+        if (a != -1)
+            listaTranseuntes.remove(a);
 
         TextPaint paintTimer = new TextPaint();
         paintTimer.setColor(context.getResources().getColor(R.color.DarkBlue));
@@ -409,7 +416,6 @@ public class MapaGrande {
             }
         }
     }
-
     private PointF buscoPosicionParaDejarTranseuntes(){
         // direction = 0 right, 1 left, 2 up, 3 down,
         if(jugadora.getDireccio() == 0){
@@ -432,6 +438,14 @@ public class MapaGrande {
         return -1;
     }
 
+    protected void decirATransQueSeEstaEncarando(IAPolicias poli){
+        int i = hiHaUnTransEnRectangle(poli.getPosicion(), poli.getDireccio(), listaTranseuntes, zoomBitmap+5);
+        if(i != -1){
+            listaTranseuntes.get(i).setMeEstoyEncarando(true);
+            Log.d(TAG,"Lo encuentra");
+        }
+        //Log.d(TAG, "NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+    }
 
 
     /*protected void processButtons(int x, int y){ // ya que los botones se inicializan aqui, el metodo de cambiar direccion no lo puedo poner en jugadora
