@@ -37,9 +37,34 @@ public class MapaEscuela {
     private int cualEsMiCamino = 0;
     private int iMiCaminoP = 0;
     private int esperaIAs;
+
     private Jugadora jugadora;
     private BotonesDeMapas botones;
     private PLayerStats stats;
+
+
+    private Rect rectUrna;
+    Rect rectEstavotando00 = new Rect(50,30,70,41);
+    Rect rectEstavotando10 = new Rect(131,30,151,41);
+    Rect rectEstavotando01 = new Rect(50,60,70,71);
+    Rect rectEstavotando11 = new Rect(131,60,151,71);
+
+    Rect cancelandoUrna00 = new Rect(11,30,31,41);
+    Rect cancelandoUrna10 = new Rect(171,30,191,41);
+    Rect cancelandoUrna01 = new Rect(11,60,31,71);
+    Rect cancelandoUrna11 = new Rect(171,60,191,71);
+
+
+
+
+
+    Rect urna00;
+    Rect urna10;
+    Rect urna01;
+    Rect urna11;
+    int counter = 0;
+
+
 
     // cosas que inicializar en el construct
     private int x = 0, y = 0;
@@ -121,7 +146,10 @@ public class MapaEscuela {
         Paint paint = new Paint();
         int a = -1;
         //startTime = System.currentTimeMillis();
+
         for (IA ia : listaIas) {
+            boolean iaHaVotado = false;
+
             //startTime2 = System.currentTimeMillis();
             recBtm = ia.onDraw(canvas,jugadora,zoomBitmap);
             if (ia.isMeQuieroMorir())
@@ -137,6 +165,64 @@ public class MapaEscuela {
                 paint.setColor(context.getResources().getColor(R.color.colorPrimary));
                 canvas.drawRect(rec, paint);
             }
+
+            if(ia.isVotando()){
+                counter++;
+
+                if(counter ==10){
+
+                    stats.setVotos(stats.getVotos()+1);
+                    iaHaVotado= true;
+                    counter = 0;
+
+                }
+                rectUrna = new Rect();
+                if(rectEstavotando00.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
+
+                    int[] xs;
+                    xs = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando00.left -18,rectEstavotando00.top +2);
+                    int[] ys;
+                    ys = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando00.right -20,rectEstavotando00.bottom -2);
+
+                    urna00 = new Rect(xs[0],xs[1],ys[0],ys[1]);
+
+                    rectUrna.set(xs[0], xs[1], ys[0], ys[1]);
+                }
+                else if(rectEstavotando10.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
+
+                    int[] xs;
+                    xs = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando10.left +21,rectEstavotando10.top +2);
+                    int[] ys;
+                    ys = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando10.right +19,rectEstavotando10.bottom -2);
+                    urna10 = new Rect(xs[0],xs[1],ys[0],ys[1]);
+                    rectUrna.set(xs[0], xs[1], ys[0], ys[1]);
+                }
+                else if(rectEstavotando01.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
+                    int[] xs;
+                    xs = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando01.left -18,rectEstavotando01.top +2);
+                    int[] ys;
+                    ys = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando01.right -19,rectEstavotando01.bottom -2);
+                    urna01 = new Rect(xs[0],xs[1],ys[0],ys[1]);
+
+                    rectUrna.set(xs[0], xs[1], ys[0], ys[1]);
+                }
+                else if(rectEstavotando11.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
+                    int[] xs;
+                    xs = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando11.left +21,rectEstavotando11.top +2);
+                    int[] ys;
+                    ys = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando11.right +19,rectEstavotando11.bottom -2);
+                    urna11 = new Rect(xs[0],xs[1],ys[0],ys[1]);
+
+                    rectUrna.set(xs[0], xs[1], ys[0], ys[1]);
+                }
+
+
+                Bitmap bitmap1 = BitmapFactory.decodeResource(context.getResources(),R.drawable.votinggreen);
+
+                canvas.drawBitmap(bitmap1,null,rectUrna,null);
+
+
+            }
             //startTime2 = System.currentTimeMillis()-startTime2;
             //Log.d(TAG,"Dibuixar un Ia: " + startTime2);
         }
@@ -144,17 +230,20 @@ public class MapaEscuela {
             listaIas.remove(a);
 
         // respawn d'ias
-        if (esperaIAs == 5) {
+        if (esperaIAs == 20) {
             iasNonStop();
             esperaIAs = 0;
             if(iMiCaminoP < 4) {
                 iaPoliNonStop(caminoAseguir[iMiCaminoP]);
                 iMiCaminoP++;
             }
-        } else {
-            esperaIAs++;
         }
+        else
+            {
+                esperaIAs++;
+            }
         a = -1;
+        //IAS
         //startTime = System.currentTimeMillis();
         for (IAPoliciaEscuela ia : listaPolicias) {
             //startTime2 = System.currentTimeMillis();
@@ -174,6 +263,35 @@ public class MapaEscuela {
             }
             //startTime2 = System.currentTimeMillis()-startTime2;
             //Log.d(TAG,"Dibuixar un Ia: " + startTime2);
+            if(ia.isCancelandoUrna()){
+                rectUrna = new Rect();
+
+                if(cancelandoUrna00.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
+
+                    rectUrna = urna00;
+
+                }
+                else if(cancelandoUrna10.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
+
+                    rectUrna = urna10;
+                }
+                else if(cancelandoUrna01.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
+
+                    rectUrna = urna01;
+                }
+                else if(cancelandoUrna11.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
+
+                    rectUrna = urna11;
+                }
+
+
+                Bitmap bitmap1 = BitmapFactory.decodeResource(context.getResources(),R.drawable.redcross);
+
+                canvas.drawBitmap(bitmap1,null,rectUrna,null);
+
+
+
+            }
         }
         if (a != -1)
             listaPolicias.remove(a);
@@ -193,7 +311,38 @@ public class MapaEscuela {
         //startTime = System.currentTimeMillis()-startTime;
         //Log.d(TAG,"Dibuixar tots els Ias: " + startTime);
 
+        // Imagen urna votante votando
+
+
+
+
         // JOAN!! Aqui se pintan los "botones"
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),R.drawable.bddown);
+        canvas.drawBitmap(bitmap, null, botones.getBotonRecVertBajo(), null);
+
+        Bitmap bitmap2 = BitmapFactory.decodeResource(context.getResources(),R.drawable.bdtop);
+        canvas.drawBitmap(bitmap2, null, botones.getBotonRecVertArriba(), null);
+
+
+        // paint.setColor(context.getResources().getColor(R.color.AntiqueWhite));
+        // canvas.drawRect(botones.getRecHorizontalEntero(), paint);
+        paint.setColor(context.getResources().getColor(R.color.Green));
+
+        Bitmap bitmap3 = BitmapFactory.decodeResource(context.getResources(),R.drawable.bdleft);
+        canvas.drawBitmap(bitmap3, null, botones.getBotonRecHorizLeft(), null);
+
+        Bitmap bitmap4 = BitmapFactory.decodeResource(context.getResources(),R.drawable.bdright);
+        canvas.drawBitmap(bitmap4, null, botones.getBotonRecHorizRigth(), null);
+
+
+        //canvas.drawRect(botones.getBotonRecHorizLeft(), paint);
+        //canvas.drawRect(botones.getBotonRecHorizRigth(), paint);
+
+        paint.setColor(context.getResources().getColor(R.color.AntiqueWhite));
+        Bitmap bitmap5 = BitmapFactory.decodeResource(context.getResources(),R.drawable.circlebutton);
+        canvas.drawBitmap(bitmap5, null, botones.getBotonCercleA(), null);
+        Bitmap bitmap6 = BitmapFactory.decodeResource(context.getResources(),R.drawable.circlebutton);
+        canvas.drawBitmap(bitmap6, null, botones.getBotonCercleB(), null);
         // los cojo de la clase BotonesDeMapas
         // MOSTRAMOS TIMER /////
 
@@ -220,30 +369,30 @@ public class MapaEscuela {
         canvas.drawText("Seguidores  "+stats.getSeguidores(), stats.getMargenX(), stats.getLiniaseguidores(),paintStats);
         // Poner botones
         paint.setColor(context.getResources().getColor(R.color.Cornsilk));
-        canvas.drawRect(botones.getRecVerticalEntero(),paint);
+        //canvas.drawRect(botones.getRecVerticalEntero(),paint);
         paint.setColor(context.getResources().getColor(R.color.Green));
-        canvas.drawRect(botones.getBotonRecVertArriba(), paint);
-        canvas.drawRect(botones.getBotonRecVertBajo(), paint);
+        //canvas.drawRect(botones.getBotonRecVertArriba(), paint);
+        //canvas.drawRect(botones.getBotonRecVertBajo(), paint);
 
 
         paint.setColor(context.getResources().getColor(R.color.AntiqueWhite));
-        canvas.drawRect(botones.getRecHorizontalEntero(), paint);
+        //canvas.drawRect(botones.getRecHorizontalEntero(), paint);
         paint.setColor(context.getResources().getColor(R.color.Green));
-        canvas.drawRect(botones.getBotonRecHorizLeft(), paint);
-        canvas.drawRect(botones.getBotonRecHorizRigth(), paint);
+       // canvas.drawRect(botones.getBotonRecHorizLeft(), paint);
+        //canvas.drawRect(botones.getBotonRecHorizRigth(), paint);
 
         paint.setColor(context.getResources().getColor(R.color.AntiqueWhite));
 
-        canvas.drawRect(botones.getBotonCercleA(), paint);
-        canvas.drawRect(botones.getBotonCercleB(), paint);
+        //canvas.drawRect(botones.getBotonCercleA(), paint);
+       // canvas.drawRect(botones.getBotonCercleB(), paint);
         paint.setColor(context.getResources().getColor(R.color.Green));
-        canvas.drawCircle(botones.getCentreX1(), botones.getCentreY1(), botones.getRadi(), paint);
-        canvas.drawCircle(botones.getCentreX2(), botones.getCentreY2(), botones.getRadi(), paint);
+       // canvas.drawCircle(botones.getCentreX1(), botones.getCentreY1(), botones.getRadi(), paint);
+       // canvas.drawCircle(botones.getCentreX2(), botones.getCentreY2(), botones.getRadi(), paint);
 
         return canvas;
     }
     private void iasNonStop() {
-        listaIas.add(createIA(R.drawable.bad1, new PointF(165, 95), new PointF(100, 60)));
+        listaIas.add(createIA(R.drawable.bad1, new PointF(165, 6), new PointF(100, 45)));
     }
     private IA createIA(int resouce, PointF pos, PointF obj) {
         Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resouce);
@@ -281,6 +430,7 @@ public class MapaEscuela {
             return false;
         }
     }
+    ///DE MOMENTO...NO SE USA ( NEVER KNOWS)
     public void interactionOneTouch(int x, int y){
         if(this.getBotones().getBotonRecHorizLeft().contains(x,y)){
             Log.d(TAG,"boton Left");

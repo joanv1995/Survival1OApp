@@ -44,7 +44,7 @@ public class IAPoliciaEscuela {
     // animation = 3 back, 1 left, 0 front, 2 right
     private static final int[] DIRECTION_TO_ANIMATION_MAP = {2, 1, 3, 0};//{ 3, 1, 0, 2 };
 
-
+    private boolean cancelandoUrna = false;
     // per dibuixar
     private PointF act = new PointF(), act2 = new PointF();
     private PointF p = new PointF();
@@ -72,6 +72,10 @@ public class IAPoliciaEscuela {
         calculaRecObjetivo();
         //saberDireccio();
         calculaAnimes();
+    }
+
+    public boolean isCancelandoUrna() {
+        return cancelandoUrna;
     }
 
     public int getSpeed() {
@@ -206,7 +210,7 @@ public class IAPoliciaEscuela {
                 if(!estaDinsDeMalla(act, mapa.getMalla(), mapa.getZoomBitmap()))
                     Log.e(TAG,"No esta dins la malla");
                 contEspera++;
-                if(contEspera > 10) {
+                if(contEspera > 35) {
                     estoyCansadoDeEsperar = true;
                     contEspera = 0;
                 }
@@ -237,8 +241,12 @@ public class IAPoliciaEscuela {
                     calculaRecObjetivo();
                     if (rectObjetivo.contains((int) posicion.x, (int) posicion.y))
                         meQuieroMorir = true;
-                } else
+                } else {
+                    /// poLICIAS SE LLEVA URNA PROGRESS BAR O ALGO ASI
+                    cancelandoUrna = true;
+
                     tiempoVotangoPasado++;
+                }
             //}
         }
     }

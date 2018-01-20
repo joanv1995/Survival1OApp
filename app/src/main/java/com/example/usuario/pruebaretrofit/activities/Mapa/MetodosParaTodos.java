@@ -57,6 +57,13 @@ public class MetodosParaTodos {
         return p.x <= malla[0].length-zoomBitmap-1 && p.x >= zoomBitmap-1
                 && p.y <= (malla.length-zoomBitmap-1) && p.y >= zoomBitmap-1;
     }
+    protected static int[] convertMallaToCanvas(int canvasAmple, int canvasAltura,int margeample, int margealtura,int x, int y){
+        int[] num = new int[2];
+        num[0] = x * canvasAmple + margeample / 2;
+        num[1] = y * canvasAltura + margealtura / 2;
+        return num;
+    }
+
 
     protected static boolean esPotTrepitjar(PointF p, String[][] malla, int zoomBitmap){
         // si per les celes proximes no toca la imatge del bitmap amb taules o merdes
