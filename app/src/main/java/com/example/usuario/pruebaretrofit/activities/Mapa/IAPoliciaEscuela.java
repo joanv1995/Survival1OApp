@@ -210,7 +210,7 @@ public class IAPoliciaEscuela {
                 if(!estaDinsDeMalla(act, mapa.getMalla(), mapa.getZoomBitmap()))
                     Log.e(TAG,"No esta dins la malla");
                 contEspera++;
-                if(contEspera > 35) {
+                if(contEspera > 10) {
                     estoyCansadoDeEsperar = true;
                     contEspera = 0;
                 }

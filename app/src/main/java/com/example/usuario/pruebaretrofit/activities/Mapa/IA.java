@@ -58,10 +58,10 @@ public class IA extends MuevoImagenes{
     private int[] vecPos2 = {speed+1, -speed-1, 0, 0};
 
 
-    private PointF[] caminoAseguir = {new PointF(55, 36),
+    /*private PointF[] caminoAseguir = {new PointF(55, 36),
                                 new PointF(145, 36),
                                 new PointF(55, 66),
-                                new PointF(145,66)};
+                                new PointF(145,66)};*/
     private PointF puertaAlInfierno = new PointF(100,2);
     private boolean meVoy = false, meQuieroMorir= false;
     private int tiempoVotando = 10, tiempoVotangoPasado = 0;
@@ -149,6 +149,8 @@ public class IA extends MuevoImagenes{
     public boolean isMeQuieroMorir() {
         return meQuieroMorir;
     }
+
+
 
     private void update(Jugadora jugadora, int zoomBitmap) {
         Log.d(TAG, "Update: moc una casella");
@@ -261,13 +263,11 @@ public class IA extends MuevoImagenes{
         } else { // ha arribat a la posició objectiu
             if(!meVoy) {
                 // se'n van a les taules
-                posObjetivo.set(caminoAseguir[mapa.getCualEsMiCamino()]);
-                mapa.setCualEsMiCamino(mapa.getCualEsMiCamino() + 1);
+                posObjetivo.set(mapa.cambioPosObjetivoIA(this));
+                //mapa.setCualEsMiCamino(mapa.getCualEsMiCamino() + 1);
                 calculaRecObjetivo();
                 posAntiga = new PointF();
                 meVoy = true;
-                if (mapa.getCualEsMiCamino() == caminoAseguir.length)
-                    mapa.setCualEsMiCamino(0);
             } else {
                 if(tiempoVotangoPasado >= tiempoVotando) {
                     votando = false;

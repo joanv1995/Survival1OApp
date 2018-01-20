@@ -37,6 +37,7 @@ public class MapaEscuela {
     private int cualEsMiCamino = 0;
     private int iMiCaminoP = 0;
     private int esperaIAs;
+    private int esperaPolis;
 
     private Jugadora jugadora;
     private BotonesDeMapas botones;
@@ -54,17 +55,18 @@ public class MapaEscuela {
     Rect cancelandoUrna01 = new Rect(11,60,31,71);
     Rect cancelandoUrna11 = new Rect(171,60,191,71);
 
-
-
-
-
     Rect urna00;
     Rect urna10;
     Rect urna01;
     Rect urna11;
     int counter = 0;
 
-
+    boolean urna00Blocked = false;
+    boolean urna10Blocked = false;
+    boolean urna01Blocked = false;
+    boolean urna11Blocked = false;
+    Bitmap redcross;
+    Bitmap votado;
 
     // cosas que inicializar en el construct
     private int x = 0, y = 0;
@@ -81,8 +83,22 @@ public class MapaEscuela {
             new PointF(25, 66),
             new PointF(175,66)};
 
-    public MapaEscuela(Context context, GameView gameView) {
+    private PointF[] caminoAseguirVotantes = {new PointF(55, 36),
+            new PointF(145, 36),
+            new PointF(55, 66),
+            new PointF(145,66)};
 
+    java.util.List<PointF> caminoAseguirVotanteLista = new ArrayList<>();
+
+    public MapaEscuela(Context context, GameView gameView) {
+        redcross = BitmapFactory.decodeResource(context.getResources(), R.drawable.redcross);
+        votado = BitmapFactory.decodeResource(context.getResources(),R.drawable.votinggreen);
+
+
+        for(PointF p: this.caminoAseguirVotantes){
+            this.caminoAseguirVotanteLista.add(p);
+
+        }
         this.context = context;
         this.gameView = gameView;
 
@@ -148,7 +164,8 @@ public class MapaEscuela {
         //startTime = System.currentTimeMillis();
 
         for (IA ia : listaIas) {
-            boolean iaHaVotado = false;
+
+
 
             //startTime2 = System.currentTimeMillis();
             recBtm = ia.onDraw(canvas,jugadora,zoomBitmap);
@@ -172,7 +189,7 @@ public class MapaEscuela {
                 if(counter ==10){
 
                     stats.setVotos(stats.getVotos()+1);
-                    iaHaVotado= true;
+
                     counter = 0;
 
                 }
@@ -215,13 +232,7 @@ public class MapaEscuela {
 
                     rectUrna.set(xs[0], xs[1], ys[0], ys[1]);
                 }
-
-
-                Bitmap bitmap1 = BitmapFactory.decodeResource(context.getResources(),R.drawable.votinggreen);
-
-                canvas.drawBitmap(bitmap1,null,rectUrna,null);
-
-
+                canvas.drawBitmap(votado,null,rectUrna,null);
             }
             //startTime2 = System.currentTimeMillis()-startTime2;
             //Log.d(TAG,"Dibuixar un Ia: " + startTime2);
@@ -229,14 +240,24 @@ public class MapaEscuela {
         if (a != -1)
             listaIas.remove(a);
 
-        // respawn d'ias
-        if (esperaIAs == 20) {
-            iasNonStop();
-            esperaIAs = 0;
-            if(iMiCaminoP < 4) {
+        if (esperaPolis == 40) {
+            if (iMiCaminoP < 4) {
                 iaPoliNonStop(caminoAseguir[iMiCaminoP]);
                 iMiCaminoP++;
             }
+            esperaPolis = 0;
+        } else
+            esperaPolis++;
+
+
+        // respawn d'ias
+        if (esperaIAs == 10) {
+            iasNonStop();
+            esperaIAs = 0;
+            /*if(iMiCaminoP < 4) {
+                iaPoliNonStop(caminoAseguir[iMiCaminoP]);
+                iMiCaminoP++;
+            }*/
         }
         else
             {
@@ -247,7 +268,7 @@ public class MapaEscuela {
         //startTime = System.currentTimeMillis();
         for (IAPoliciaEscuela ia : listaPolicias) {
             //startTime2 = System.currentTimeMillis();
-            recBtm = ia.onDraw(canvas,jugadora,zoomBitmap);
+            recBtm = ia.onDraw(canvas, jugadora, zoomBitmap);
             if (ia.isMeQuieroMorir())
                 a = listaPolicias.indexOf(ia);
             else {
@@ -263,36 +284,54 @@ public class MapaEscuela {
             }
             //startTime2 = System.currentTimeMillis()-startTime2;
             //Log.d(TAG,"Dibuixar un Ia: " + startTime2);
-            if(ia.isCancelandoUrna()){
+            if (ia.isCancelandoUrna())
+            {
                 rectUrna = new Rect();
-
-                if(cancelandoUrna00.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
-
+                if (cancelandoUrna00.contains((int) ia.getPosicion().x, (int) ia.getPosicion().y)) {
                     rectUrna = urna00;
-
+                    for (PointF f : caminoAseguirVotantes) {
+                        if (rectEstavotando00.contains((int) f.x, (int) f.y)) {
+                            caminoAseguirVotanteLista.remove(f);
+                            urna00Blocked = true;
+                            break;
+                        }
+                    }
                 }
-                else if(cancelandoUrna10.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
-
-                    rectUrna = urna10;
+                else if (cancelandoUrna10.contains((int) ia.getPosicion().x, (int) ia.getPosicion().y)) {
+                rectUrna = urna10;
+                for (PointF f : caminoAseguirVotantes) {
+                    if (rectEstavotando10.contains((int) f.x, (int) f.y)) {
+                        caminoAseguirVotanteLista.remove(f);
+                        urna10Blocked = true;
+                        break;
+                    }
                 }
-                else if(cancelandoUrna01.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
+            } else if (cancelandoUrna01.contains((int) ia.getPosicion().x, (int) ia.getPosicion().y)) {
 
-                    rectUrna = urna01;
+                rectUrna = urna01;
+                for (PointF f : caminoAseguirVotantes) {
+                    if (rectEstavotando01.contains((int) f.x, (int) f.y)) {
+                        caminoAseguirVotanteLista.remove(f);
+                        urna01Blocked = true;
+                        break;
+                    }
                 }
-                else if(cancelandoUrna11.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
+            } else if (cancelandoUrna11.contains((int) ia.getPosicion().x, (int) ia.getPosicion().y)) {
 
-                    rectUrna = urna11;
+                rectUrna = urna11;
+                for (PointF f : caminoAseguirVotantes) {
+                    if (rectEstavotando11.contains((int) f.x, (int) f.y)) {
+                        caminoAseguirVotanteLista.remove(f);
+                        urna11Blocked = true;
+                        break;
+                    }
                 }
+            }
 
-
-                Bitmap bitmap1 = BitmapFactory.decodeResource(context.getResources(),R.drawable.redcross);
-
-                canvas.drawBitmap(bitmap1,null,rectUrna,null);
-
-
-
+            canvas.drawBitmap(redcross, null, rectUrna, null);
             }
         }
+
         if (a != -1)
             listaPolicias.remove(a);
 
@@ -315,6 +354,11 @@ public class MapaEscuela {
 
 
 
+        // Pintamos cruz en las urnas PARA SIEMPRE si estan bloqueadas
+        if(urna00Blocked){canvas.drawBitmap(redcross, null, urna00, null);}
+        if(urna10Blocked){canvas.drawBitmap(redcross, null, urna10, null);}
+        if(urna01Blocked){canvas.drawBitmap(redcross, null, urna01, null);}
+        if(urna11Blocked){canvas.drawBitmap(redcross, null, urna11, null);}
 
         // JOAN!! Aqui se pintan los "botones"
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),R.drawable.bddown);
@@ -404,6 +448,16 @@ public class MapaEscuela {
     private IAPoliciaEscuela createIAPoli(int resouce, PointF pos, PointF obj) {
         Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resouce);
         return new IAPoliciaEscuela(bmp, "v", pos, obj, this); // de la malla //TODO borrar gameview
+    }
+
+    protected PointF cambioPosObjetivoIA(IA ia){
+        //ia.setPosObjetivo(caminoAseguirVotantes[cualEsMiCamino]);
+        PointF p = caminoAseguirVotanteLista.get(cualEsMiCamino);
+
+        cualEsMiCamino++;
+        if(cualEsMiCamino >= caminoAseguirVotanteLista.size())
+            cualEsMiCamino=0;
+        return  p;
     }
 
     private boolean moverJugadora(){
