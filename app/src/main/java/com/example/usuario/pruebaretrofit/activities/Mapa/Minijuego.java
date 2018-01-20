@@ -100,7 +100,7 @@ public class Minijuego {
         }
         Paint paint = new Paint();
         int a = -1;
-        /*for (IA ia : listaIas) {
+       /*for (IA ia : listaIas) {
             //startTime2 = System.currentTimeMillis();
             recBtm = ia.onDraw(canvas,jugadora,zoomBitmap);
             if (ia.isMeQuieroMorir())

@@ -76,7 +76,6 @@ public class IATranseunte {
 
 
     public IATranseunte(Bitmap bmp, String idIa, PointF posicion, PointF posObjetivo, MapaGrande mapaEscuela){
-        Log.d(TAG, "inicialitzo un IA");
         //this.gameView=gameView;
         this.bmp=bmp;
         this.width = bmp.getWidth() / BMP_COLUMNS;
@@ -88,18 +87,25 @@ public class IATranseunte {
         calculaRecObjetivo();
         calculaAnimes();
     }
-    public IATranseunte(Bitmap bmp, String idIa, MapaGrande mapaEscuela){
-        Log.d(TAG, "inicialitzo un IA");
-        //int i = r.nextInt(max - min + 1) + min;
-        //int i1 = r.nextInt(max - min + 1) + min;
-        //this.gameView=gameView;
+    public IATranseunte(Bitmap bmp, String idIa, MapaGrande mapaEscuela, int zoom){
+        this.mapa = mapaEscuela;
+        minX = zoom; minY = zoom; maxX = mapa.getMalla()[0].length - zoom; maxY = mapa.getMalla().length - zoom;
+        PointF p = new PointF(r.nextInt(maxX - minX + 1) + minX, r.nextInt(maxY - minY + 1) + minY);
+        PointF pp = new PointF(r.nextInt(maxX - minX + 1) + minX, r.nextInt(maxY - minY + 1) + minY);
+        while (!esPotTrepitjar(p, mapa.getMalla(), zoom)){
+            p.set(r.nextInt(maxX - minX + 1) + minX, r.nextInt(maxY - minY + 1) + minY);
+        }
+        while (!esPotTrepitjar(pp, mapa.getMalla(), zoom)){
+            pp.set(r.nextInt(maxX - minX + 1) + minX, r.nextInt(maxY - minY + 1) + minY);
+        }
+        this.posicion = p;
+        this.posObjetivo = pp;
         this.bmp=bmp;
         this.width = bmp.getWidth() / BMP_COLUMNS;
         this.height = bmp.getHeight() / BMP_ROWS;
         this.idIa = idIa;
-        this.posicion = new PointF(r.nextInt(maxX - minX + 1) + minX, r.nextInt(maxY - minY + 1) + minY);
-        this.posObjetivo = new PointF(r.nextInt(maxX - minX + 1) + minX, r.nextInt(maxY - minY + 1) + minY);
-        this.mapa = mapaEscuela;
+        //this.posicion = new PointF(r.nextInt(maxX - minX + 1) + minX, r.nextInt(maxY - minY + 1) + minY);
+        //this.posObjetivo = new PointF(r.nextInt(maxX - minX + 1) + minX, r.nextInt(maxY - minY + 1) + minY);
         calculaRecObjetivo();
         calculaAnimes();
     }
@@ -110,10 +116,6 @@ public class IATranseunte {
     }
     private void calculaAnimes(){
         // [files][columnes]
-        /*this.anima.set((int) posicion.x + matrix[0][direccio] * gameView.getZoomBitmap(),
-                (int) posicion.y + matrix[1][direccio] * gameView.getZoomBitmap(),
-                (int) posicion.x + matrix[2][direccio] * gameView.getZoomBitmap(),
-                (int) posicion.y + matrix[3][direccio] * gameView.getZoomBitmap());*/
         this.anima.set((int) posicion.x - mapa.getZoomBitmap()+1, (int) posicion.y - mapa.getZoomBitmap(),
                 (int) posicion.x + mapa.getZoomBitmap()-1, (int) posicion.y + mapa.getZoomBitmap());
     }
@@ -281,7 +283,11 @@ public class IATranseunte {
         } else { // ha arribat a la posició objectiu
 
             if(!laEstoySiguiendo && !meParoAdefender && !meVoyAlHospital) {
-                posObjetivo.set(new PointF(r.nextInt(maxX - minX + 1) + minX, r.nextInt(maxY - minY + 1) + minY));
+                //posObjetivo.set(new PointF(r.nextInt(maxX - minX + 1) + minX, r.nextInt(maxY - minY + 1) + minY));
+                PointF p = new PointF(r.nextInt(maxX - minX + 1) + minX, r.nextInt(maxY - minY + 1) + minY);
+                while (!esPotTrepitjar(p, mapa.getMalla(), mapa.getZoomBitmap())){
+                    p.set(r.nextInt(maxX - minX + 1) + minX, r.nextInt(maxY - minY + 1) + minY);
+                }
                 calculaRecObjetivo();
                 posAntiga = new PointF();
             } else if(meParoAdefender){

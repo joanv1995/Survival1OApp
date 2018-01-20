@@ -13,6 +13,7 @@ import android.text.TextPaint;
 import android.util.Log;
 
 import com.example.usuario.pruebaretrofit.R;
+import com.example.usuario.pruebaretrofit.model.Objeto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +54,8 @@ public class MapaGrande {
 
     private java.util.List<IAPolicias> listaPolicias = new ArrayList<>();
     private java.util.List<IATranseunte> listaTranseuntes = new ArrayList<>();
+    private java.util.List<Objeto> listaObjetos = new ArrayList<>();
+
     private int numTranseuntes = 0;
     private int esperaIAs;
 
@@ -69,12 +72,9 @@ public class MapaGrande {
                         TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
                         TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
             }
-
             @Override
             public void onFinish() {
-
                 ///PARTIDA ACABADA ---  NIVEL SUPERADO
-
             }
         }.start();
         timerPolice = new CountDownTimer(20000, 1000) {
@@ -85,25 +85,22 @@ public class MapaGrande {
                 timesPolice = String.format("%02d:%02d",
                         TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
                         TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
-
             }
-
             @Override
             public void onFinish() {
-
                 alerta = true;
-
-
             }
         }.start();
 
         this.context = context;
         this.gameView = gameView;
 
+
         malla = llegirMapaTxt("mapaGeneral3", context);
         jugadora = createJugadora(R.drawable.bad3,new PointF(150,100));
         botones = new BotonesDeMapas();
         stats = new PLayerStats();
+        addObjetos();
     }
 
     public String[][] getMalla() {
@@ -123,6 +120,24 @@ public class MapaGrande {
     }
     public List<IATranseunte> getListaTranseuntes() {
         return listaTranseuntes;
+    }
+    public List<Objeto> getListaObjetos() {
+        return listaObjetos;
+    }
+
+    private void addObjetos(){
+        listaObjetos.add(createObject(R.drawable.tractor,7));
+        listaObjetos.add(createObject(R.drawable.valla,6));
+        listaObjetos.add(createObject(R.drawable.tractor,7));
+        listaObjetos.add(createObject(R.drawable.valla,6));
+        listaObjetos.add(createObject(R.drawable.tractor,7));
+        listaObjetos.add(createObject(R.drawable.valla,6));
+        listaObjetos.add(createObject(R.drawable.tractor,7));
+        listaObjetos.add(createObject(R.drawable.valla,6));
+        listaObjetos.add(createObject(R.drawable.tractor,7));
+        listaObjetos.add(createObject(R.drawable.valla,6));
+        listaObjetos.add(createObject(R.drawable.tractor,7));
+        listaObjetos.add(createObject(R.drawable.valla,6));
     }
 
     private Paint quinColor(String s) {
@@ -161,8 +176,6 @@ public class MapaGrande {
         //jugadora.getPosicion().x +- 100
         //jugadora.getPosicion().y +- 50
 
-
-
         boolean espero = false;
         if(jugadora.isMeTengoQueMover())
             espero = !moverJugadora();
@@ -183,7 +196,7 @@ public class MapaGrande {
         cuadradoMapa.set(anchoInit + zoomBitmap/3, altoInit + zoomBitmap/3,
                 anchoInit + anchoMalla - zoomBitmap/3,altoInit + altoMalla - zoomBitmap/3);
 
-        boolean estaJug = false; int estaJugCont = 0, xx = 0, yy = 0;
+        int xx = 0, yy = 0;
         for (int i = 0; i < altoMalla; i++) //altura
         {
             anchoInit = (int) jugadora.getPosicion().x - anchoMalla/2;
@@ -191,27 +204,23 @@ public class MapaGrande {
                 anchoInit = 0;
             else if (jugadora.getPosicion().x > (malla[0].length - anchoMalla/2))
                 anchoInit = malla[0].length - anchoMalla;
-
             for (int j = 0; j < anchoMalla; j++) //amplada
             {
                 if(altoInit == (int) jugadora.getPosicion().y && anchoInit == (int) jugadora.getPosicion().x){
                     xx = j; yy = i;
                 }
-
                 x = j * ample + margeAmpl / 2;
                 y = i * altura + margeAlt / 2;
                 rec.set(x, y, x + ample, y + altura);
-
                 if (estaDinsDeMalla(new PointF(anchoInit, altoInit), malla, zoomBitmap)) {
                     canvas.drawRect(rec, quinColor(malla[altoInit][anchoInit]));
                 }
                 anchoInit++;
-
             }
             altoInit++;
         }
         Paint paint = new Paint();
-        paint.setColor(context.getResources().getColor(R.color.Olive));
+        //paint.setColor(context.getResources().getColor(R.color.Olive));
         if(espero)
             jugadora.runCurrentFrame();
         recBtm = jugadora.onDraw(canvas);
@@ -223,13 +232,26 @@ public class MapaGrande {
         //canvas.drawRect((jugadora.getAnima().left-cuadradoMapa.left)*ample+ margeAmpl / 2,
         //        (jugadora.getAnima().top - cuadradoMapa.top)*altura+ margeAlt / 2,(jugadora.getAnima().right - cuadradoMapa.top)*ample+ margeAmpl / 2,
         //        (jugadora.getAnima().bottom-cuadradoMapa.top)*altura+ margeAlt / 2,paint);
-
-
         int a = -1;
-        for (IAPolicias ia : listaPolicias) {
-            if(ia.isMeEncaroConTrans()){
-
+        for(Objeto op:listaObjetos){
+            if(op.isMeEstanDestruyendo()){
+                op.runContadorDeLaDestruccion();
             }
+            if(op.isDestruido())
+                a = listaObjetos.indexOf(op);
+            recBtm = op.onDraw(canvas);
+            if(!op.isEnInventario() && !op.isDestruido() && cuadradoMapa.contains((int) op.getPosicion().x, (int) op.getPosicion().y)) {
+                x = (int) (op.getPosicion().x - cuadradoMapa.left) * ample + margeAmpl / 2;
+                y = (int) (op.getPosicion().y - cuadradoMapa.top) * altura + margeAlt / 2;
+                rec.set(x - op.getZoomDeCaracteres() * ample, y - op.getZoomDeCaracteres() * altura, x + op.getZoomDeCaracteres() * ample, y + op.getZoomDeCaracteres() * altura);
+                canvas.drawBitmap(op.getBmp(), recBtm, rec, null);
+            }
+        }
+        if(a != -1)
+            listaObjetos.remove(a);
+
+        a = -1;
+        for (IAPolicias ia : listaPolicias) {
             if (ia.isMeQuieroMorir())
                 a = listaPolicias.indexOf(ia);
             else {
@@ -241,7 +263,6 @@ public class MapaGrande {
                     rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
                     canvas.drawBitmap(ia.getBmp(), recBtm, rec, null);
 
-
                     int xxx = (int) (ia.getPosObjetivo().x - cuadradoMapa.left) * ample + margeAmpl / 2, yyy = (int) (ia.getPosObjetivo().y - cuadradoMapa.top) * altura + margeAlt / 2;
                     Rect rec = new Rect(xxx - 10, yyy - 10, xxx + 10, yyy + 10);
                     paint.setColor(context.getResources().getColor(R.color.colorPrimary));
@@ -249,6 +270,8 @@ public class MapaGrande {
                 }
             }
         }
+        if (a != -1)
+            listaPolicias.remove(a);
 
         // respawn d'ias
         if (esperaIAs == 10) {
@@ -261,8 +284,7 @@ public class MapaGrande {
         } else
             esperaIAs++;
 
-        if (a != -1)
-            listaPolicias.remove(a);
+
         a = -1;
         for (IATranseunte ia : listaTranseuntes) {
             //startTime2 = System.currentTimeMillis();
@@ -274,7 +296,7 @@ public class MapaGrande {
                 ia.runContadorEncaro();
             }
             if (ia.isMeQuieroMorir())
-                a = listaPolicias.indexOf(ia);
+                a = listaTranseuntes.indexOf(ia);
             else {
                 recBtm = ia.onDraw(canvas, jugadora,zoomBitmap);
                 if (cuadradoMapa.contains((int) ia.getPosicion().x, (int) ia.getPosicion().y)) {
@@ -283,7 +305,6 @@ public class MapaGrande {
                     y = (int) (ia.getPosicion().y - cuadradoMapa.top) * altura + margeAlt / 2;
                     rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
                     canvas.drawBitmap(ia.getBmp(), recBtm, rec, null);
-
 
                     int xxx = (int) (ia.getPosObjetivo().x - cuadradoMapa.left) * ample + margeAmpl / 2, yyy = (int) (ia.getPosObjetivo().y - cuadradoMapa.top) * altura + margeAlt / 2;
                     Rect rec = new Rect(xxx - 10, yyy - 10, xxx + 10, yyy + 10);
@@ -322,7 +343,6 @@ public class MapaGrande {
                 timesPolice = "ALERTA";
         }
         canvas.drawText(""+timesPolice,stats.getMargenX()+ gameView.getCanvasWidth()-100,stats.getLiniaseguidores(),paintTimerPolice);
-
 
         TextPaint paintStats = new TextPaint();
 
@@ -384,6 +404,10 @@ public class MapaGrande {
         return new Jugadora(gameView, bmp, pos);
     }
 
+    private Objeto createObject(int resouce,  int zoom) {
+        Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resouce);
+        return new Objeto("obj",  bmp, this, zoom); // de la malla
+    }
     private void polisNonStop() {
         listaPolicias.add(createPoli(R.drawable.bad4, new PointF(10, 10), new PointF(201, 120)));
     }
@@ -396,7 +420,7 @@ public class MapaGrande {
     }
     private IATranseunte createTrans(int resouce) {
         Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resouce);
-        return new IATranseunte(bmp, "tra", this); // de la malla
+        return new IATranseunte(bmp, "tra", this, zoomBitmap); // de la malla
     }
 
     protected void puedeElTranseunteSeguirme(){
@@ -413,6 +437,12 @@ public class MapaGrande {
                 listaTranseuntes.get(b).setPosObjetivo(buscoPosicionParaDejarTranseuntes());
                 listaTranseuntes.get(b).calculaRecObjetivo();
                 Log.d(TAG,"Lo dejo");
+            } else {
+                // Comprovar si hay objeto
+                int c = hiHaUnObjecteEnRectangle(jugadora.getPosicion(), jugadora.getDireccio(), listaObjetos, zoomBitmap);
+                if (c != -1 ){
+                    listaObjetos.get(c).setEnInventario(true);
+                }
             }
         }
     }
@@ -444,9 +474,14 @@ public class MapaGrande {
             listaTranseuntes.get(i).setMeEstoyEncarando(true);
             Log.d(TAG,"Lo encuentra");
         }
-        //Log.d(TAG, "NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
     }
-
+    protected void decirAObjetoQueLoEstoyDestruyendo(IAPolicias poli){
+        int i = hiHaUnObjecteEnRectangle(poli.getPosicion(), poli.getDireccio(), listaObjetos, zoomBitmap+5);
+        if(i != -1){
+            listaObjetos.get(i).setMeEstanDestruyendo(true);
+            Log.d(TAG,"Lo encuentra");
+        }
+    }
 
     /*protected void processButtons(int x, int y){ // ya que los botones se inicializan aqui, el metodo de cambiar direccion no lo puedo poner en jugadora
         if(this.getBotones().getBotonRecHorizLeft().contains(x,y)){ //boton Left

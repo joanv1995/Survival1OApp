@@ -6,6 +6,8 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.util.Log;
 
+import com.example.usuario.pruebaretrofit.model.Objeto;
+
 import static com.example.usuario.pruebaretrofit.activities.Mapa.MetodosParaTodos.*;
 
 /**
@@ -56,6 +58,7 @@ public class IAPolicias {
     PointF puertaAlInfierno = new PointF(203,119);
     private boolean meVoy = false, meQuieroMorir= false;
     private boolean meEncaroConTrans = false;
+    private boolean estoyDestruyendoObjeto = false;
 
     public IAPolicias(Bitmap bmp, String idIa, PointF posicion, PointF posObjetivo, MapaGrande mapa){
         Log.d(TAG, "inicialitzo un IA");
@@ -101,6 +104,12 @@ public class IAPolicias {
     }
     public void setMeEncaroConTrans(boolean meEncaroConTrans) {
         this.meEncaroConTrans = meEncaroConTrans;
+    }
+    public boolean isEstoyDestruyendoObjeto() {
+        return estoyDestruyendoObjeto;
+    }
+    public void setEstoyDestruyendoObjeto(boolean estoyDestruyendoObjeto) {
+        this.estoyDestruyendoObjeto = estoyDestruyendoObjeto;
     }
 
     private void calculaRecObjetivo(){
@@ -158,10 +167,14 @@ public class IAPolicias {
             if(hiHaUnTransPoli(act2,direccio,mapa.getListaTranseuntes())==1) {
                 mapa.decirATransQueSeEstaEncarando(this);
             }
+            if(hiHaUnObjecte(act2, mapa.getListaObjetos()) == 1) {
+                mapa.decirAObjetoQueLoEstoyDestruyendo(this);
+            }
 
             // si m'ho ha calculat bé, actualitzo posicio
             if(!enEspera && hiHaUnPoli(act2, direccio, mapa.getListaPolicias()) == 0 && hiHaLaJugadora(act2,  direccio, jugadora)==0
-                    && hiHaUnTransPoli(act2,direccio,mapa.getListaTranseuntes())==0){//gameView.hiHaUnIA(act2,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
+                    && hiHaUnTransPoli(act2,direccio,mapa.getListaTranseuntes()) == 0
+                    && hiHaUnObjecte(act2, mapa.getListaObjetos()) == 0){//gameView.hiHaUnIA(act2,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
                 posAntiga = new PointF(posicion.x, posicion.y);
                 if(!act.equals(0,0))
                     posicion.set(act);
