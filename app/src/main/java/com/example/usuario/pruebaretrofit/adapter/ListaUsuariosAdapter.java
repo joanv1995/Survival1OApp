@@ -21,7 +21,7 @@ public class ListaUsuariosAdapter extends RecyclerView.Adapter<ListaUsuariosAdap
     private Context context;
 
 
-    public ListaUsuariosAdapter(List<Usuario2> movies, int rowLayout, Context context) {
+    public ListaUsuariosAdapter(List<Usuario2> listaUsuarios, int rowLayout, Context context) {
         this.listaUsuarios = listaUsuarios;
         this.rowLayout = rowLayout;
         this.context = context;
@@ -56,7 +56,7 @@ public class ListaUsuariosAdapter extends RecyclerView.Adapter<ListaUsuariosAdap
     @Override
     public void onBindViewHolder(ListaUsuariosViewHolder holder, final int position) {
         holder.nombreUser.setText(listaUsuarios.get(position).getNombre());
-        holder.puntuacion.setText(listaUsuarios.get(position).getPuntFinal());
+        holder.puntuacion.setText(String.valueOf(listaUsuarios.get(position).getPuntFinal()));
     }
 
     @Override

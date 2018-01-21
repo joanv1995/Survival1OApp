@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.usuario.pruebaretrofit.R;
+import com.example.usuario.pruebaretrofit.activities.PerfilActivity;
 import com.example.usuario.pruebaretrofit.adapter.ListaUsuariosAdapter;
 import com.example.usuario.pruebaretrofit.model.ListaUsuariosResponse;
 import com.example.usuario.pruebaretrofit.model.Usuario2;
@@ -44,7 +45,7 @@ public class RankingFragment extends Fragment {
     private static final String TAG = RankingFragment.class.getSimpleName();
     private RecyclerView recyclerView = null;
     private static Retrofit retrofit = null;
-    public static final String BASE_URL = "http://147.83.7.206:8080/1O-survival/game/";
+    public static final String BASE_URL = "http://147.83.7.206:8088/1O-survival/game/";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -94,7 +95,10 @@ public class RankingFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         //Agafar el nom d'usuari
-        String userName = "Javi";
+        PerfilActivity pf = (PerfilActivity)getActivity();
+        Usuario2 player = pf.getInfoUser();
+
+        String userName = player.getNombre();
         connectApiService(userName);
 
         View rootView = inflater.inflate(R.layout.fragment_ranking, container, false);
@@ -124,10 +128,10 @@ public class RankingFragment extends Fragment {
         RestClient restClient = retrofit.create(RestClient.class);
 
 
-        Call<ListaUsuariosResponse> call = restClient.getListaUsuarios(userName);
-        call.enqueue(new Callback<ListaUsuariosResponse>() {
+        Call<List<Usuario2>> call = restClient.getListaUsuarios(userName);
+        call.enqueue(new Callback<List<Usuario2>>() {
             @Override
-            public void onResponse(Call<ListaUsuariosResponse> call, Response<ListaUsuariosResponse> response) {
+            public void onResponse(Call<List<Usuario2>> call, Response<List<Usuario2>> response) {
                 List<Usuario2> listaUsuarios = (List<Usuario2>) response.body();
 
                 recyclerView.setAdapter(new ListaUsuariosAdapter(listaUsuarios, R.layout.list_usuarios_item, getContext()));
@@ -137,7 +141,7 @@ public class RankingFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<ListaUsuariosResponse> call, Throwable throwable) {
+            public void onFailure(Call<List<Usuario2>> call, Throwable throwable) {
                 Log.e(TAG, throwable.toString());
             }
         });
