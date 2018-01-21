@@ -1,5 +1,6 @@
 package com.example.usuario.pruebaretrofit.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -7,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -17,6 +19,9 @@ import com.example.usuario.pruebaretrofit.R;
 import com.example.usuario.pruebaretrofit.activities.Mapa.MapaActivity;
 import com.example.usuario.pruebaretrofit.model.Usuario2;
 import com.example.usuario.pruebaretrofit.service.RestClient;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,7 +39,10 @@ public class LoginActivity extends AppCompatActivity {
     Retrofit retrofit;
     Usuario2 user;
     Button button;
+    final ProgressDialog pd = new ProgressDialog(getApplicationContext());
     private static final String URL_BASE = "http://147.83.7.206:8088/1O-survival/game/"; ///nuestra api virtual
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +70,7 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+
         password.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
             @Override
@@ -76,6 +85,10 @@ public class LoginActivity extends AppCompatActivity {
        login.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
+               pd.setIndeterminate(true);
+               pd.setTitle("1O - Survival");
+               pd.setMessage("Cargando usuario");
+               pd.show();
                playerName = userName.getText().toString();
                pass = password.getText().toString();
                //user = new Usuario2("Joan Valverde","admin","joanv1995@gmail.com");
@@ -153,6 +166,7 @@ public class LoginActivity extends AppCompatActivity {
             //}
            // else{
             if(response ==0) {
+                stopProgress(pd);
                 Toast.makeText(this,"Usuario "+ user.getNombre()+" ha sido logueado correctamente", Toast.LENGTH_LONG).show();
                 Intent in = new Intent(LoginActivity.this,PerfilActivity.class);
                 in.putExtra("jugador", user);
@@ -166,6 +180,17 @@ public class LoginActivity extends AppCompatActivity {
 
 
             //}
+
+    }
+    private void stopProgress(final ProgressDialog pd){
+            final Timer t = new Timer();
+            t.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    pd.dismiss();
+                    t.cancel();
+                }
+            },1500);
 
     }
 
