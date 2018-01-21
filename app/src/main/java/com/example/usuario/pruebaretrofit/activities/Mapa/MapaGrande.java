@@ -58,7 +58,8 @@ public class MapaGrande {
     private java.util.List<IATranseunte> listaTranseuntes = new ArrayList<>();
     private java.util.List<Objeto> listaObjetos = new ArrayList<>();
 
-    private int numTranseuntes = 0;
+    private int numTranseuntes = 0, numPoliciasEnEscuela = 0, maxPolisEnEscuela = 4, maxTranseuntes = 6;
+    private int respawnPolicias = 40;
     private int esperaIAs;
 
     private int count;
@@ -75,9 +76,7 @@ public class MapaGrande {
                 count++;
                 if(count==2){
                     stats.setVotos(stats.getVotos()+1);
-
                     count =0;
-
                 }
                 times = String.format("%02d:%02d",
                         TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
@@ -263,8 +262,10 @@ public class MapaGrande {
 
         a = -1;
         for (IAPolicias ia : listaPolicias) {
-            if (ia.isMeQuieroMorir())
+            if (ia.isMeQuieroMorir() && numPoliciasEnEscuela < maxPolisEnEscuela) {
                 a = listaPolicias.indexOf(ia);
+                numPoliciasEnEscuela++;
+            }
             else {
                 recBtm = ia.onDraw(canvas, jugadora);
                 if (cuadradoMapa.contains((int) ia.getPosicion().x, (int) ia.getPosicion().y)) {
@@ -285,10 +286,10 @@ public class MapaGrande {
             listaPolicias.remove(a);
 
         // respawn d'ias
-        if (esperaIAs == 10) {
+        if (esperaIAs == respawnPolicias) {
             polisNonStop();
             esperaIAs = 0;
-            if(numTranseuntes < 6) {
+            if(numTranseuntes < maxTranseuntes) {
                 transNonStop();
                 numTranseuntes++;
             }
@@ -329,17 +330,17 @@ public class MapaGrande {
 
         TextPaint paintTimer = new TextPaint();
         paintTimer.setColor(context.getResources().getColor(R.color.DarkBlue));
-        paintTimer.setTextSize(28);
+        paintTimer.setTextSize((28*gameView.getCanvasWidth())/1184);
         paintTimer.setTypeface(Typeface.create("Arial",Typeface.BOLD));
         paintTimer.setStyle(Paint.Style.FILL);
-        paintTimer.setStrokeWidth(2);
-        canvas.drawText(""+times,stats.getMargenX()+ gameView.getCanvasWidth()-100,stats.getLiniavida(),paintTimer);
+        paintTimer.setStrokeWidth((2*gameView.getCanvasWidth())/1776);
+        canvas.drawText(""+times, gameView.getCanvasWidth() - stats.getMargenX() + margeAmpl/2,stats.getLiniavida(),paintTimer);
 
         TextPaint paintTimerPolice = new TextPaint();
         if(!alerta)
         {
                 paintTimerPolice.setColor(context.getResources().getColor(R.color.Red));
-                paintTimerPolice.setTextSize(28);
+                paintTimerPolice.setTextSize((28*gameView.getCanvasWidth())/1184);
                 paintTimerPolice.setTypeface(Typeface.create("Arial",Typeface.BOLD));
                 paintTimerPolice.setStyle(Paint.Style.FILL);
                 paintTimerPolice.setStrokeWidth(2);
@@ -347,29 +348,29 @@ public class MapaGrande {
         else
         {
                 paintTimerPolice.setColor(context.getResources().getColor(R.color.Red));
-                paintTimerPolice.setTextSize(34);
+                paintTimerPolice.setTextSize((34*gameView.getCanvasWidth())/1184);
                 paintTimerPolice.setTypeface(Typeface.create("Arial",Typeface.BOLD));
                 paintTimerPolice.setStyle(Paint.Style.FILL);
                 paintTimerPolice.setStrokeWidth(2);
                 timesPolice = "ALERTA";
         }
-        canvas.drawText(""+timesPolice,stats.getMargenX()+ gameView.getCanvasWidth()-100,stats.getLiniaseguidores(),paintTimerPolice);
+        canvas.drawText(""+timesPolice,gameView.getCanvasWidth() - stats.getMargenX() + margeAmpl/2,stats.getLiniaseguidores(),paintTimerPolice);
 
         TextPaint paintStats = new TextPaint();
 
         paintStats.setColor(context.getResources().getColor(R.color.Black));
-        paintStats.setTextSize(28);
+        paintStats.setTextSize((28*gameView.getCanvasWidth())/1184);
         paintStats.setTypeface(Typeface.create("Arial",Typeface.BOLD));
         paintStats.setStyle(Paint.Style.FILL);
-        paintStats.setStrokeWidth(1);
+        paintStats.setStrokeWidth((3*gameView.getCanvasWidth())/1776);
         canvas.drawText("Vida  "+stats.getVida(), stats.getMargenX(), stats.getLiniavida(),paintStats);
         canvas.drawText("Votos  "+stats.getVotos(), stats.getMargenX(),stats.getLiniavotos(),paintStats);
         canvas.drawText("Seguidores  "+stats.getSeguidores(), stats.getMargenX(), stats.getLiniaseguidores(),paintStats);
 
         // Poner botones
-        paint.setColor(context.getResources().getColor(R.color.Cornsilk));
+        //paint.setColor(context.getResources().getColor(R.color.Cornsilk));
         //canvas.drawRect(botones.getRecVerticalEntero(),paint);
-        paint.setColor(context.getResources().getColor(R.color.Green));
+        //paint.setColor(context.getResources().getColor(R.color.Green));
 
         //canvas.drawRect(botones.getBotonRecVertArriba(), paint);
         //canvas.drawRect(botones.getBotonRecVertBajo(), paint);
@@ -383,7 +384,7 @@ public class MapaGrande {
 
        // paint.setColor(context.getResources().getColor(R.color.AntiqueWhite));
        // canvas.drawRect(botones.getRecHorizontalEntero(), paint);
-        paint.setColor(context.getResources().getColor(R.color.Green));
+        //paint.setColor(context.getResources().getColor(R.color.Green));
 
         Bitmap bitmap3 = BitmapFactory.decodeResource(context.getResources(),R.mipmap.bdleft2);
         canvas.drawBitmap(bitmap3, null, botones.getBotonRecHorizLeft(), null);
@@ -395,7 +396,7 @@ public class MapaGrande {
         //canvas.drawRect(botones.getBotonRecHorizLeft(), paint);
         //canvas.drawRect(botones.getBotonRecHorizRigth(), paint);
 
-        paint.setColor(context.getResources().getColor(R.color.AntiqueWhite));
+        //paint.setColor(context.getResources().getColor(R.color.AntiqueWhite));
         Bitmap bitmap5 = BitmapFactory.decodeResource(context.getResources(),R.mipmap.circlebutton2);
         canvas.drawBitmap(bitmap5, null, botones.getBotonCercleA(), null);
         Bitmap bitmap6 = BitmapFactory.decodeResource(context.getResources(),R.mipmap.circlebutton2);
@@ -403,7 +404,7 @@ public class MapaGrande {
 
         //canvas.drawRect(botones.getBotonCercleA(), paint);
         //canvas.drawRect(botones.getBotonCercleB(), paint);
-        paint.setColor(context.getResources().getColor(R.color.Green));
+        //paint.setColor(context.getResources().getColor(R.color.Green));
         //canvas.drawCircle(botones.getCentreX1(), botones.getCentreY1(), botones.getRadi(), paint);
         //canvas.drawCircle(botones.getCentreX2(), botones.getCentreY2(), botones.getRadi(), paint);
 
@@ -540,7 +541,9 @@ public class MapaGrande {
             Log.d(TAG,"Lo encuentra");
         }
     }
-    public void dañoVidaPolicia(){stats.setVida(stats.getVida()-1);}
+    public void dañoVidaPolicia(){
+        stats.setVida(stats.getVida()-1);
+    }
 
     private boolean moverJugadora(){
         PointF p = new PointF();
@@ -570,34 +573,5 @@ public class MapaGrande {
 
     }
 
-    protected void moverJugadoraEnMalla(){ //NO VA
-        String s = malla[(int) jugadora.getPosicion().y][(int) jugadora.getPosicion().x];
-        String ss=malla[(int) jugadora.getPosicion().y][(int) jugadora.getPosicion().x].replace( s, caracterAnterior);
-        switch (jugadora.getDireccio()){
-            case 1:
-                caracterAnterior = malla[(int) jugadora.getPosicion().y][(int) jugadora.getPosicion().x - jugadora.getSpeed()];
-                s = malla[(int) jugadora.getPosicion().y][(int) jugadora.getPosicion().x - jugadora.getSpeed()];
-                malla[(int) jugadora.getPosicion().y][(int) jugadora.getPosicion().x - jugadora.getSpeed()].replace(s, caracterJugadora);
-                jugadora.setPosicion(jugadora.getPosicion().x - jugadora.getSpeed(),jugadora.getPosicion().y);
-                break;
-            case 0:
-                caracterAnterior = malla[(int) jugadora.getPosicion().y][(int) jugadora.getPosicion().x + jugadora.getSpeed()];
-                s = malla[(int) jugadora.getPosicion().y][(int) jugadora.getPosicion().x + jugadora.getSpeed()];// = caracterJugadora;
-                malla[(int) jugadora.getPosicion().y][(int) jugadora.getPosicion().x + jugadora.getSpeed()].replace(s,caracterJugadora);
-                jugadora.setPosicion(jugadora.getPosicion().x + jugadora.getSpeed(),jugadora.getPosicion().y);
-                break;
-            case 2:
-                caracterAnterior = malla[(int) jugadora.getPosicion().y - jugadora.getSpeed()][(int) jugadora.getPosicion().x];
-                s = malla[(int) jugadora.getPosicion().y - jugadora.getSpeed()][(int) jugadora.getPosicion().x];// =caracterJugadora;
-                malla[(int) jugadora.getPosicion().y - jugadora.getSpeed()][(int) jugadora.getPosicion().x].replace(s, caracterJugadora);
-                jugadora.setPosicion(jugadora.getPosicion().x,jugadora.getPosicion().y - jugadora.getSpeed());
-                break;
-            case 3:
-                caracterAnterior = malla[(int) jugadora.getPosicion().y + jugadora.getSpeed()][(int) jugadora.getPosicion().x];
-                s = malla[(int) jugadora.getPosicion().y + jugadora.getSpeed()][(int) jugadora.getPosicion().x]; //= caracterJugadora;
-                malla[(int) jugadora.getPosicion().y + jugadora.getSpeed()][(int) jugadora.getPosicion().x].replace(s,caracterJugadora);
-                jugadora.setPosicion(jugadora.getPosicion().x,jugadora.getPosicion().y + jugadora.getSpeed());
-                break;
-        }
-    }
+
 }

@@ -261,8 +261,8 @@ public class IATranseunte {
                 currentFrame = ++currentFrame % BMP_COLUMNS;
                 estoyCansadoDeEsperar = false;
             }else {
-                if(!estaDinsDeMalla(act, mapa.getMalla(), mapa.getZoomBitmap()))
-                    Log.e(TAG,"No esta dins la malla");
+                /*if(!estaDinsDeMalla(act, mapa.getMalla(), mapa.getZoomBitmap()))
+                    Log.e(TAG,"No esta dins la malla");*/
                 contEspera++;
                 if(contEspera > 40) {
                     estoyCansadoDeEsperar = true;
