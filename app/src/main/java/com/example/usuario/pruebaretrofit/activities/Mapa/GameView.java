@@ -56,7 +56,6 @@ public class GameView extends SurfaceView {
                 gameLoopThread.setRunning(true);
                 gameLoopThread.start();
                 Log.d(TAG, "gameLoopThread.start");
-
             }
 
             @Override

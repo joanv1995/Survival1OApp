@@ -103,7 +103,7 @@ public class MapaEscuela {
         this.gameView = gameView;
 
         malla = llegirMapaTxt("mapaEscola10", context);
-        jugadora = createJugadora(R.drawable.bad3,new PointF(150,95));
+        jugadora = createJugadora(R.mipmap.bad33,new PointF(150,95));
         botones = new BotonesDeMapas();
         stats = new PLayerStats();
     }

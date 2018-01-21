@@ -97,7 +97,7 @@ public class MapaGrande {
 
 
         malla = llegirMapaTxt("mapaGeneral3", context);
-        jugadora = createJugadora(R.drawable.bad3,new PointF(150,100));
+        jugadora = createJugadora(R.mipmap.bad33,new PointF(150,100));
         botones = new BotonesDeMapas();
         stats = new PLayerStats();
         addObjetos();
