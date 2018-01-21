@@ -64,7 +64,7 @@ public class Minijuego {
         int pos0=generator.nextInt(100);
         if(pos0<5) pos0=5;
         if(pos0>95) pos0=95;
-        PointF pos=new PointF(150,50);
+        PointF pos=new PointF(0,pos0);
         return pos;
         //spawn++;
     } //Random elije a que altura spawnea el poli y lo añade al array
