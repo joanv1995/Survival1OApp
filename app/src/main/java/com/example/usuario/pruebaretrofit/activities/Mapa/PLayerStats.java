@@ -127,26 +127,27 @@ public class PLayerStats {
 
     public void setVida(double vida) {
         this.vida = vida;
+        if(!hayVida())
+            this.vida = 0;
     }
-    public void setMedidasCanvas(int canvasWidth, int canvasHeight){
+    public void setMedidasCanvas(int canvasWidth, int canvasHeight, int margenAmple, int margenAlt){
 
-        this.statsRectAncho = (canvasWidth*350)/1920;//350;
-        this.statsRectAlto = (canvasHeight*200)/1008;//200;
-        centroRectX = (canvasWidth*350)/1920;//350;
-        centroRectY = (canvasHeight*150)/1008;//150;
-        liniavida = (canvasHeight*100)/1008;//20;
-        liniaseguidores = (canvasHeight*160)/1008;//40;
-        liniavotos = (canvasHeight*220)/1008;//60;
-        margenX = (canvasWidth*200)/1920;//50
+        this.statsRectAncho = (canvasWidth*350)/1184;//(canvasWidth*350)/1920;//350;
+        this.statsRectAlto = (canvasHeight*200)/720;//(canvasHeight*200)/1008;//200;
+        centroRectX = (canvasWidth*350)/1184;//(canvasWidth*350)/1920;//350;
+        centroRectY = (canvasHeight*150)/720;//(canvasHeight*150)/1008;//150;
+        liniavida = margenAlt/2 + (canvasHeight*80)/720;//(canvasHeight*100)/720;//(canvasHeight*120)/1008;//20;       //100
+        liniaseguidores = margenAlt/2 + (canvasHeight*110)/720;//(canvasHeight*150)/720;//(canvasHeight*170)/1008;//40; //160
+        liniavotos = margenAlt/2 + (canvasHeight*140)/720;//(canvasHeight*200)/720;//(canvasHeight*220)/1008;//60;      //220
+        margenX = margenAmple/2+(canvasWidth*30)/1184;//(canvasWidth*150)/1184;//(canvasWidth*220)/1920;//50
         calculaPosRectangulo();
     }
     public void calculaPosRectangulo(){
 
         stats.set(centroRectX -statsRectAncho/2, centroRectY -statsRectAlto/2, centroRectX + statsRectAncho/2, centroRectY + statsRectAlto/2);
+    }
 
-
-
-
-
+    public boolean hayVida(){
+        return !(vida <= 0);
     }
 }
