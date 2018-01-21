@@ -42,29 +42,29 @@ public class Minijuego {
     private Context context;
     private GameView gameView;
 
-    private IAMinijuego[] policias;
+    private List<IAMinijuego> policias;
+    private int spawn=0,tspawn=0;
+    private int parados=0,pasan=0;
+    private String puntuacion;
 
 
     public Minijuego(Context context, GameView gameView) {
 
         this.context = context;
         this.gameView = gameView;
-
+        jugadora=new Jugadora(gameView,BitmapFactory.decodeResource(context.getResources(),R.mipmap.bad44),new PointF(195,50));
         malla = llegirMapaTxt("mapaMinijuego", context);
         botones = new BotonesDeMapas();
         PointF meta=new PointF(95,0);
-        policias=new IAMinijuego[4];
-        for(int i=0;i<policias.length;i++){
-            //policias[i]=new IAMinijuego(R.drawable.bad4,"poli",spawn(),meta,this);
-        }
+        policias=new ArrayList<IAMinijuego>();
 
     }
     public PointF spawn(){
         Random generator=new Random();
         int pos0=generator.nextInt(100);
         if(pos0<5) pos0=5;
-        if(pos0<95) pos0=95;
-        PointF pos=new PointF(0,pos0);
+        if(pos0>95) pos0=95;
+        PointF pos=new PointF(150,50);
         return pos;
         //spawn++;
     } //Random elije a que altura spawnea el poli y lo añade al array
@@ -94,6 +94,22 @@ public class Minijuego {
         }
         return paint;
     }
+    private boolean meta(IAMinijuego poli){
+        int margen1=(int)poli.getPosicion().y + 3;
+        int margen2=(int)poli.getPosicion().y - 3;
+        if(jugadora.getPosicion().y<margen1 && jugadora.getPosicion().y>margen2){
+            return true;
+        }else{return false;}
+    }
+    private IAMinijuego[] eliminado(IAMinijuego[] polis){
+        IAMinijuego[] quedan=new IAMinijuego[polis.length-1];
+        for(int i=1;i<polis.length;i++)
+        {
+            quedan[i-1]=polis[i];
+        }
+        return quedan;
+
+    }
 
     protected Canvas dibujoMinijuego(Canvas canvas, int ample, int altura, int margeAlt, int margeAmpl){
         //startTime = System.currentTimeMillis();
@@ -113,12 +129,13 @@ public class Minijuego {
         }
         Paint paint = new Paint();
         int a = -1;
-       /*for (IA ia : listaIas) {
+        if(tspawn<0) tspawn=10;
+        boolean eliminar=false;
+        for(IAMinijuego ia:policias){
+
             //startTime2 = System.currentTimeMillis();
             recBtm = ia.onDraw(canvas,jugadora,zoomBitmap);
-            if (ia.isMeQuieroMorir())
-                a = listaIas.indexOf(ia);
-            else {
+
                 x = (int) ia.getPosicion().x * ample + margeAmpl / 2;
                 y = (int) ia.getPosicion().y * altura + margeAlt / 2;
                 rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
@@ -128,36 +145,49 @@ public class Minijuego {
                 Rect rec = new Rect(xx - 10, yy - 10, xx + 10, yy + 10);
                 paint.setColor(context.getResources().getColor(R.color.colorPrimary));
                 canvas.drawRect(rec, paint);
-            }
+
             //startTime2 = System.currentTimeMillis()-startTime2;
             //Log.d(TAG,"Dibuixar un Ia: " + startTime2);
-        }
-        if (a != -1)
-            listaIas.remove(a);
 
-        // respawn d'ias
-        if (esperaIAs == 5) {
-            iasNonStop();
-            esperaIAs = 0;
-            if(iMiCaminoP < 4) {
-                iaPoliNonStop(caminoAseguir[iMiCaminoP]);
-                iMiCaminoP++;
+            boolean metas=false;
+            if(ia.getPosicion().x>185)
+                    metas=meta(ia);
+            if(ia.getPosicion().x>=190 && metas)
+            {
+                parados++;
+                eliminar=true;
             }
-        } else {
-            esperaIAs++;
+            else if(ia.getPosicion().x>=190 && !metas){
+                pasan++;
+                eliminar=true;
+            }
         }
-        a = -1;
-        //startTime = System.currentTimeMillis();
+        if(eliminar)
+            policias.remove(0);
+        if(tspawn==0&&spawn<4){
+            PointF obj=new PointF(195,2);
+            policias.add(new IAMinijuego(BitmapFactory.decodeResource(context.getResources(),R.mipmap.bad44),"polis",spawn(),obj,this));
+            spawn++;
+        }
+        tspawn=tspawn-1;
 
+        if(policias.size()==0 &&spawn==4)
+        {
+            if(parados>=3)
+                puntuacion="Victoria";
+            else
+                puntuacion="Derrota";
+        }
         // JOAN!!! Aqui se dibuja el player
-        if(espero)
+
             jugadora.runCurrentFrame();
         recBtm = jugadora.onDraw(canvas);
         x = (int) jugadora.getPosicion().x * ample + margeAmpl / 2;
         y = (int) jugadora.getPosicion().y * altura + margeAlt / 2;
         rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
         canvas.drawBitmap(jugadora.getBmp(), recBtm, rec, null);
-        // FIN*/
+        // FIN
+
 
 
         //startTime = System.currentTimeMillis()-startTime;
