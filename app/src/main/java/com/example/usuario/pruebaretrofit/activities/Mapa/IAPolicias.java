@@ -170,17 +170,22 @@ public class IAPolicias {
             if(hiHaUnObjecte(act2, mapa.getListaObjetos()) == 1) {
                 mapa.decirAObjetoQueLoEstoyDestruyendo(this);
             }
+            if(hiHaLaJugadora(act2,direccio,jugadora)==1){
+                mapa.dañoVidaPolicia();
+            }
 
             // si m'ho ha calculat bé, actualitzo posicio
             if(!enEspera && hiHaUnPoli(act2, direccio, mapa.getListaPolicias()) == 0 && hiHaLaJugadora(act2,  direccio, jugadora)==0
                     && hiHaUnTransPoli(act2,direccio,mapa.getListaTranseuntes()) == 0
                     && hiHaUnObjecte(act2, mapa.getListaObjetos()) == 0){//gameView.hiHaUnIA(act2,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
+
                 posAntiga = new PointF(posicion.x, posicion.y);
                 if(!act.equals(0,0))
                     posicion.set(act);
                 calculaAnimes();
                 currentFrame = ++currentFrame % BMP_COLUMNS;
             }else {
+
                 if(!estaDinsDeMalla(act, mapa.getMalla(), mapa.getZoomBitmap()))
                     Log.e(TAG,"No esta dins la malla");
 

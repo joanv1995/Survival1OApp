@@ -431,10 +431,12 @@ public class MapaGrande {
             if (a != -1) { // Cojo un ia
                 listaTranseuntes.get(a).setLaEstoySiguiendo(true);
                 listaTranseuntes.get(a).setPosObjetivo(jugadora.getPosicion());
+                stats.setSeguidores(stats.getSeguidores() +1);
                 Log.d(TAG, "Lo ha encontrado");
             } else { // lo dejo
                 int b = buscoTranseunteSeguidor();
                 if (b != -1) {
+
                     listaTranseuntes.get(b).setLaEstoySiguiendo(false);
                     listaTranseuntes.get(b).setMeParoAdefender(true);
                     listaTranseuntes.get(b).setPosObjetivo(buscoPosicionParaDejarTranseuntes());
@@ -447,10 +449,10 @@ public class MapaGrande {
                         listaObjetos.get(c).setEnInventario(true);
                         jugadora.getInventario().getListaObjetos().add(listaObjetos.get(c));
                     } else {
-                        if (jugadora.getInventario().hayObjetosEnInventario()) { //esta parte no hace nada en verdad
+                        /*if (jugadora.getInventario().hayObjetosEnInventario()) { //esta parte no hace nada en verdad
                             jugadora.getInventario().getListaObjetos().get(0).setEnInventario(false);
                             jugadora.getInventario().getListaObjetos().remove(0);
-                        }
+                        }*/
                         int d = buscoObjetoDeInventario();
                         if (d != -1) {
                             listaObjetos.get(d).setEnInventario(false);
@@ -510,29 +512,7 @@ public class MapaGrande {
             Log.d(TAG,"Lo encuentra");
         }
     }
-
-    /*protected void processButtons(int x, int y){ // ya que los botones se inicializan aqui, el metodo de cambiar direccion no lo puedo poner en jugadora
-        if(this.getBotones().getBotonRecHorizLeft().contains(x,y)){ //boton Left
-            jugadora.setDireccio(1);
-            //jugadora.setPosicion(jugadora.getPosicion().x - jugadora.getSpeed(),jugadora.getPosicion().y);
-        }else if(this.getBotones().getBotonRecHorizRigth().contains(x,y)) {//boton Right
-            jugadora.setDireccio(0);
-            //jugadora.setPosicion(jugadora.getPosicion().x + jugadora.getSpeed(),jugadora.getPosicion().y);
-        } else if (this.getBotones().getBotonRecVertArriba().contains(x,y)){//boton Arriba
-            jugadora.setDireccio(2);
-            //jugadora.setPosicion(jugadora.getPosicion().x,jugadora.getPosicion().y - jugadora.getSpeed());
-        } else if (this.getBotones().getBotonRecVertBajo().contains(x,y)){ //boton Abajo
-            jugadora.setDireccio(3);
-            //jugadora.setPosicion(jugadora.getPosicion().x,jugadora.getPosicion().y + jugadora.getSpeed());
-        }
-        if(this.getBotones().getBotonCercleA().contains(x,y)){
-            Log.d(TAG, "boton A");
-        }
-        if(this.getBotones().getBotonCercleB().contains(x,y)){
-            Log.d(TAG, "boton B");
-
-        }
-    }*/
+    public void dañoVidaPolicia(){stats.setVida(stats.getVida()-1);}
 
     private boolean moverJugadora(){
         PointF p = new PointF();
