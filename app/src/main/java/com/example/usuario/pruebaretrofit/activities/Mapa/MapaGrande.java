@@ -17,6 +17,8 @@ import com.example.usuario.pruebaretrofit.model.Objeto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import static com.example.usuario.pruebaretrofit.activities.Mapa.MetodosParaTodos.*;
@@ -59,6 +61,8 @@ public class MapaGrande {
     private int numTranseuntes = 0;
     private int esperaIAs;
 
+    private int count;
+
     public PLayerStats getStats() {
         return stats;
     }
@@ -68,6 +72,13 @@ public class MapaGrande {
             @Override
             public void onTick(long millisUntilFinished) {
                 long millis = millisUntilFinished;
+                count++;
+                if(count==2){
+                    stats.setVotos(stats.getVotos()+1);
+
+                    count =0;
+
+                }
                 times = String.format("%02d:%02d",
                         TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
                         TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
@@ -461,6 +472,23 @@ public class MapaGrande {
                             Rect r = new Rect(76, 59, 85, 62);
                             if (r.contains((int) jugadora.getPosicion().x, (int) jugadora.getPosicion().y)) {
                                 jugadora.setEstoyEnElHospital(true);
+
+                                if(stats.getVida()<100){
+                                    //Declare the timer
+                                    Timer myTimer = new Timer();
+                                    //Set the schedule function and rate
+                                    myTimer.scheduleAtFixedRate(new TimerTask() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        stats.setVida(stats.getVida()+1);
+                                                                        //Called at every 1000 milliseconds (1 second)
+                                                                        Log.i("MainActivity", "Repeated task");
+                                                                    }
+                                                                },0,2000);
+
+
+                                }
+
                             }
                         }
                     }
