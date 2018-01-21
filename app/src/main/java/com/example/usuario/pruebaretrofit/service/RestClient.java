@@ -19,8 +19,8 @@ import retrofit2.http.Path;
 
 public interface RestClient {
 
-    @GET("listaUsuarios")
-    Call<List<Usuario2>> getListaUsuarios();
+    @GET("{userName}/listaUsuarios")
+    Call<List<Usuario2>> getListaUsuarios(@Path("userName") String userName);
     @GET("player/{nomPlayer}")
     Call<Usuario2> loginUser(@Body Usuario2 u);
     @POST("isUser")
