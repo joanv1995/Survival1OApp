@@ -1,5 +1,6 @@
 package com.example.usuario.pruebaretrofit.activities.FragmentsPerfil;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.usuario.pruebaretrofit.R;
+import com.example.usuario.pruebaretrofit.activities.PerfilActivity;
+import com.example.usuario.pruebaretrofit.model.Usuario2;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +31,7 @@ public class PerfilFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private Usuario2 player;
 
     private OnFragmentInteractionListener mListener;
 
@@ -65,8 +69,12 @@ public class PerfilFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_perfil, container, false);
+        PerfilActivity pa = (PerfilActivity) getActivity();
+        player = pa.getInfoUser();
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_perfil, container, false);
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

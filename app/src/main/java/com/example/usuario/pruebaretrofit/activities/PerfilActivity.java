@@ -30,7 +30,7 @@ import com.example.usuario.pruebaretrofit.model.Usuario2;
 
 public class PerfilActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, PerfilFragment.OnFragmentInteractionListener, RankingFragment.OnFragmentInteractionListener, PlayFragment.OnFragmentInteractionListener{
-
+    private Usuario2 player;
     public void onFragmentInteraction(Uri uri){};
 
     @Override
@@ -63,7 +63,7 @@ public class PerfilActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         Intent in = getIntent();
-        Usuario2 player = (Usuario2)in.getSerializableExtra("jugador");
+        player = (Usuario2)in.getSerializableExtra("jugador");
 
         final NavigationView navigation = (NavigationView)findViewById(R.id.nav_view);
         navigation.setNavigationItemSelectedListener(this);
@@ -164,4 +164,5 @@ public class PerfilActivity extends AppCompatActivity
                 break;
         }
     }
+    public Usuario2 getInfoUser(){return player;}
 }
