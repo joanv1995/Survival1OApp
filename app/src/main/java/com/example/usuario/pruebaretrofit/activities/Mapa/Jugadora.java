@@ -6,6 +6,8 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.util.Log;
 
+import com.example.usuario.pruebaretrofit.model.Inventario;
+
 /**
  * Created by annag on 11/01/2018.
  */
@@ -32,6 +34,9 @@ public class Jugadora {
     private Rect src = new Rect();
     private int speed = 4;
     private boolean meTengoQueMover = false;
+    private boolean estoyEnElHospital = false;
+
+    private Inventario inventario;
 
     public Jugadora(GameView gameView,Bitmap bmp, PointF posicion) {
         this.bmp = bmp;
@@ -39,6 +44,7 @@ public class Jugadora {
         this.width = bmp.getWidth() / BMP_COLUMNS_JUGADORA;
         this.height = bmp.getHeight() / BMP_ROWS_JUGADORA;
         this.posicion = posicion;
+        inventario = new Inventario();
     }
 
     public void setPosicion(PointF posicion) {
@@ -79,7 +85,18 @@ public class Jugadora {
     public Rect getAnima() {
         return anima;
     }
-
+    public Inventario getInventario() {
+        return inventario;
+    }
+    public void setInventario(Inventario inventario) {
+        this.inventario = inventario;
+    }
+    public boolean isEstoyEnElHospital() {
+        return estoyEnElHospital;
+    }
+    public void setEstoyEnElHospital(boolean estoyEnElHospital) {
+        this.estoyEnElHospital = estoyEnElHospital;
+    }
     public void setAnima(Rect anima) {
         this.anima = anima;
     }
@@ -88,7 +105,6 @@ public class Jugadora {
         // [files][columnes]
         this.anima.set((int) posicion.x - zoom+1, (int) posicion.y - zoom,
                 (int) posicion.x + zoom, (int) posicion.y + zoom);
-        Log.d(TAG,"ANIMA::: " + anima );
     }
     protected void update(){
         // canviar la posicio
