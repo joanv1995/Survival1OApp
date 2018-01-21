@@ -1,7 +1,10 @@
 package com.example.usuario.pruebaretrofit.activities.Mapa;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -18,10 +21,12 @@ public class GameView extends SurfaceView {
     private final String TAG = this.getClass().getSimpleName();
     private SurfaceHolder holder;
     private GameLoopThread gameLoopThread;
+    private Context context;
     private int canvasWidth, canvasHeight;
     protected int margeAmpl = 0, margeAlt = 0;
     private Rect rectangleCanvas = new Rect();
-    private CountDownTimer timer;
+    private CountDownTimer timer, timerPolice;
+    //private String times;
 
     // per dibuixar
     private int x = 0, y = 0;
@@ -37,17 +42,32 @@ public class GameView extends SurfaceView {
     //int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
     //        | View.SYSTEM_UI_FLAG_FULLSCREEN;
 
-    private int quinMapa = 2; // mapaEscuela=0, mapaGrande = 1, minijuegos = 2
+    private PLayerStats stats;
+    private BotonesDeMapas botones;
+    private Jugadora jugadora;
 
+    private int count;
 
+    private int quinMapa = 1; // mapaEscuela=0, mapaGrande = 1, minijuegos = 2
+
+    private PointF portaEscola = new PointF(100,98);
+    private PointF portaEscolaMapaGran = new PointF(201,121);
 
     public GameView(Context context) {
         super(context);
+        this.context = context;
         Log.d(TAG, "constructor GameView");
+
+        jugadora = createJugadora(R.mipmap.bad33, new PointF(10,10));
+        botones = new BotonesDeMapas();
+        stats = new PLayerStats();
+
         gameLoopThread = new GameLoopThread(this);
-        mapaEscuela = new MapaEscuela(context, this); // AQUI ESTA EL MAPA
-        mapaGrande = new MapaGrande(context, this);
-        minijuego = new Minijuego(context, this);
+        mapaEscuela = new MapaEscuela(context, this, jugadora, botones, stats); // AQUI ESTA EL MAPA
+        mapaGrande = new MapaGrande(context, this, jugadora, botones, stats);
+
+
+        //minijuego = new Minijuego(context, this);
         //this.setSystemUiVisibility(uiOptions);
 
         holder = getHolder();
@@ -56,6 +76,38 @@ public class GameView extends SurfaceView {
             public void surfaceCreated(SurfaceHolder surfaceHolder) {
                 gameLoopThread.setRunning(true);
                 gameLoopThread.start();
+                timer = new CountDownTimer(180000, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        long millis = millisUntilFinished;
+                        count++;
+                        if(count==2){
+                            stats.setVotos(stats.getVotos()+1);
+                            count =0;
+                        }
+                        mapaGrande.setTimes(String.format("%02d:%02d",
+                                TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+                                TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))));
+                    }
+                    @Override
+                    public void onFinish() {
+                        ///PARTIDA ACABADA ---  NIVEL SUPERADO
+                    }
+                }.start();
+                timerPolice = new CountDownTimer(20000, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        mapaGrande.setAlerta(false);
+                        long millis = millisUntilFinished;
+                        mapaGrande.setTimesPolice(String.format("%02d:%02d",
+                                TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+                                TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))));
+                    }
+                    @Override
+                    public void onFinish() {
+                        mapaGrande.setAlerta(true);
+                    }
+                }.start();
                 Log.d(TAG, "gameLoopThread.start");
             }
 
@@ -116,7 +168,7 @@ public class GameView extends SurfaceView {
                 if (i % length == 0) {
                     ampladaCanvas = i;
                     trobat = true;
-                    break;// TODO; mirar esto porque no redondeo hacia abajo
+                    break;
 
                 }
             }
@@ -129,18 +181,9 @@ public class GameView extends SurfaceView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        long startTime, startTime2;
-        //Log.d(TAG, "onDraw");
         canvas.drawColor(getResources().getColor(R.color.Black)); // Fondo
-
-        //Log.d(TAG,"canvasWidth " + canvas.getWidth());
-        //Log.d(TAG,"canvasHeight " + canvas.getHeight());
-
         altura = canvasHeight / altoMalla;
         ample = canvasWidth / anchoMalla;
-
-        //Log.d(TAG,"canvasWidth " + ample);
-        //Log.d(TAG,"canvasHeight " + altura);
 
         if (quinMapa == 0) { //mapa escola
             canvas = mapaEscuela.dibujoElMapaEscuela(canvas, ample, altura, margeAlt, margeAmpl);
@@ -154,6 +197,10 @@ public class GameView extends SurfaceView {
         }
     }
 
+    private Jugadora createJugadora(int resouce, PointF pos){
+        Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resouce);
+        return new Jugadora(this, bmp, pos);
+    }
 
 
     @Override
@@ -180,7 +227,7 @@ public class GameView extends SurfaceView {
                             mapaEscuela.getJugadora().setMeTengoQueMover(true);
                         }
                         if(mapaEscuela.getBotones().getBotonCercleA().contains(x,y)){ // boton A
-
+                            mapaEscuela.mePuedoCambiarDeMapa();
                         }
                         if(mapaEscuela.getBotones().getBotonCercleB().contains(x,y)){ // boton B
 
@@ -207,7 +254,6 @@ public class GameView extends SurfaceView {
                             mapaGrande.puedeElTranseunteSeguirme();
                         }
                         if(mapaGrande.getBotones().getBotonCercleB().contains(x,y)){ // boton B
-
 
                         }
                     }
@@ -262,6 +308,20 @@ public class GameView extends SurfaceView {
         }
     }
 
+    protected void deMapaGrandeAEscuela(Jugadora jugador, PLayerStats stats){
+        quinMapa = 0;
+        this.jugadora = jugador;
+        this.stats = stats;
+        jugador.setPosicion(portaEscola);
+
+    }
+    protected void deMapaEscuelaAGrande(Jugadora jugador, PLayerStats stats){
+        quinMapa = 1;
+        this.jugadora = jugador;
+        this.stats = stats;
+        jugador.setPosicion(portaEscolaMapaGran);
+
+    }
     private void hideUI() {
         /*this.getHandler().postDelayed(new Runnable() {
             @Override

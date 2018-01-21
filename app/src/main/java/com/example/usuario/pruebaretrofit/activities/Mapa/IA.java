@@ -36,7 +36,7 @@ public class IA extends MuevoImagenes{
     private Rect rectObjetivo = new Rect();
     private PointF posAntiga;
     private boolean enEspera = false;
-    private int speed = 4; // TODO: mirar que faig amb la velocitat
+    private int speed = 2; // TODO: mirar que faig amb la velocitat
     private boolean direccioX_Left, direccioY_Up; // true: up, false: down
     private int direccio; // direction = 0 right, 1 left, 2 up, 3 down,
 
@@ -62,7 +62,7 @@ public class IA extends MuevoImagenes{
                                 new PointF(145, 36),
                                 new PointF(55, 66),
                                 new PointF(145,66)};*/
-    private PointF puertaAlInfierno = new PointF(100,2);
+    private PointF puertaAlInfierno = new PointF(100,4);
     private boolean meVoy = false, meQuieroMorir= false;
     private int tiempoVotando = 10, tiempoVotangoPasado = 0;
     private boolean estoyCansadoDeEsperar = false;
@@ -91,10 +91,6 @@ public class IA extends MuevoImagenes{
     }
     private void calculaAnimes(){
         // [files][columnes]
-        /*this.anima.set((int) posicion.x + matrix[0][direccio] * gameView.getZoomBitmap(),
-                (int) posicion.y + matrix[1][direccio] * gameView.getZoomBitmap(),
-                (int) posicion.x + matrix[2][direccio] * gameView.getZoomBitmap(),
-                (int) posicion.y + matrix[3][direccio] * gameView.getZoomBitmap());*/
             this.anima.set((int) posicion.x - mapa.getZoomBitmap()+1, (int) posicion.y - mapa.getZoomBitmap(),
                     (int) posicion.x + mapa.getZoomBitmap()-1, (int) posicion.y + mapa.getZoomBitmap());
     }
@@ -263,11 +259,14 @@ public class IA extends MuevoImagenes{
         } else { // ha arribat a la posició objectiu
             if(!meVoy) {
                 // se'n van a les taules
-                posObjetivo.set(mapa.cambioPosObjetivoIA(this));
-                //mapa.setCualEsMiCamino(mapa.getCualEsMiCamino() + 1);
-                calculaRecObjetivo();
-                posAntiga = new PointF();
-                meVoy = true;
+                PointF pos = mapa.cambioPosObjetivoIA();
+                if(!pos.equals(0,0)) {
+                    posObjetivo.set(pos);
+                    //mapa.setCualEsMiCamino(mapa.getCualEsMiCamino() + 1);
+                    calculaRecObjetivo();
+                    posAntiga = new PointF();
+                    meVoy = true;
+                }
             } else {
                 if(tiempoVotangoPasado >= tiempoVotando) {
                     votando = false;

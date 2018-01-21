@@ -239,12 +239,12 @@ public class IAPoliciaEscuela {
                     posObjetivo.set(puertaAlInfierno);
                     posAntiga = new PointF();
                     calculaRecObjetivo();
+                    cancelandoUrna = false;
                     if (rectObjetivo.contains((int) posicion.x, (int) posicion.y))
                         meQuieroMorir = true;
                 } else {
                     /// poLICIAS SE LLEVA URNA PROGRESS BAR O ALGO ASI
                     cancelandoUrna = true;
-
                     tiempoVotangoPasado++;
                 }
             //}
