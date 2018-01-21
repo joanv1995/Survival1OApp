@@ -1,5 +1,6 @@
 package com.example.usuario.pruebaretrofit.service;
 
+import com.example.usuario.pruebaretrofit.model.ListaUsuariosResponse;
 import com.example.usuario.pruebaretrofit.model.Usuario2;
 
 import java.util.List;
@@ -20,7 +21,7 @@ import retrofit2.http.Path;
 public interface RestClient {
 
     @GET("{userName}/listaUsuarios")
-    Call<List<Usuario2>> getListaUsuarios(@Path("userName") String userName);
+    Call<ListaUsuariosResponse> getListaUsuarios(@Path("userName") String userName);
     @GET("player/{nomPlayer}")
     Call<Usuario2> loginUser(@Body Usuario2 u);
     @POST("isUser")
