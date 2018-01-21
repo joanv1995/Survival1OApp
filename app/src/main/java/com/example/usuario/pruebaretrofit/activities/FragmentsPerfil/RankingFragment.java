@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import com.example.usuario.pruebaretrofit.R;
 import com.example.usuario.pruebaretrofit.activities.PerfilActivity;
 import com.example.usuario.pruebaretrofit.adapter.ListaUsuariosAdapter;
-import com.example.usuario.pruebaretrofit.model.ListaUsuariosResponse;
 import com.example.usuario.pruebaretrofit.model.Usuario2;
 import com.example.usuario.pruebaretrofit.service.RestClient;
 

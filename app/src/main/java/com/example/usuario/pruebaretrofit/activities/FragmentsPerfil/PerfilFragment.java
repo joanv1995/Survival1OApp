@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.usuario.pruebaretrofit.R;
 import com.example.usuario.pruebaretrofit.activities.PerfilActivity;
@@ -32,6 +33,14 @@ public class PerfilFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private Usuario2 player;
+
+    private TextView user;
+    private TextView password;
+    private TextView mail;
+    private TextView punt;
+
+
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -72,6 +81,15 @@ public class PerfilFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_perfil, container, false);
         PerfilActivity pa = (PerfilActivity) getActivity();
         player = pa.getInfoUser();
+        user = rootView.findViewById(R.id.nameUser);
+        password = rootView.findViewById(R.id.pass);
+        mail = rootView.findViewById(R.id.email);
+        punt = rootView.findViewById(R.id.punt);
+        user.setText(player.getNombre());
+        password.setText(player.getPassword());
+        mail.setText(player.getCorreo());
+        punt.setText(String.valueOf(player.getPuntFinal()));
+
 
         // Inflate the layout for this fragment
         return rootView;

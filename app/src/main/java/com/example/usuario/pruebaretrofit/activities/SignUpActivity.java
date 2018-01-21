@@ -22,6 +22,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SignUpActivity extends AppCompatActivity {
 Button sign;
+Button volver;
 String name;
 String pass;
 String passRep;
@@ -44,6 +45,13 @@ EditText mail;
         pass2 = (EditText) findViewById(R.id.pass22);
         mail = (EditText) findViewById(R.id.mail);
         sign= (Button) findViewById(R.id.signup);
+        volver = (Button) findViewById(R.id.volver);
+        volver.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         sign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

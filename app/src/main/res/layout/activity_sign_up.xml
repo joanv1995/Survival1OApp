@@ -6,7 +6,7 @@
     android:id="@+id/activity_sign_up"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@android:color/holo_green_light"
+    android:background="@drawable/backperfilfrag"
     tools:context="com.example.usuario.pruebaretrofit.activities.SignUpActivity">
     <RelativeLayout
         android:id="@+id/lay1"
@@ -113,6 +113,15 @@
             android:layout_centerVertical="true"
             android:text="Registrarse"
             />
+
     </RelativeLayout>
+    <Button
+        android:id="@+id/volver"
+        android:layout_marginTop="225dp"
+        android:layout_marginLeft="400dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Volver"
+        />
 
 </RelativeLayout>
