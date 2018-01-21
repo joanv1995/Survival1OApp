@@ -1,14 +1,32 @@
 package com.example.usuario.pruebaretrofit.activities.FragmentsPerfil;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.usuario.pruebaretrofit.R;
+import com.example.usuario.pruebaretrofit.adapter.ListaUsuariosAdapter;
+import com.example.usuario.pruebaretrofit.model.ListaUsuariosResponse;
+import com.example.usuario.pruebaretrofit.model.Usuario2;
+import com.example.usuario.pruebaretrofit.service.RestClient;
+
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,6 +41,10 @@ public class RankingFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = RankingFragment.class.getSimpleName();
+    private RecyclerView recyclerView = null;
+    private static Retrofit retrofit = null;
+    public static final String BASE_URL = "http://147.83.7.206:8080/1O-survival/game/";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -59,19 +81,80 @@ public class RankingFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
+
+
+
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        //apiconnect
+        //Agafar el nom d'usuari
+        String userName = "Javi";
+        connectApiService(userName);
 
         View rootView = inflater.inflate(R.layout.fragment_ranking, container, false);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         // Inflate the layout for this fragment
         return rootView;
     }
+
+    public void connectApiService(String userName){
+
+        final ProgressDialog progDialog = new ProgressDialog(getActivity());
+        progDialog.setIndeterminate(true);              // Tipus de progressbar
+        progDialog.setTitle("1O - Database");
+        progDialog.setMessage("Realizando la búsqueda...");
+        progDialog.show();
+
+        if (retrofit == null) {
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+        }
+
+        RestClient restClient = retrofit.create(RestClient.class);
+
+
+        Call<ListaUsuariosResponse> call = restClient.getListaUsuarios(userName);
+        call.enqueue(new Callback<ListaUsuariosResponse>() {
+            @Override
+            public void onResponse(Call<ListaUsuariosResponse> call, Response<ListaUsuariosResponse> response) {
+                List<Usuario2> listaUsuarios = (List<Usuario2>) response.body();
+
+                recyclerView.setAdapter(new ListaUsuariosAdapter(listaUsuarios, R.layout.list_usuarios_item, getContext()));
+
+                Log.d(TAG, "Number of movies received: " + listaUsuarios.size());
+                stopProgDialog(progDialog);
+            }
+
+            @Override
+            public void onFailure(Call<ListaUsuariosResponse> call, Throwable throwable) {
+                Log.e(TAG, throwable.toString());
+            }
+        });
+
+    }
+
+    private void stopProgDialog(final ProgressDialog progDialog){
+        final Timer t = new Timer();
+        t.schedule(new TimerTask() {
+            public void run() {
+                progDialog.dismiss();       // Tanca progressbar
+                t.cancel();                 // Cancela el timer
+            }
+        }, 2000);                    // Delay de 2s per mostrar la informació
+    }
+
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -96,6 +179,8 @@ public class RankingFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+
 
     /**
      * This interface must be implemented by activities that contain this

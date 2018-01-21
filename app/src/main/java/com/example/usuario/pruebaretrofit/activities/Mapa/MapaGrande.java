@@ -58,7 +58,8 @@ public class MapaGrande {
     private java.util.List<IATranseunte> listaTranseuntes = new ArrayList<>();
     private java.util.List<Objeto> listaObjetos = new ArrayList<>();
 
-    private int numTranseuntes = 0;
+    private int numTranseuntes = 0, numPoliciasEnEscuela = 0, maxPolisEnEscuela = 4, maxTranseuntes = 6;
+    private int respawnPolicias = 40;
     private int esperaIAs;
 
     private int count;
@@ -75,9 +76,7 @@ public class MapaGrande {
                 count++;
                 if(count==2){
                     stats.setVotos(stats.getVotos()+1);
-
                     count =0;
-
                 }
                 times = String.format("%02d:%02d",
                         TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
@@ -263,8 +262,10 @@ public class MapaGrande {
 
         a = -1;
         for (IAPolicias ia : listaPolicias) {
-            if (ia.isMeQuieroMorir())
+            if (ia.isMeQuieroMorir() && numPoliciasEnEscuela < maxPolisEnEscuela) {
                 a = listaPolicias.indexOf(ia);
+                numPoliciasEnEscuela++;
+            }
             else {
                 recBtm = ia.onDraw(canvas, jugadora);
                 if (cuadradoMapa.contains((int) ia.getPosicion().x, (int) ia.getPosicion().y)) {
@@ -285,10 +286,10 @@ public class MapaGrande {
             listaPolicias.remove(a);
 
         // respawn d'ias
-        if (esperaIAs == 10) {
+        if (esperaIAs == respawnPolicias) {
             polisNonStop();
             esperaIAs = 0;
-            if(numTranseuntes < 6) {
+            if(numTranseuntes < maxTranseuntes) {
                 transNonStop();
                 numTranseuntes++;
             }

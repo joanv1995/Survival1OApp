@@ -143,28 +143,14 @@ public class IAPolicias {
                     pp.set((int) posicion.x + vecPos2[i], (int) posicion.y + vecPos2[vecPos2.length-1-i]);
 
                     int d = hiHaUnPoli(p,direccio, mapa.getListaPolicias());//gameView.listaIas);
-                    if(d == 2 && estoyCansadoDeEsperar){
+                    if(d == 2 ){
                         //TODO si es miren, que s'evitin  (ara mateix funciona, fes-ho quan tinguis temps ;)
                         // 2: estan en horitzontal, han d'escapar un per baix i l'altre per dalt
                         // ferho aqui o al començament (millor idea ja que aqui es calcula 4 cops
-                        double distancia = calculaDistancia(p, posObjetivo);
-                        if (distancia < min && estaDinsDeMalla(p, mapa.getMalla(), mapa.getZoomBitmap())
-                                && esPotTrepitjar(p, mapa.getMalla(), mapa.getZoomBitmap()) && !p.equals(posAntiga)) {
-                            direccio = i;
-                            min = calculaDistancia(p, posObjetivo);
-                            act.set(p);
-                            act2.set(pp);
-                        }
-                    }else if (d==3 && estoyCansadoDeEsperar){
+
+                    }else if (d==3 ){
                         // 3: estan en vertical, han d'escapar un per la dreta i l'altre per l'esquerra
-                        double distancia = calculaDistancia(p, posObjetivo);
-                        if (distancia < min && estaDinsDeMalla(p, mapa.getMalla(), mapa.getZoomBitmap())
-                                && esPotTrepitjar(p, mapa.getMalla(), mapa.getZoomBitmap()) && !p.equals(posAntiga)) {
-                            direccio = i;
-                            min = calculaDistancia(p, posObjetivo);
-                            act.set(p);
-                            act2.set(pp);
-                        }
+
                     } else {
                         double distancia = calculaDistancia(p, posObjetivo);
                         if (distancia < min && estaDinsDeMalla(p, mapa.getMalla(), mapa.getZoomBitmap())
