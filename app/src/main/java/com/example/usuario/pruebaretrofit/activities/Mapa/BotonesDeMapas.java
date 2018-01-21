@@ -29,6 +29,7 @@ public class BotonesDeMapas {
     private Rect botonCercleA = new Rect();
     private Rect botonCercleB = new Rect();
 
+
     public BotonesDeMapas() {    }
 
     public Rect getRecVerticalEntero() {
@@ -75,8 +76,8 @@ public class BotonesDeMapas {
         //this.canvasHeight = canvasHeight;
         //this.canvasWidth = canvasWidth;
 
-        botonRectAncho = (canvasWidth*105)/1920;//100;
-        botonRectAlto = (canvasHeight*300)/1008;//300;
+        botonRectAncho = (canvasWidth*110)/1920;//100;
+        botonRectAlto = (canvasHeight*310)/1008;//300;
         centreRect = (canvasWidth*260)/1920;//260;
         centreRectY = canvasHeight-(canvasHeight*150)/1008;//150;
 

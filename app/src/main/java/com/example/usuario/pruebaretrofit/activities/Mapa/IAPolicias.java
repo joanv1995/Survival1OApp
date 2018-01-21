@@ -59,6 +59,8 @@ public class IAPolicias {
     private boolean meVoy = false, meQuieroMorir= false;
     private boolean meEncaroConTrans = false;
     private boolean estoyDestruyendoObjeto = false;
+    private boolean estoyCansadoDeEsperar = false;
+    private int contEspera = 0;
 
     public IAPolicias(Bitmap bmp, String idIa, PointF posicion, PointF posObjetivo, MapaGrande mapa){
         Log.d(TAG, "inicialitzo un IA");
@@ -141,12 +143,28 @@ public class IAPolicias {
                     pp.set((int) posicion.x + vecPos2[i], (int) posicion.y + vecPos2[vecPos2.length-1-i]);
 
                     int d = hiHaUnPoli(p,direccio, mapa.getListaPolicias());//gameView.listaIas);
-                    if(d == 2){
+                    if(d == 2 && estoyCansadoDeEsperar){
                         //TODO si es miren, que s'evitin  (ara mateix funciona, fes-ho quan tinguis temps ;)
                         // 2: estan en horitzontal, han d'escapar un per baix i l'altre per dalt
                         // ferho aqui o al començament (millor idea ja que aqui es calcula 4 cops
-                    }else if (d==3){
+                        double distancia = calculaDistancia(p, posObjetivo);
+                        if (distancia < min && estaDinsDeMalla(p, mapa.getMalla(), mapa.getZoomBitmap())
+                                && esPotTrepitjar(p, mapa.getMalla(), mapa.getZoomBitmap()) && !p.equals(posAntiga)) {
+                            direccio = i;
+                            min = calculaDistancia(p, posObjetivo);
+                            act.set(p);
+                            act2.set(pp);
+                        }
+                    }else if (d==3 && estoyCansadoDeEsperar){
                         // 3: estan en vertical, han d'escapar un per la dreta i l'altre per l'esquerra
+                        double distancia = calculaDistancia(p, posObjetivo);
+                        if (distancia < min && estaDinsDeMalla(p, mapa.getMalla(), mapa.getZoomBitmap())
+                                && esPotTrepitjar(p, mapa.getMalla(), mapa.getZoomBitmap()) && !p.equals(posAntiga)) {
+                            direccio = i;
+                            min = calculaDistancia(p, posObjetivo);
+                            act.set(p);
+                            act2.set(pp);
+                        }
                     } else {
                         double distancia = calculaDistancia(p, posObjetivo);
                         if (distancia < min && estaDinsDeMalla(p, mapa.getMalla(), mapa.getZoomBitmap())
@@ -170,24 +188,30 @@ public class IAPolicias {
             if(hiHaUnObjecte(act2, mapa.getListaObjetos()) == 1) {
                 mapa.decirAObjetoQueLoEstoyDestruyendo(this);
             }
-            if(hiHaLaJugadora(act2,direccio,jugadora)==1){
+            if(hiHaLaJugadora(act2,direccio,jugadora)!=0){
                 mapa.dañoVidaPolicia();
             }
 
             // si m'ho ha calculat bé, actualitzo posicio
-            if(!enEspera && hiHaUnPoli(act2, direccio, mapa.getListaPolicias()) == 0 && hiHaLaJugadora(act2,  direccio, jugadora)==0
+            if((!enEspera && hiHaUnPoli(act2, direccio, mapa.getListaPolicias()) == 0 && hiHaLaJugadora(act2,  direccio, jugadora)==0
                     && hiHaUnTransPoli(act2,direccio,mapa.getListaTranseuntes()) == 0
-                    && hiHaUnObjecte(act2, mapa.getListaObjetos()) == 0){//gameView.hiHaUnIA(act2,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
+                    && hiHaUnObjecte(act2, mapa.getListaObjetos()) == 0) || estoyCansadoDeEsperar){//gameView.hiHaUnIA(act2,direccio) == 0){// && !hihaIaInoEmPucMoure){ //&& !act.equals(getPosicion())) {
 
                 posAntiga = new PointF(posicion.x, posicion.y);
                 if(!act.equals(0,0))
                     posicion.set(act);
                 calculaAnimes();
                 currentFrame = ++currentFrame % BMP_COLUMNS;
+                //estoyCansadoDeEsperar = false;
             }else {
 
                 if(!estaDinsDeMalla(act, mapa.getMalla(), mapa.getZoomBitmap()))
                     Log.e(TAG,"No esta dins la malla");
+                /*contEspera++;
+                if(contEspera > 5) {
+                    estoyCansadoDeEsperar = true;
+                    contEspera = 0;
+                }*/
 
             }
 

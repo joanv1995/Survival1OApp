@@ -37,7 +37,7 @@ public class GameView extends SurfaceView {
     //int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
     //        | View.SYSTEM_UI_FLAG_FULLSCREEN;
 
-    private int quinMapa = 0; // mapaEscuela=0, mapaGrande = 1, minijuegos = 2
+    private int quinMapa = 1; // mapaEscuela=0, mapaGrande = 1, minijuegos = 2
 
 
     public GameView(Context context) {
@@ -67,10 +67,10 @@ public class GameView extends SurfaceView {
                 canvasWidth = midaCanvas(width, anchoMalla);
                 if(quinMapa == 0){
                     mapaEscuela.getBotones().setMedidasCanvas(canvasWidth,canvasHeight);
-                    mapaEscuela.getStats().setMedidasCanvas(canvasWidth,canvasHeight);
+                    mapaEscuela.getStats().setMedidasCanvas(canvasWidth,canvasHeight,margeAmpl,margeAlt);
                 } else if (quinMapa == 1) {
                     mapaGrande.getBotones().setMedidasCanvas(canvasWidth,canvasHeight);
-                    mapaGrande.getStats().setMedidasCanvas(canvasWidth,canvasHeight);
+                    mapaGrande.getStats().setMedidasCanvas(canvasWidth,canvasHeight,margeAmpl,margeAlt);
                 } else if (quinMapa == 2){
                     minijuego.getBotones().setMedidasCanvas(canvasWidth,canvasHeight);
                 }
