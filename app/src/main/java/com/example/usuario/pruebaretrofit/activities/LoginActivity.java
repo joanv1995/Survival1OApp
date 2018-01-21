@@ -39,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
     Retrofit retrofit;
     Usuario2 user;
     Button button;
-    final ProgressDialog pd = new ProgressDialog(getApplicationContext());
+
     private static final String URL_BASE = "http://147.83.7.206:8088/1O-survival/game/"; ///nuestra api virtual
 
 
@@ -85,10 +85,8 @@ public class LoginActivity extends AppCompatActivity {
        login.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
-               pd.setIndeterminate(true);
-               pd.setTitle("1O - Survival");
-               pd.setMessage("Cargando usuario");
-               pd.show();
+
+
                playerName = userName.getText().toString();
                pass = password.getText().toString();
                //user = new Usuario2("Joan Valverde","admin","joanv1995@gmail.com");
@@ -113,6 +111,11 @@ public class LoginActivity extends AppCompatActivity {
 
 
     public void connectApiService() {
+        final ProgressDialog pd = new ProgressDialog(LoginActivity.this);
+        pd.setIndeterminate(true);
+        pd.setTitle("1O - Survival");
+        pd.setMessage("Cargando usuario");
+        pd.show();
         if (this.retrofit == null) {
             this.retrofit = new Retrofit.Builder()
                     .baseUrl(URL_BASE)
@@ -133,7 +136,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     user = new Usuario2(response.body().getNombre(), response.body().getPassword(), response.body().getCorreo(), response.body().getPuntFinal(), response.body().getResponse());
 
-                    EntryUserInterface(user.getResponse());
+                    EntryUserInterface(user.getResponse(),pd);
 
                     //if(!p.getPassword().equals(pass))
                     //Toast.makeText(getApplicationContext(), "Contraseña incorrecta", Toast.LENGTH_LONG).show();
@@ -154,7 +157,7 @@ public class LoginActivity extends AppCompatActivity {
             Log.e("error", er.getMessage());
         }
     }
-        public void EntryUserInterface(int response){
+        public void EntryUserInterface(int response, ProgressDialog pd){
             //if(user!=null)
             //{
             //    Toast.makeText(this,"Usuario "+user.getNombre()+"ha sido logueado correctamente", Toast.LENGTH_SHORT).show();
@@ -173,6 +176,7 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(in);
             }
             if (response == -3){
+                stopProgress(pd);
                 Toast.makeText(this,"Usuario no existe o credenciales mal introducidas, intente de nuevo.", Toast.LENGTH_LONG).show();
                 userName.setText("");
                 password.setText("");
