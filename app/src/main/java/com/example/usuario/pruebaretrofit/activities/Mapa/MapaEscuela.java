@@ -91,8 +91,8 @@ public class MapaEscuela {
     java.util.List<PointF> caminoAseguirVotanteLista = new ArrayList<>();
 
     public MapaEscuela(Context context, GameView gameView) {
-        redcross = BitmapFactory.decodeResource(context.getResources(), R.drawable.redcross);
-        votado = BitmapFactory.decodeResource(context.getResources(),R.drawable.votinggreen);
+        redcross = BitmapFactory.decodeResource(context.getResources(), R.mipmap.redcross2);
+        votado = BitmapFactory.decodeResource(context.getResources(),R.mipmap.votinggreen2);
 
 
         for(PointF p: this.caminoAseguirVotantes){
@@ -361,10 +361,10 @@ public class MapaEscuela {
         if(urna11Blocked){canvas.drawBitmap(redcross, null, urna11, null);}
 
         // JOAN!! Aqui se pintan los "botones"
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),R.drawable.bddown);
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),R.mipmap.bddown2);
         canvas.drawBitmap(bitmap, null, botones.getBotonRecVertBajo(), null);
 
-        Bitmap bitmap2 = BitmapFactory.decodeResource(context.getResources(),R.drawable.bdtop);
+        Bitmap bitmap2 = BitmapFactory.decodeResource(context.getResources(),R.mipmap.bdtop2);
         canvas.drawBitmap(bitmap2, null, botones.getBotonRecVertArriba(), null);
 
 
@@ -372,10 +372,10 @@ public class MapaEscuela {
         // canvas.drawRect(botones.getRecHorizontalEntero(), paint);
         paint.setColor(context.getResources().getColor(R.color.Green));
 
-        Bitmap bitmap3 = BitmapFactory.decodeResource(context.getResources(),R.drawable.bdleft);
+        Bitmap bitmap3 = BitmapFactory.decodeResource(context.getResources(),R.mipmap.bdleft2);
         canvas.drawBitmap(bitmap3, null, botones.getBotonRecHorizLeft(), null);
 
-        Bitmap bitmap4 = BitmapFactory.decodeResource(context.getResources(),R.drawable.bdright);
+        Bitmap bitmap4 = BitmapFactory.decodeResource(context.getResources(),R.mipmap.bdright2);
         canvas.drawBitmap(bitmap4, null, botones.getBotonRecHorizRigth(), null);
 
 
@@ -383,9 +383,9 @@ public class MapaEscuela {
         //canvas.drawRect(botones.getBotonRecHorizRigth(), paint);
 
         paint.setColor(context.getResources().getColor(R.color.AntiqueWhite));
-        Bitmap bitmap5 = BitmapFactory.decodeResource(context.getResources(),R.drawable.circlebutton);
+        Bitmap bitmap5 = BitmapFactory.decodeResource(context.getResources(),R.mipmap.circlebutton2);
         canvas.drawBitmap(bitmap5, null, botones.getBotonCercleA(), null);
-        Bitmap bitmap6 = BitmapFactory.decodeResource(context.getResources(),R.drawable.circlebutton);
+        Bitmap bitmap6 = BitmapFactory.decodeResource(context.getResources(),R.mipmap.circlebutton2);
         canvas.drawBitmap(bitmap6, null, botones.getBotonCercleB(), null);
         // los cojo de la clase BotonesDeMapas
         // MOSTRAMOS TIMER /////
@@ -436,18 +436,18 @@ public class MapaEscuela {
         return canvas;
     }
     private void iasNonStop() {
-        listaIas.add(createIA(R.drawable.bad1, new PointF(165, 6), new PointF(100, 45)));
+        listaIas.add(createIA(R.mipmap.bad11, new PointF(165, 6), new PointF(100, 45)));
     }
     private IA createIA(int resouce, PointF pos, PointF obj) {
         Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resouce);
-        return new IA(bmp, "v", pos, obj, this); // de la malla //TODO borrar gameview
+        return new IA(bmp, "v", pos, obj, this); // de la malla
     }
     private void iaPoliNonStop(PointF p) {
-        listaPolicias.add(createIAPoli(R.drawable.bad4, new PointF(100, 95), p));
+        listaPolicias.add(createIAPoli(R.mipmap.bad44, new PointF(100, 95), p));
     }
     private IAPoliciaEscuela createIAPoli(int resouce, PointF pos, PointF obj) {
         Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resouce);
-        return new IAPoliciaEscuela(bmp, "v", pos, obj, this); // de la malla //TODO borrar gameview
+        return new IAPoliciaEscuela(bmp, "v", pos, obj, this); // de la malla
     }
 
     protected PointF cambioPosObjetivoIA(IA ia){

@@ -137,18 +137,18 @@ public class MapaGrande {
     }
 
     private void addObjetos(){
-        listaObjetos.add(createObject(R.drawable.tractor,7));
-        listaObjetos.add(createObject(R.drawable.valla,6));
-        listaObjetos.add(createObject(R.drawable.tractor,7));
-        listaObjetos.add(createObject(R.drawable.valla,6));
-        listaObjetos.add(createObject(R.drawable.tractor,7));
-        listaObjetos.add(createObject(R.drawable.valla,6));
-        listaObjetos.add(createObject(R.drawable.tractor,7));
-        listaObjetos.add(createObject(R.drawable.valla,6));
-        listaObjetos.add(createObject(R.drawable.tractor,7));
-        listaObjetos.add(createObject(R.drawable.valla,6));
-        listaObjetos.add(createObject(R.drawable.tractor,7));
-        listaObjetos.add(createObject(R.drawable.valla,6));
+        listaObjetos.add(createObject(R.mipmap.tractor2,7));
+        listaObjetos.add(createObject(R.mipmap.valla2,6));
+        listaObjetos.add(createObject(R.mipmap.tractor2,7));
+        listaObjetos.add(createObject(R.mipmap.valla2,6));
+        listaObjetos.add(createObject(R.mipmap.tractor2,7));
+        listaObjetos.add(createObject(R.mipmap.valla2,6));
+        listaObjetos.add(createObject(R.mipmap.tractor2,7));
+        listaObjetos.add(createObject(R.mipmap.valla2,6));
+        listaObjetos.add(createObject(R.mipmap.tractor2,7));
+        listaObjetos.add(createObject(R.mipmap.valla2,6));
+        listaObjetos.add(createObject(R.mipmap.tractor2,7));
+        listaObjetos.add(createObject(R.mipmap.valla2,6));
     }
 
     private Paint quinColor(String s) {
@@ -374,10 +374,10 @@ public class MapaGrande {
         //canvas.drawRect(botones.getBotonRecVertArriba(), paint);
         //canvas.drawRect(botones.getBotonRecVertBajo(), paint);
 
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),R.drawable.bddown);
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),R.mipmap.bddown2);
         canvas.drawBitmap(bitmap, null, botones.getBotonRecVertBajo(), null);
 
-        Bitmap bitmap2 = BitmapFactory.decodeResource(context.getResources(),R.drawable.bdtop);
+        Bitmap bitmap2 = BitmapFactory.decodeResource(context.getResources(),R.mipmap.bdtop2);
         canvas.drawBitmap(bitmap2, null, botones.getBotonRecVertArriba(), null);
 
 
@@ -385,10 +385,10 @@ public class MapaGrande {
        // canvas.drawRect(botones.getRecHorizontalEntero(), paint);
         paint.setColor(context.getResources().getColor(R.color.Green));
 
-        Bitmap bitmap3 = BitmapFactory.decodeResource(context.getResources(),R.drawable.bdleft);
+        Bitmap bitmap3 = BitmapFactory.decodeResource(context.getResources(),R.mipmap.bdleft2);
         canvas.drawBitmap(bitmap3, null, botones.getBotonRecHorizLeft(), null);
 
-        Bitmap bitmap4 = BitmapFactory.decodeResource(context.getResources(),R.drawable.bdright);
+        Bitmap bitmap4 = BitmapFactory.decodeResource(context.getResources(),R.mipmap.bdright2);
         canvas.drawBitmap(bitmap4, null, botones.getBotonRecHorizRigth(), null);
 
 
@@ -396,9 +396,9 @@ public class MapaGrande {
         //canvas.drawRect(botones.getBotonRecHorizRigth(), paint);
 
         paint.setColor(context.getResources().getColor(R.color.AntiqueWhite));
-        Bitmap bitmap5 = BitmapFactory.decodeResource(context.getResources(),R.drawable.circlebutton);
+        Bitmap bitmap5 = BitmapFactory.decodeResource(context.getResources(),R.mipmap.circlebutton2);
         canvas.drawBitmap(bitmap5, null, botones.getBotonCercleA(), null);
-        Bitmap bitmap6 = BitmapFactory.decodeResource(context.getResources(),R.drawable.circlebutton);
+        Bitmap bitmap6 = BitmapFactory.decodeResource(context.getResources(),R.mipmap.circlebutton2);
         canvas.drawBitmap(bitmap6, null, botones.getBotonCercleB(), null);
 
         //canvas.drawRect(botones.getBotonCercleA(), paint);
@@ -420,14 +420,14 @@ public class MapaGrande {
         return new Objeto("obj",  bmp, this, zoom); // de la malla
     }
     private void polisNonStop() {
-        listaPolicias.add(createPoli(R.drawable.bad4, new PointF(10, 10), new PointF(201, 120)));
+        listaPolicias.add(createPoli(R.mipmap.bad44, new PointF(10, 10), new PointF(201, 120)));
     }
     private IAPolicias createPoli(int resouce, PointF pos, PointF obj) {
         Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resouce);
         return new IAPolicias(bmp, "poli", pos, obj, this); // de la malla
     }
     private void transNonStop() {
-        listaTranseuntes.add(createTrans(R.drawable.good3 ));
+        listaTranseuntes.add(createTrans(R.mipmap.good33 ));
     }
     private IATranseunte createTrans(int resouce) {
         Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resouce);
