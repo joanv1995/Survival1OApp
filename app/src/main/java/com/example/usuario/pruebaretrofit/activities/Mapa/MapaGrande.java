@@ -38,16 +38,14 @@ public class MapaGrande {
     private int zoomBitmap = 5;
     private Rect cuadradoMapa = new Rect();
 
-    private CountDownTimer timer;
+    //private CountDownTimer timer;
     private String times;
 
-    private CountDownTimer timerPolice;
+    //private CountDownTimer timerPolice;
     private String timesPolice;
     private boolean alerta = false;
 
     private PLayerStats stats;
-
-
     private BotonesDeMapas botones;
     private Jugadora jugadora;
 
@@ -58,18 +56,20 @@ public class MapaGrande {
     private java.util.List<IATranseunte> listaTranseuntes = new ArrayList<>();
     private java.util.List<Objeto> listaObjetos = new ArrayList<>();
 
-    private int numTranseuntes = 0, numPoliciasEnEscuela = 0, maxPolisEnEscuela = 4, maxTranseuntes = 6;
-    private int respawnPolicias = 40;
+    private int numPoliciasEnEscuela = 0, maxPolisEnEscuela = 4, maxTranseuntes = 6, numTranseuntes = 0;
+    private int maxPoliciasMapa = 10;
+    //private boolean hordaPolicias = false;
+    private int respawnPolicias = 10;
     private int esperaIAs;
 
-    private int count;
+    //private int count;
 
     public PLayerStats getStats() {
         return stats;
     }
 
-    public MapaGrande(Context context, GameView gameView) {
-        timer = new CountDownTimer(180000, 1000) {
+    public MapaGrande(Context context, GameView gameView, Jugadora jugadora, BotonesDeMapas botones, PLayerStats stats) {
+       /* timer = new CountDownTimer(180000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 long millis = millisUntilFinished;
@@ -101,16 +101,21 @@ public class MapaGrande {
                 alerta = true;
             }
         }.start();
-
+*/
         this.context = context;
         this.gameView = gameView;
-
+        this.jugadora = jugadora;
+        this.botones = botones;
+        this.stats = stats;
 
         malla = llegirMapaTxt("mapaGeneral3", context);
-        jugadora = createJugadora(R.mipmap.bad33,new PointF(150,100));
-        botones = new BotonesDeMapas();
-        stats = new PLayerStats();
+        //jugadora = createJugadora(R.mipmap.bad33,new PointF(150,100));
+        //botones = new BotonesDeMapas();
+        //stats = new PLayerStats();
         addObjetos();
+        for (int q=0; q<=maxTranseuntes; q++){
+            transNonStop();
+        }
     }
 
     public String[][] getMalla() {
@@ -133,6 +138,24 @@ public class MapaGrande {
     }
     public List<Objeto> getListaObjetos() {
         return listaObjetos;
+    }
+    public String getTimes() {
+        return times;
+    }
+    public boolean isAlerta() {
+        return alerta;
+    }
+    public void setAlerta(boolean alerta) {
+        this.alerta = alerta;
+    }
+    public void setTimes(String times) {
+        this.times = times;
+    }
+    public String getTimesPolice() {
+        return timesPolice;
+    }
+    public void setTimesPolice(String timesPolice) {
+        this.timesPolice = timesPolice;
     }
 
     private void addObjetos(){
@@ -285,8 +308,13 @@ public class MapaGrande {
         if (a != -1)
             listaPolicias.remove(a);
 
+        if(alerta && listaPolicias.size() <= maxPoliciasMapa && esperaIAs == respawnPolicias) {
+            polisNonStop();
+            esperaIAs = 0;
+        } else if(alerta)
+            esperaIAs++;
         // respawn d'ias
-        if (esperaIAs == respawnPolicias) {
+        /*if (esperaIAs == respawnPolicias) {
             polisNonStop();
             esperaIAs = 0;
             if(numTranseuntes < maxTranseuntes) {
@@ -294,7 +322,7 @@ public class MapaGrande {
                 numTranseuntes++;
             }
         } else
-            esperaIAs++;
+            esperaIAs++;*/
 
 
         a = -1;
@@ -470,7 +498,8 @@ public class MapaGrande {
                             listaObjetos.get(d).setEnInventario(false);
                             listaObjetos.get(d).setPosicion(buscoPosicionParaDejarTranseuntes());
                         } else {
-                            Rect r = new Rect(76, 59, 85, 62);
+                            Rect r = new Rect(76, 59, 85, 64);
+                            Rect rr = new Rect(196,119,205,124);
                             if (r.contains((int) jugadora.getPosicion().x, (int) jugadora.getPosicion().y)) {
                                 jugadora.setEstoyEnElHospital(true);
 
@@ -481,15 +510,17 @@ public class MapaGrande {
                                     myTimer.scheduleAtFixedRate(new TimerTask() {
                                                                     @Override
                                                                     public void run() {
-                                                                        stats.setVida(stats.getVida()+1);
+                                                                        if(stats.getVida()<100)
+                                                                            stats.setVida(stats.getVida()+1);
                                                                         //Called at every 1000 milliseconds (1 second)
                                                                         Log.i("MainActivity", "Repeated task");
                                                                     }
                                                                 },0,2000);
-
-
                                 }
 
+                            }else if(rr.contains((int) jugadora.getPosicion().x, (int) jugadora.getPosicion().y)){
+                                //Cambio de mapa
+                                gameView.deMapaGrandeAEscuela(jugadora,stats);
                             }
                         }
                     }
@@ -561,7 +592,8 @@ public class MapaGrande {
                 p.set(jugadora.getPosicion().x,jugadora.getPosicion().y + jugadora.getSpeed());
                 break;
         }
-        if(estaDinsDeMalla(p,malla,zoomBitmap) && esPotTrepitjar(p,malla,zoomBitmap/2) && !jugadora.isEstoyEnElHospital()){
+        if(estaDinsDeMalla(p,malla,zoomBitmap) && esPotTrepitjar(p,malla,zoomBitmap/2)
+                && !jugadora.isEstoyEnElHospital()){
             jugadora.setPosicion(p);
             jugadora.calculaAnimes(zoomBitmap);
 

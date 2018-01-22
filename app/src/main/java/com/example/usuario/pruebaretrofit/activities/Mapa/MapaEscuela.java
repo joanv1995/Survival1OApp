@@ -90,22 +90,23 @@ public class MapaEscuela {
 
     java.util.List<PointF> caminoAseguirVotanteLista = new ArrayList<>();
 
-    public MapaEscuela(Context context, GameView gameView) {
+    public MapaEscuela(Context context, GameView gameView, Jugadora jugadora, BotonesDeMapas botones, PLayerStats stats) {
         redcross = BitmapFactory.decodeResource(context.getResources(), R.mipmap.redcross2);
         votado = BitmapFactory.decodeResource(context.getResources(),R.mipmap.votinggreen2);
-
+        this.jugadora = jugadora;
+        this.botones = botones;
+        this.stats = stats;
 
         for(PointF p: this.caminoAseguirVotantes){
             this.caminoAseguirVotanteLista.add(p);
-
         }
         this.context = context;
         this.gameView = gameView;
 
         malla = llegirMapaTxt("mapaEscola10", context);
-        jugadora = createJugadora(R.mipmap.bad33,new PointF(150,95));
-        botones = new BotonesDeMapas();
-        stats = new PLayerStats();
+        //jugadora = createJugadora(R.mipmap.bad33,new PointF(150,95));
+        //botones = new BotonesDeMapas();
+        //stats = new PLayerStats();
     }
 
     public PLayerStats getStats() {
@@ -164,9 +165,6 @@ public class MapaEscuela {
         //startTime = System.currentTimeMillis();
 
         for (IA ia : listaIas) {
-
-
-
             //startTime2 = System.currentTimeMillis();
             recBtm = ia.onDraw(canvas,jugadora,zoomBitmap);
             if (ia.isMeQuieroMorir())
@@ -185,28 +183,20 @@ public class MapaEscuela {
 
             if(ia.isVotando()){
                 counter++;
-
                 if(counter ==10){
-
                     stats.setVotos(stats.getVotos()+1);
-
                     counter = 0;
-
                 }
                 rectUrna = new Rect();
                 if(rectEstavotando00.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
-
                     int[] xs;
                     xs = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando00.left -18,rectEstavotando00.top +2);
                     int[] ys;
                     ys = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando00.right -20,rectEstavotando00.bottom -2);
-
                     urna00 = new Rect(xs[0],xs[1],ys[0],ys[1]);
-
                     rectUrna.set(xs[0], xs[1], ys[0], ys[1]);
                 }
                 else if(rectEstavotando10.contains((int)ia.getPosicion().x,(int)ia.getPosicion().y)) {
-
                     int[] xs;
                     xs = convertMallaToCanvas(ample,altura,margeAmpl,margeAlt,rectEstavotando10.left +21,rectEstavotando10.top +2);
                     int[] ys;
@@ -450,16 +440,28 @@ public class MapaEscuela {
         return new IAPoliciaEscuela(bmp, "v", pos, obj, this); // de la malla
     }
 
-    protected PointF cambioPosObjetivoIA(IA ia){
-        //ia.setPosObjetivo(caminoAseguirVotantes[cualEsMiCamino]);
-        PointF p = caminoAseguirVotanteLista.get(cualEsMiCamino);
+    protected PointF cambioPosObjetivoIA(){
+        PointF p = new PointF();
+        if (!caminoAseguirVotanteLista.isEmpty()) {
+            while(cualEsMiCamino >= caminoAseguirVotanteLista.size()){
+                cualEsMiCamino--;
+            }
+            p = caminoAseguirVotanteLista.get(cualEsMiCamino);
 
-        cualEsMiCamino++;
-        if(cualEsMiCamino >= caminoAseguirVotanteLista.size())
-            cualEsMiCamino=0;
+            cualEsMiCamino++;
+            if(cualEsMiCamino >= caminoAseguirVotanteLista.size())
+                cualEsMiCamino=0;
+        }
+
         return  p;
     }
 
+    protected void mePuedoCambiarDeMapa(){
+        Rect r = new Rect(95,94,106,100);
+        if(r.contains((int) jugadora.getPosicion().x,(int) jugadora.getPosicion().y)){
+            gameView.deMapaEscuelaAGrande(jugadora,stats);
+        }
+    }
     private boolean moverJugadora(){
         PointF p = new PointF();
         switch (jugadora.getDireccio()){

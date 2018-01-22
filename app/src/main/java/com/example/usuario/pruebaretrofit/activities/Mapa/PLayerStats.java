@@ -60,9 +60,6 @@ public class PLayerStats {
         this.votos = 0;
         this.seguidores = 0;
         this.vida = 100;
-
-
-
     }
 
     public Rect getStats() {
@@ -143,7 +140,6 @@ public class PLayerStats {
         calculaPosRectangulo();
     }
     public void calculaPosRectangulo(){
-
         stats.set(centroRectX -statsRectAncho/2, centroRectY -statsRectAlto/2, centroRectX + statsRectAncho/2, centroRectY + statsRectAlto/2);
     }
 

@@ -10,7 +10,6 @@ public class BotonesDeMapas {
 
     //private GameView gameView;
     //private int canvasHeight, canvasWidth;
-    //final private instance; //TODO: fer instancia
 
     // dibuixar botons
     private int botonRectAncho, botonRectAlto;
