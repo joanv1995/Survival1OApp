@@ -1,6 +1,7 @@
 package com.example.usuario.pruebaretrofit.activities.Mapa;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -58,7 +59,7 @@ public class GameView extends SurfaceView {
         this.context = context;
         Log.d(TAG, "constructor GameView");
 
-        jugadora = createJugadora(R.mipmap.bad33, new PointF(10,10));
+        jugadora = createJugadora(R.mipmap.bad33, new PointF(150,100));
         botones = new BotonesDeMapas();
         stats = new PLayerStats();
 
@@ -76,22 +77,32 @@ public class GameView extends SurfaceView {
             public void surfaceCreated(SurfaceHolder surfaceHolder) {
                 gameLoopThread.setRunning(true);
                 gameLoopThread.start();
-                timer = new CountDownTimer(180000, 1000) {
+                timer = new CountDownTimer(10000, 1000) { //180000
                     @Override
                     public void onTick(long millisUntilFinished) {
                         long millis = millisUntilFinished;
-                        count++;
-                        if(count==2){
-                            stats.setVotos(stats.getVotos()+1);
-                            count =0;
+                        if (quinMapa == 1) {
+                            count++;
+                            if(count==2 ){
+                                stats.setVotos(stats.getVotos()+1);
+                                count =0;
+                            }
                         }
                         mapaGrande.setTimes(String.format("%02d:%02d",
+                                TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+                                TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))));
+                        mapaEscuela.setTimes(String.format("%02d:%02d",
                                 TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
                                 TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))));
                     }
                     @Override
                     public void onFinish() {
                         ///PARTIDA ACABADA ---  NIVEL SUPERADO
+                        //surfaceDestroyed(surfaceHolder);
+                        gameLoopThread.stop();
+                        Intent i = new Intent();
+                        i.putExtra("Hola",stats.getVida());
+
                     }
                 }.start();
                 timerPolice = new CountDownTimer(20000, 1000) {
@@ -227,11 +238,10 @@ public class GameView extends SurfaceView {
                             mapaEscuela.getJugadora().setMeTengoQueMover(true);
                         }
                         if(mapaEscuela.getBotones().getBotonCercleA().contains(x,y)){ // boton A
-                            mapaEscuela.mePuedoCambiarDeMapa();
+
                         }
                         if(mapaEscuela.getBotones().getBotonCercleB().contains(x,y)){ // boton B
-
-
+                            mapaEscuela.mePuedoCambiarDeMapa();
                         }
                     } else if(quinMapa == 1){
                         //mapaGrande.processButtons(x,y); // le paso la direccion
@@ -254,7 +264,7 @@ public class GameView extends SurfaceView {
                             mapaGrande.puedeElTranseunteSeguirme();
                         }
                         if(mapaGrande.getBotones().getBotonCercleB().contains(x,y)){ // boton B
-
+                            mapaGrande.puedoCambiarDeMapa();
                         }
                     }
                     break;
@@ -308,10 +318,11 @@ public class GameView extends SurfaceView {
         }
     }
 
-    protected void deMapaGrandeAEscuela(Jugadora jugador, PLayerStats stats){
+    protected void deMapaGrandeAEscuela(Jugadora jugador, PLayerStats stats, int numPolicias){
         quinMapa = 0;
         this.jugadora = jugador;
         this.stats = stats;
+        mapaEscuela.setNumeroPolicias(numPolicias);
         jugador.setPosicion(portaEscola);
 
     }

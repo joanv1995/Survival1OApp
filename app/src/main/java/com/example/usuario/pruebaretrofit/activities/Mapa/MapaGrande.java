@@ -463,10 +463,41 @@ public class MapaGrande {
         return new IATranseunte(bmp, "tra", this, zoomBitmap); // de la malla
     }
 
-    protected void puedeElTranseunteSeguirme(){
+    protected void puedoCambiarDeMapa(){
         if(jugadora.isEstoyEnElHospital())
             jugadora.setEstoyEnElHospital(false);
         else {
+            Rect r = new Rect(76, 59, 85, 64);
+            Rect rr = new Rect(196, 119, 205, 124);
+            if (r.contains((int) jugadora.getPosicion().x, (int) jugadora.getPosicion().y)) {
+                jugadora.setEstoyEnElHospital(true);
+
+                if (stats.getVida() < 100) {
+                    //Declare the timer
+                    Timer myTimer = new Timer();
+                    //Set the schedule function and rate
+                    myTimer.scheduleAtFixedRate(new TimerTask() {
+                        @Override
+                        public void run() {
+                            if (stats.getVida() < 100)
+                                stats.setVida(stats.getVida() + 1);
+                            //Called at every 1000 milliseconds (1 second)
+                            Log.i("MainActivity", "Repeated task");
+                        }
+                    }, 0, 2000);
+                }
+
+            } else if (rr.contains((int) jugadora.getPosicion().x, (int) jugadora.getPosicion().y)) {
+                //Cambio de mapa
+                gameView.deMapaGrandeAEscuela(jugadora, stats, numPoliciasEnEscuela);
+            }
+        }
+    }
+
+    protected void puedeElTranseunteSeguirme(){
+        /*if(jugadora.isEstoyEnElHospital())
+            jugadora.setEstoyEnElHospital(false);
+        else {*/
             int a = hiHaUnTransEnRectangle(jugadora.getPosicion(), jugadora.getDireccio(), listaTranseuntes, zoomBitmap);
             if (a != -1) { // Cojo un ia
                 listaTranseuntes.get(a).setLaEstoySiguiendo(true);
@@ -497,7 +528,7 @@ public class MapaGrande {
                         if (d != -1) {
                             listaObjetos.get(d).setEnInventario(false);
                             listaObjetos.get(d).setPosicion(buscoPosicionParaDejarTranseuntes());
-                        } else {
+                        } /*else {
                             Rect r = new Rect(76, 59, 85, 64);
                             Rect rr = new Rect(196,119,205,124);
                             if (r.contains((int) jugadora.getPosicion().x, (int) jugadora.getPosicion().y)) {
@@ -522,11 +553,11 @@ public class MapaGrande {
                                 //Cambio de mapa
                                 gameView.deMapaGrandeAEscuela(jugadora,stats);
                             }
-                        }
+                        }*/
                     }
                 }
             }
-        }
+
     }
 
     private PointF buscoPosicionParaDejarTranseuntes(){

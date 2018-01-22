@@ -38,6 +38,7 @@ public class MapaEscuela {
     private int iMiCaminoP = 0;
     private int esperaIAs;
     private int esperaPolis;
+    private String times;
 
     private Jugadora jugadora;
     private BotonesDeMapas botones;
@@ -77,6 +78,7 @@ public class MapaEscuela {
     private int zoomBitmap = 5;
     private Context context;
     private GameView gameView;
+    private int numeroPolicias = 0;
 
     PointF[] caminoAseguir = {new PointF(25, 36),
             new PointF(175, 36),
@@ -135,6 +137,18 @@ public class MapaEscuela {
     }
     public List<IAPoliciaEscuela> getListaPolicias() {
         return listaPolicias;
+    }
+    public String getTimes() {
+        return times;
+    }
+    public void setTimes(String times) {
+        this.times = times;
+    }
+    public int getNumeroPolicias() {
+        return numeroPolicias;
+    }
+    public void setNumeroPolicias(int numeroPolicias) {
+        this.numeroPolicias = numeroPolicias;
     }
 
     private Jugadora createJugadora(int resouce, PointF pos){
@@ -230,18 +244,18 @@ public class MapaEscuela {
         if (a != -1)
             listaIas.remove(a);
 
-        if (esperaPolis == 40) {
-            if (iMiCaminoP < 4) {
+        //if (esperaPolis == 40) {
+            if (iMiCaminoP < numeroPolicias) {
                 iaPoliNonStop(caminoAseguir[iMiCaminoP]);
                 iMiCaminoP++;
             }
-            esperaPolis = 0;
-        } else
-            esperaPolis++;
+         //   esperaPolis = 0;
+        //} else
+        //    esperaPolis++;
 
 
         // respawn d'ias
-        if (esperaIAs == 10) {
+        if (esperaIAs == 30) {
             iasNonStop();
             esperaIAs = 0;
             /*if(iMiCaminoP < 4) {
@@ -386,7 +400,7 @@ public class MapaEscuela {
         paintTimer.setTypeface(Typeface.create("Arial",Typeface.BOLD));
         paintTimer.setStyle(Paint.Style.FILL);
         paintTimer.setStrokeWidth(2);
-        canvas.drawText("pasa timer",stats.getMargenX()+ gameView.getCanvasWidth()-100,stats.getLiniavida(),paintTimer);
+        canvas.drawText(""+times,stats.getMargenX()+ gameView.getCanvasWidth()-100,stats.getLiniavida(),paintTimer);
         //Poner Rectangulo stats
         //paint.setColor(context.getResources().getColor(R.color.Orange));
         //canvas.drawRect(stats.getStats(),paint);

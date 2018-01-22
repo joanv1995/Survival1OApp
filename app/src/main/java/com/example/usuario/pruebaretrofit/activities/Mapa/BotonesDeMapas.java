@@ -75,10 +75,10 @@ public class BotonesDeMapas {
         //this.canvasHeight = canvasHeight;
         //this.canvasWidth = canvasWidth;
 
-        botonRectAncho = (canvasWidth*110)/1920;//100;
-        botonRectAlto = (canvasHeight*310)/1008;//300;
+        botonRectAncho = (canvasWidth*140)/1920;//100;
+        botonRectAlto = (canvasHeight*330)/1008;//300;
         centreRect = (canvasWidth*260)/1920;//260;
-        centreRectY = canvasHeight-(canvasHeight*150)/1008;//150;
+        centreRectY = canvasHeight-(canvasHeight*220)/1008;//150;
 
         centreX1 = canvasWidth- centreRect +(canvasWidth*260)/1920;//200;
         centreY1 = centreRectY -(canvasHeight*70)/1008;//70;

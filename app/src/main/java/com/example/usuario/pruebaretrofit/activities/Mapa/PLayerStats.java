@@ -136,7 +136,7 @@ public class PLayerStats {
         liniavida = margenAlt/2 + (canvasHeight*80)/720;//(canvasHeight*100)/720;//(canvasHeight*120)/1008;//20;       //100
         liniaseguidores = margenAlt/2 + (canvasHeight*110)/720;//(canvasHeight*150)/720;//(canvasHeight*170)/1008;//40; //160
         liniavotos = margenAlt/2 + (canvasHeight*140)/720;//(canvasHeight*200)/720;//(canvasHeight*220)/1008;//60;      //220
-        margenX = margenAmple/2+(canvasWidth*30)/1184;//(canvasWidth*150)/1184;//(canvasWidth*220)/1920;//50
+        margenX = margenAmple/2+(canvasWidth*100)/1184;//(canvasWidth*150)/1184;//(canvasWidth*220)/1920;//50
         calculaPosRectangulo();
     }
     public void calculaPosRectangulo(){

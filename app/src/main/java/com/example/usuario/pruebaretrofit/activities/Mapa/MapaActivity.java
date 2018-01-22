@@ -8,6 +8,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.example.usuario.pruebaretrofit.R;
 
@@ -32,6 +33,7 @@ public class MapaActivity extends Activity {
         setContentView(gameView);
         //setContentView(R.layout.activity_mapa);
         //super.onCreate(savedInstanceState);
+        int a=0;
 
     }
 }
