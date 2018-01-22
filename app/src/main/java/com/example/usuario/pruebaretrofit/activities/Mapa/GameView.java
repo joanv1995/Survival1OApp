@@ -99,9 +99,9 @@ public class GameView extends SurfaceView {
                     public void onFinish() {
                         ///PARTIDA ACABADA ---  NIVEL SUPERADO
                         //surfaceDestroyed(surfaceHolder);
-                        gameLoopThread.stop();
-                        Intent i = new Intent();
-                        i.putExtra("Hola",stats.getVida());
+                        gameLoopThread.setRunning(false);
+                        //gameLoopThread.stop();
+
 
                     }
                 }.start();

@@ -52,6 +52,7 @@ public class Objeto implements Serializable
     private boolean enInventario = false;
     private boolean meEstanDestruyendo = false, destruido = false;
     private int contadorDeLaDestruccion = 0;
+    private int vidaObjeto = 20;
 
     int minX = 281, minY = 81;
     int maxX = 361, maxY = 120;
@@ -70,7 +71,7 @@ public class Objeto implements Serializable
         src = new Rect(0,0,bmp.getWidth(),bmp.getHeight());
     }
     public Objeto(String nombreObjeto,  Bitmap bmp, MapaGrande mapa, int zoom) {
-        minX = zoom; minY = zoom; maxX = mapa.getMalla()[0].length - zoom; maxY = mapa.getMalla().length - zoom;
+        minX = zoom+10; minY = zoom; maxX = mapa.getMalla()[0].length - zoom; maxY = mapa.getMalla().length - zoom;
         this.nombreObjeto = nombreObjeto;
         PointF p = new PointF(r.nextInt(maxX - minX + 1) + minX, r.nextInt(maxY - minY + 1) + minY);
         while (!esPotTrepitjar(p, mapa.getMalla(), zoom)){
@@ -158,7 +159,7 @@ public class Objeto implements Serializable
         //int srcX = currentFrame * width;
         //int srcY = getAnimationRow() * height;
         //src.set(srcX, srcY, srcX + width, srcY + height); //retalla la imatge segons l'animacio
-        if(contadorDeLaDestruccion > 10){
+        if(contadorDeLaDestruccion > vidaObjeto){
             destruido = true;
         }
         return src;

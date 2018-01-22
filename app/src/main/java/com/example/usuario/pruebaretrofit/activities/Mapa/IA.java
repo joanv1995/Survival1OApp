@@ -36,7 +36,7 @@ public class IA extends MuevoImagenes{
     private Rect rectObjetivo = new Rect();
     private PointF posAntiga;
     private boolean enEspera = false;
-    private int speed = 2; // TODO: mirar que faig amb la velocitat
+    private int speed = 2;
     private boolean direccioX_Left, direccioY_Up; // true: up, false: down
     private int direccio; // direction = 0 right, 1 left, 2 up, 3 down,
 

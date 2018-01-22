@@ -106,6 +106,7 @@ public class MapaEscuela {
         this.gameView = gameView;
 
         malla = llegirMapaTxt("mapaEscola10", context);
+        iasNonStop();
         //jugadora = createJugadora(R.mipmap.bad33,new PointF(150,95));
         //botones = new BotonesDeMapas();
         //stats = new PLayerStats();
@@ -188,11 +189,6 @@ public class MapaEscuela {
                 y = (int) ia.getPosicion().y * altura + margeAlt / 2;
                 rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
                 canvas.drawBitmap(ia.getBmp(), recBtm, rec, null);
-
-                int xx = (int) ia.getPosObjetivo().x * ample + margeAmpl / 2, yy = (int) ia.getPosObjetivo().y * altura + margeAlt / 2;
-                Rect rec = new Rect(xx - 10, yy - 10, xx + 10, yy + 10);
-                paint.setColor(context.getResources().getColor(R.color.colorPrimary));
-                canvas.drawRect(rec, paint);
             }
 
             if(ia.isVotando()){
@@ -255,18 +251,13 @@ public class MapaEscuela {
 
 
         // respawn d'ias
-        if (esperaIAs == 30) {
+        if (esperaIAs == 20) {
             iasNonStop();
             esperaIAs = 0;
-            /*if(iMiCaminoP < 4) {
-                iaPoliNonStop(caminoAseguir[iMiCaminoP]);
-                iMiCaminoP++;
-            }*/
         }
         else
-            {
-                esperaIAs++;
-            }
+            esperaIAs++;
+
         a = -1;
         //IAS
         //startTime = System.currentTimeMillis();
@@ -281,10 +272,6 @@ public class MapaEscuela {
                 rec.set(x - zoomBitmap * ample, y - zoomBitmap * altura, x + zoomBitmap * ample, y + zoomBitmap * altura);
                 canvas.drawBitmap(ia.getBmp(), recBtm, rec, null);
 
-                int xx = (int) ia.getPosObjetivo().x * ample + margeAmpl / 2, yy = (int) ia.getPosObjetivo().y * altura + margeAlt / 2;
-                Rect rec = new Rect(xx - 10, yy - 10, xx + 10, yy + 10);
-                paint.setColor(context.getResources().getColor(R.color.colorPrimary));
-                canvas.drawRect(rec, paint);
             }
             //startTime2 = System.currentTimeMillis()-startTime2;
             //Log.d(TAG,"Dibuixar un Ia: " + startTime2);
@@ -331,8 +318,11 @@ public class MapaEscuela {
                     }
                 }
             }
+            try {
+                canvas.drawBitmap(redcross, null, rectUrna, null);
+            } catch(Exception e) {
 
-            canvas.drawBitmap(redcross, null, rectUrna, null);
+            }
             }
         }
 
@@ -359,11 +349,22 @@ public class MapaEscuela {
 
 
         // Pintamos cruz en las urnas PARA SIEMPRE si estan bloqueadas
-        if(urna00Blocked){canvas.drawBitmap(redcross, null, urna00, null);}
-        if(urna10Blocked){canvas.drawBitmap(redcross, null, urna10, null);}
-        if(urna01Blocked){canvas.drawBitmap(redcross, null, urna01, null);}
-        if(urna11Blocked){canvas.drawBitmap(redcross, null, urna11, null);}
+        try {
+            if (urna00Blocked) {
+                canvas.drawBitmap(redcross, null, urna00, null);
+            }
+            if (urna10Blocked) {
+                canvas.drawBitmap(redcross, null, urna10, null);
+            }
+            if (urna01Blocked) {
+                canvas.drawBitmap(redcross, null, urna01, null);
+            }
+            if (urna11Blocked) {
+                canvas.drawBitmap(redcross, null, urna11, null);
+            }
+        } catch(Exception e){
 
+        }
         // JOAN!! Aqui se pintan los "botones"
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),R.mipmap.bddown2);
         canvas.drawBitmap(bitmap, null, botones.getBotonRecVertBajo(), null);
@@ -400,7 +401,7 @@ public class MapaEscuela {
         paintTimer.setTypeface(Typeface.create("Arial",Typeface.BOLD));
         paintTimer.setStyle(Paint.Style.FILL);
         paintTimer.setStrokeWidth(2);
-        canvas.drawText(""+times,stats.getMargenX()+ gameView.getCanvasWidth()-100,stats.getLiniavida(),paintTimer);
+        canvas.drawText(""+times,gameView.getCanvasWidth() - stats.getMargenX() + margeAmpl/2,stats.getLiniavida(),paintTimer);
         //Poner Rectangulo stats
         //paint.setColor(context.getResources().getColor(R.color.Orange));
         //canvas.drawRect(stats.getStats(),paint);
