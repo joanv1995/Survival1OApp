@@ -32,7 +32,8 @@
             android:label="@string/title_activity_perfil"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.SignUpActivity" />
-        <activity android:name=".activities.Mapa.MapaActivity"></activity>
+        <activity android:name=".activities.Mapa.MapaActivity" />
+        <activity android:name=".activities.Mapa.GameOverActivity"></activity>
     </application>
 
 </manifest>

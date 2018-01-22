@@ -14,6 +14,7 @@ import com.example.usuario.pruebaretrofit.R;
 import com.example.usuario.pruebaretrofit.activities.LoginActivity;
 import com.example.usuario.pruebaretrofit.activities.Mapa.MapaActivity;
 import com.example.usuario.pruebaretrofit.activities.PerfilActivity;
+import com.example.usuario.pruebaretrofit.model.Usuario2;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -77,11 +78,16 @@ public class PlayFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_play, container, false);
+
+        PerfilActivity pa = (PerfilActivity) getActivity();
+        Usuario2 player = pa.getInfoUser();
+
         nivel1 = (Button) rootView.findViewById(R.id.nivel1);
         nivel1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent mapa = new Intent(getActivity(), MapaActivity.class);
+                mapa.putExtra("user",player);
                 startActivity(mapa);
             }
         });

@@ -10,9 +10,9 @@ import com.google.gson.annotations.SerializedName;
 public class Ranking2 implements Serializable
 {
 
-    @SerializedName("idMapa")
+    @SerializedName("idmapa")
     @Expose
-    private String idMapa;
+    private String idmapa;
     @SerializedName("puntuaciontot")
     @Expose
     private Integer puntuaciontot;
@@ -27,12 +27,12 @@ public class Ranking2 implements Serializable
     private Integer votos;
     private final static long serialVersionUID = 3505279293833851666L;
 
-    public String getIdMapa() {
-        return idMapa;
+    public String getIdmapa() {
+        return idmapa;
     }
 
-    public void setIdMapa(String idMapa) {
-        this.idMapa = idMapa;
+    public void setIdmapa(String idMapa) {
+        this.idmapa = idMapa;
     }
 
     public Integer getPuntuaciontot() {

@@ -27,7 +27,10 @@ public interface RestClient {
     Call<Usuario2> signupUser(@Body Usuario2 u);
     @GET("{nombre}/ranking")
     Call<List<Ranking2>> infoUser (@Path("nombre") String nombre);
-
+    @POST("player/update")
+    Call<Usuario2> userUpdate(@Body Usuario2 user);
+    @POST("player/insertRank")
+    Call<Ranking2> cargarDatos(@Body Ranking2 rank);
 
 
 

@@ -133,8 +133,9 @@ public class LoginActivity extends AppCompatActivity {
             Callback<Usuario2> cb = new Callback<Usuario2>() {
                 @Override
                 public void onResponse(Call<Usuario2> call, Response<Usuario2> response) {
+                    user = (Usuario2) response.body();
 
-                    user = new Usuario2(response.body().getNombre(), response.body().getPassword(), response.body().getCorreo(), response.body().getPuntFinal(), response.body().getResponse());
+                    //user = new Usuario2(response.body().getNombre(), response.body().getPassword(), response.body().getCorreo(), response.body().getPuntFinal(), response.body().getResponse());
 
                     EntryUserInterface(user.getResponse(),pd);
 

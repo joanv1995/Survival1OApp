@@ -1,5 +1,6 @@
 package com.example.usuario.pruebaretrofit.activities.Mapa;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,11 +13,24 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
 import com.example.usuario.pruebaretrofit.R;
+import com.example.usuario.pruebaretrofit.activities.LoginActivity;
+import com.example.usuario.pruebaretrofit.activities.PerfilActivity;
+import com.example.usuario.pruebaretrofit.model.Ranking2;
+import com.example.usuario.pruebaretrofit.model.Usuario2;
+import com.example.usuario.pruebaretrofit.service.RestClient;
 
 import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class GameView extends SurfaceView {
     private final String TAG = this.getClass().getSimpleName();
@@ -27,6 +41,8 @@ public class GameView extends SurfaceView {
     protected int margeAmpl = 0, margeAlt = 0;
     private Rect rectangleCanvas = new Rect();
     private CountDownTimer timer, timerPolice;
+    private static final String URL_BASE = "http://147.83.7.206:8088/1O-survival/game/"; ///nuestra api virtual
+    Retrofit retrofit;
     //private String times;
 
     // per dibuixar
@@ -34,7 +50,7 @@ public class GameView extends SurfaceView {
     private Rect rec = new Rect(), recBtm = new Rect();
     protected int ample, altura;
     private int zoomBitmap = 5;
-
+    private boolean retry;
     private MapaEscuela mapaEscuela;
     private MapaGrande mapaGrande;
     private Minijuego minijuego;
@@ -54,7 +70,7 @@ public class GameView extends SurfaceView {
     private PointF portaEscola = new PointF(100,98);
     private PointF portaEscolaMapaGran = new PointF(201,121);
 
-    public GameView(Context context) {
+    public GameView(Context context, Usuario2 user) {
         super(context);
         this.context = context;
         Log.d(TAG, "constructor GameView");
@@ -77,7 +93,7 @@ public class GameView extends SurfaceView {
             public void surfaceCreated(SurfaceHolder surfaceHolder) {
                 gameLoopThread.setRunning(true);
                 gameLoopThread.start();
-                timer = new CountDownTimer(10000, 1000) { //180000
+                timer = new CountDownTimer(120000, 1000) { //180000
                     @Override
                     public void onTick(long millisUntilFinished) {
                         long millis = millisUntilFinished;
@@ -99,9 +115,55 @@ public class GameView extends SurfaceView {
                     public void onFinish() {
                         ///PARTIDA ACABADA ---  NIVEL SUPERADO
                         //surfaceDestroyed(surfaceHolder);
-                        gameLoopThread.stop();
-                        Intent i = new Intent();
-                        i.putExtra("Hola",stats.getVida());
+                        int punt = stats.getSeguidores()* 3 + stats.getVotos();
+                        user.setPuntFinal(user.getPuntFinal()+punt);
+                        final ProgressDialog pd = new ProgressDialog(getContext());
+                        pd.setIndeterminate(true);
+                        pd.setTitle("1O - Survival");
+                        pd.setMessage("Partida finalizada! Enviando datos");
+                        pd.show();
+
+                        if (retrofit == null) {
+                            retrofit = new Retrofit.Builder()
+                                    .baseUrl(URL_BASE)
+                                    .addConverterFactory(GsonConverterFactory.create())
+                                    .build();
+                        }
+                        RestClient service = retrofit.create(RestClient.class);
+                        Ranking2 rank = new Ranking2();
+                        rank.setIdmapa("mapa1");
+                        rank.setPuntuaciontot(punt);
+                        rank.setSeguidores(stats.getSeguidores());
+                        rank.setUsuario(user.getNombre());
+                        rank.setVotos(stats.getVotos());
+                        Call<Ranking2> precall = service.cargarDatos(rank);
+
+                        precall.enqueue(new Callback<Ranking2>() {
+                            @Override
+                            public void onResponse(Call<Ranking2> call, Response<Ranking2> response) {
+                                Ranking2 player = (Ranking2) response.body();
+                            }
+
+                            @Override
+                            public void onFailure(Call<Ranking2> call, Throwable t) {
+
+                            }
+                        });
+
+                        Call<Usuario2> call = service.userUpdate(user);
+                        call.enqueue(new Callback<Usuario2>() {
+                            @Override
+                            public void onResponse(Call<Usuario2> call, Response<Usuario2> response) {
+                                Usuario2 player = (Usuario2) response.body();
+                                EntryUserInterface(player.getResponse(),pd);
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<Usuario2> call, Throwable t) {
+
+                            }
+                        });
 
                     }
                 }.start();
@@ -120,6 +182,31 @@ public class GameView extends SurfaceView {
                     }
                 }.start();
                 Log.d(TAG, "gameLoopThread.start");
+            }
+            public void EntryUserInterface(int response, ProgressDialog pd){
+
+                if(response ==0) {
+                    stopProgress(pd);
+                }
+                if (response == -3){
+                    stopProgress(pd);
+
+                }
+                gameLoopThread.stop();
+
+
+
+            }
+            private void stopProgress(final ProgressDialog pd){
+                final Timer t = new Timer();
+                t.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        pd.dismiss();
+                        t.cancel();
+                    }
+                },1500);
+
             }
 
             @Override
@@ -146,7 +233,7 @@ public class GameView extends SurfaceView {
             @Override
             public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
                 Log.d(TAG, "surfaceDestroyed");
-                boolean retry = true;
+                retry = true;
                 gameLoopThread.setRunning(false);
                 while (retry) {
                     try {

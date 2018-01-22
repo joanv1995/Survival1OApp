@@ -59,11 +59,11 @@ public class ListaPartidasUser extends RecyclerView.Adapter<ListaPartidasUser.Li
     @Override
     public void onBindViewHolder(ListaUsuariosViewHolder holder, final int position) {
         String level = null;
-        if(partidas.get(position).getIdMapa().equals("mapa1")){level="Nivel 1";}
-        if(partidas.get(position).getIdMapa().equals("mapa2")){level="Nivel 2";}
-        if(partidas.get(position).getIdMapa().equals("mapa3")){level="Nivel 3";}
-        if(partidas.get(position).getIdMapa().equals("mapa4")){level="Nivel 4";}
-        if(partidas.get(position).getIdMapa().equals("mapa5")){level="Nivel 5";}
+        if(partidas.get(position).getIdmapa().equals("mapa1")){level="Nivel 1";}
+        if(partidas.get(position).getIdmapa().equals("mapa2")){level="Nivel 2";}
+        if(partidas.get(position).getIdmapa().equals("mapa3")){level="Nivel 3";}
+        if(partidas.get(position).getIdmapa().equals("mapa4")){level="Nivel 4";}
+        if(partidas.get(position).getIdmapa().equals("mapa5")){level="Nivel 5";}
 
         holder.id.setText(level);
         holder.seguidores.setText(String.valueOf(partidas.get(position).getSeguidores()));
