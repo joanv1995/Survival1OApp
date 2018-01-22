@@ -93,7 +93,7 @@ public class GameView extends SurfaceView {
             public void surfaceCreated(SurfaceHolder surfaceHolder) {
                 gameLoopThread.setRunning(true);
                 gameLoopThread.start();
-                timer = new CountDownTimer(120000, 1000) { //180000
+                timer = new CountDownTimer(180000, 1000) { //180000
                     @Override
                     public void onTick(long millisUntilFinished) {
                         long millis = millisUntilFinished;
@@ -166,7 +166,8 @@ public class GameView extends SurfaceView {
                             }
                         });
 
-                        gameLoopThread.stop();
+                        gameLoopThread.interrupt();
+                        //gameLoopThread.stop();
 
 
 
@@ -287,6 +288,7 @@ public class GameView extends SurfaceView {
         canvas.drawColor(getResources().getColor(R.color.Black)); // Fondo
         altura = canvasHeight / altoMalla;
         ample = canvasWidth / anchoMalla;
+        if(stats.getVida()<=0){gameLoopThread.interrupt();}
 
         if (quinMapa == 0) { //mapa escola
             canvas = mapaEscuela.dibujoElMapaEscuela(canvas, ample, altura, margeAlt, margeAmpl);
