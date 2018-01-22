@@ -115,6 +115,7 @@ public class GameView extends SurfaceView {
                     public void onFinish() {
                         ///PARTIDA ACABADA ---  NIVEL SUPERADO
                         //surfaceDestroyed(surfaceHolder);
+
                         int punt = stats.getSeguidores()* 3 + stats.getVotos();
                         user.setPuntFinal(user.getPuntFinal()+punt);
                         final ProgressDialog pd = new ProgressDialog(getContext());
@@ -164,6 +165,10 @@ public class GameView extends SurfaceView {
 
                             }
                         });
+
+                        gameLoopThread.stop();
+
+
 
                     }
                 }.start();
