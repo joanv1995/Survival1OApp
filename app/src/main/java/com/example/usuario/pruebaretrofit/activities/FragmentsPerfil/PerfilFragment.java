@@ -1,10 +1,12 @@
 package com.example.usuario.pruebaretrofit.activities.FragmentsPerfil;
 
-import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +14,21 @@ import android.widget.TextView;
 
 import com.example.usuario.pruebaretrofit.R;
 import com.example.usuario.pruebaretrofit.activities.PerfilActivity;
+import com.example.usuario.pruebaretrofit.adapter.ListaPartidasUser;
+import com.example.usuario.pruebaretrofit.adapter.ListaUsuariosAdapter;
+import com.example.usuario.pruebaretrofit.model.Ranking2;
 import com.example.usuario.pruebaretrofit.model.Usuario2;
+import com.example.usuario.pruebaretrofit.service.RestClient;
+
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,9 +54,10 @@ public class PerfilFragment extends Fragment {
     private TextView password;
     private TextView mail;
     private TextView punt;
+    private RecyclerView recyclerView;
 
-
-
+    private static Retrofit retrofit = null;
+    public static final String BASE_URL = "http://147.83.7.206:8088/1O-survival/game/";
 
     private OnFragmentInteractionListener mListener;
 
@@ -89,10 +106,60 @@ public class PerfilFragment extends Fragment {
         password.setText(player.getPassword());
         mail.setText(player.getCorreo());
         punt.setText(String.valueOf(player.getPuntFinal()));
+        connectApiService(player.getNombre());
 
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view2);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         // Inflate the layout for this fragment
         return rootView;
+    }
+
+    public void connectApiService(String user){
+
+
+
+        final ProgressDialog progDialog = new ProgressDialog(getActivity());
+        progDialog.setIndeterminate(true);              // Tipus de progressbar
+        progDialog.setTitle("1O - Database");
+        progDialog.setMessage("Realizando la búsqueda...");
+        progDialog.show();
+
+        if (retrofit == null) {
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+        }
+
+        RestClient restClient = retrofit.create(RestClient.class);
+
+        Call<List<Ranking2>> call = restClient.infoUser(user);
+        call.enqueue(new Callback<List<Ranking2>>() {
+            @Override
+            public void onResponse(Call<List<Ranking2>> call, Response<List<Ranking2>> response) {
+                List<Ranking2> partidas = (List<Ranking2>) response.body();
+                recyclerView.setAdapter(new ListaPartidasUser(partidas, R.layout.list_partidas_item, getContext()));
+                stopProgDialog(progDialog);
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Ranking2>> call, Throwable t) {
+
+            }
+        });
+
+    }
+    private void stopProgDialog(final ProgressDialog progDialog){
+        final Timer t = new Timer();
+        t.schedule(new TimerTask() {
+            public void run() {
+                progDialog.dismiss();       // Tanca progressbar
+                t.cancel();                 // Cancela el timer
+            }
+        }, 1500);                    // Delay de 2s per mostrar la informació
     }
 
     // TODO: Rename method, update argument and hook method into UI event

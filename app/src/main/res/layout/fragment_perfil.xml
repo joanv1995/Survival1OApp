@@ -136,15 +136,60 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         />
+    <TextView
+        android:text="Nivel"
+        android:layout_marginLeft="340dp"
+        android:fontFamily="casual"
+        android:textColor="@color/Black"
+        android:textSize="12dp"
+        android:textStyle="bold"
+        android:layout_marginTop="90dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+    <TextView
+        android:text="Seguidores"
+        android:layout_marginLeft="390dp"
+        android:fontFamily="casual"
+        android:textColor="@color/Black"
+        android:textSize="12dp"
+        android:textStyle="bold"
+        android:layout_marginTop="90dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+    <TextView
+        android:text="Votos"
+        android:layout_marginLeft="470dp"
+        android:fontFamily="casual"
+        android:textColor="@color/Black"
+        android:textSize="12dp"
+        android:textStyle="bold"
+        android:layout_marginTop="90dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+    <TextView
+        android:text="Punt"
+        android:layout_marginLeft="510dp"
+        android:fontFamily="casual"
+        android:textColor="@color/Black"
+        android:textSize="12dp"
+        android:textStyle="bold"
+        android:layout_marginTop="90dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view2"
+
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="340dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="120dp"
         android:layout_marginBottom="50dp"
-        android:layout_marginRight="60dp"
+        android:layout_marginRight="40dp"
         />
 
 </FrameLayout>

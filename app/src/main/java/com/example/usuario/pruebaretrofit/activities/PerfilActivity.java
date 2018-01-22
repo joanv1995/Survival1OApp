@@ -23,13 +23,14 @@ import android.view.Window;
 import android.widget.TextView;
 
 import com.example.usuario.pruebaretrofit.R;
+import com.example.usuario.pruebaretrofit.activities.FragmentsPerfil.LogOutFragment;
 import com.example.usuario.pruebaretrofit.activities.FragmentsPerfil.PerfilFragment;
 import com.example.usuario.pruebaretrofit.activities.FragmentsPerfil.PlayFragment;
 import com.example.usuario.pruebaretrofit.activities.FragmentsPerfil.RankingFragment;
 import com.example.usuario.pruebaretrofit.model.Usuario2;
 
 public class PerfilActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, PerfilFragment.OnFragmentInteractionListener, RankingFragment.OnFragmentInteractionListener, PlayFragment.OnFragmentInteractionListener{
+        implements NavigationView.OnNavigationItemSelectedListener,LogOutFragment.OnFragmentInteractionListener, PerfilFragment.OnFragmentInteractionListener, RankingFragment.OnFragmentInteractionListener, PlayFragment.OnFragmentInteractionListener{
     private Usuario2 player;
     public void onFragmentInteraction(Uri uri){};
 
@@ -109,20 +110,13 @@ public class PerfilActivity extends AppCompatActivity
         Fragment frag = null;
 
         if (id == R.id.nav_perfil) {
-            item.setChecked(true);
             setFragment(0);
-
-            // Handle the camera action
         } else if (id == R.id.nav_play) {
             setFragment(1);
         } else if (id == R.id.nav_rank) {
             setFragment(2);
         } else if (id == R.id.nav_logout) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+            setFragment(3);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -152,6 +146,13 @@ public class PerfilActivity extends AppCompatActivity
                 fragmentTransaction = fragmentManager.beginTransaction();
                 RankingFragment rankFragment = new RankingFragment();
                 fragmentTransaction.replace(R.id.basefrag, rankFragment);
+                fragmentTransaction.commit();
+                break;
+            case 3:
+                fragmentManager = getSupportFragmentManager();
+                fragmentTransaction = fragmentManager.beginTransaction();
+                LogOutFragment logoutfragment = new LogOutFragment();
+                fragmentTransaction.replace(R.id.basefrag, logoutfragment);
                 fragmentTransaction.commit();
                 break;
         }

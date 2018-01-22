@@ -135,7 +135,7 @@ public class RankingFragment extends Fragment {
 
                 recyclerView.setAdapter(new ListaUsuariosAdapter(listaUsuarios, R.layout.list_usuarios_item, getContext()));
 
-                Log.d(TAG, "Number of movies received: " + listaUsuarios.size());
+
                 stopProgDialog(progDialog);
             }
 
@@ -154,7 +154,7 @@ public class RankingFragment extends Fragment {
                 progDialog.dismiss();       // Tanca progressbar
                 t.cancel();                 // Cancela el timer
             }
-        }, 2000);                    // Delay de 2s per mostrar la informació
+        }, 1500);                    // Delay de 2s per mostrar la informació
     }
 
 

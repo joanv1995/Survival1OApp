@@ -1,5 +1,6 @@
 package com.example.usuario.pruebaretrofit.service;
 
+import com.example.usuario.pruebaretrofit.model.Ranking2;
 import com.example.usuario.pruebaretrofit.model.Usuario2;
 
 import java.util.List;
@@ -24,5 +25,10 @@ public interface RestClient {
     Call<Usuario2> esUser(@Body Usuario2 u);
     @POST("newUser")
     Call<Usuario2> signupUser(@Body Usuario2 u);
+    @GET("{nombre}/ranking")
+    Call<List<Ranking2>> infoUser (@Path("nombre") String nombre);
+
+
+
 
 }

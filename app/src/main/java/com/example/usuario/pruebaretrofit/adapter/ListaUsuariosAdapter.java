@@ -17,7 +17,6 @@ public class ListaUsuariosAdapter extends RecyclerView.Adapter<ListaUsuariosAdap
 
     private final int rowLayout;
     private List<Usuario2> listaUsuarios;
-    private int puntuacion;
     private Context context;
 
 
